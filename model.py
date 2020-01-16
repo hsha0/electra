@@ -4,7 +4,7 @@ import math
 import json
 import copy
 import numpy as np
-
+import tensorflow.contrib.slim as slim
 
 
 class ElectraConfig(object):
@@ -86,10 +86,13 @@ class ElectraConfig(object):
         """Serializes this instance to a JSON string."""
         return json.dumps(self.to_dict(), indent=2, sort_keys=True) + "\n"
 
+def model_summary():
+    model_vars = tf.trainable_variables()
+    slim.model_analyzer.analyze_vars(model_vars, print_info=True)
 
-class ElectraModel(object):
+class Generator(object):
     """
-    ELECTRA model.
+    Generator
     """
 
     def __init__(self,
@@ -126,7 +129,6 @@ class ElectraModel(object):
         if token_type_ids is None:
             token_type_ids = tf.zeros(shape=[batch_size, seq_length], dtype=tf.int32)
 
-        with tf.variable_scope(scope, default_name="generator"):
             with tf.variable_scope("embeddings"):
                 # Perform embedding lookup on the word ids.
                 (self.embedding_output, self.embedding_table) = embedding_lookup(
@@ -150,7 +152,7 @@ class ElectraModel(object):
                     initializer_range=config.initializer_range,
                     max_position_embeddings=config.max_position_embeddings,
                     dropout_prob=config.hidden_dropout_prob)
-
+        with tf.variable_scope(scope, default_name="generator"):
             with tf.variable_scope("encoder"):
                 self.all_encoder_layers = transformer_model(
                     input_tensor=self.embedding_output,
@@ -509,7 +511,7 @@ def transformer_model(input_tensor,
             group_idx = int(layer_idx / num_hidden_layers * num_hidden_groups)
             with tf.variable_scope("group_%d" % group_idx):
                 with tf.variable_scope("layer_%d" % layer_idx):
-                    all_layer_outputs = prev_output
+                    layer_output = prev_output
                     for inner_group_idx in range(inner_group_num):
                         with tf.variable_scope("inner_group_%d" % inner_group_idx):
                             layer_output = attention_ffn_block(
