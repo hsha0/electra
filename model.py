@@ -19,6 +19,7 @@ class ElectraConfig(object):
                  num_hidden_layers=12,
                  num_hidden_groups=1,
                  num_attention_heads=12,
+                 generator_size=0.25,
                  intermediate_size=3072,
                  inner_group_num=1,
                  down_scale_factor=1,
@@ -52,6 +53,7 @@ class ElectraConfig(object):
         self.num_hidden_layers = num_hidden_layers
         self.num_hidden_groups = num_hidden_groups
         self.num_attention_heads = num_attention_heads
+        self.generator_size = generator_size
         self.inner_group_num = inner_group_num
         self.down_scale_factor = down_scale_factor
         self.hidden_act = hidden_act
@@ -160,10 +162,10 @@ class Generator(object):
                 self.all_encoder_layers = transformer_model(
                     input_tensor=self.embedding_output,
                     attention_mask=input_mask,
-                    hidden_size=config.hidden_size,
-                    num_hidden_layers=config.num_hidden_layers,
+                    hidden_size=config.hidden_size * config.generator_size,
+                    num_hidden_layers=config.num_hidden_layers * config.generator_size,
                     num_hidden_groups=config.num_hidden_groups,
-                    num_attention_heads=config.num_attention_heads,
+                    num_attention_heads=config.num_attention_heads * config.generator_size,
                     intermediate_size=config.intermediate_size,
                     inner_group_num=config.inner_group_num,
                     intermediate_act_fn=get_activation(config.hidden_act),
