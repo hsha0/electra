@@ -48,6 +48,10 @@ flags.DEFINE_bool("do_train", False, "Whether to run training.")
 
 flags.DEFINE_bool("do_eval", False, "Whether to run eval on the dev set.")
 
+flags.DEFINE_integer("train_batch_size", 32, "Total batch size for training.")
+
+flags.DEFINE_integer("eval_batch_size", 8, "Total batch size for eval.")
+
 flags.DEFINE_bool("use_tpu", False, "Whether to use TPU or GPU/CPU.")
 
 tf.flags.DEFINE_string(
@@ -133,7 +137,6 @@ def get_masked_lm_output(electra_config, input_tensor, output_weights, positions
         loss = numerator / denominator
 
     return (loss, per_example_loss, log_probs)
-
 
 
 def model_fn_builder(electra_config, init_checkpoint, learning_rate,
@@ -293,6 +296,15 @@ def main():
         use_one_hot_embeddings=FLAGS.use_tpu)
 
     print("finish building model")
+
+    # If TPU is not available, this will fall back to normal Estimator on CPU
+    # or GPU.
+    estimator = tf.contrib.tpu.TPUEstimator(
+        use_tpu=FLAGS.use_tpu,
+        model_fn=model_fn,
+        config=run_config,
+        train_batch_size=FLAGS.train_batch_size,
+        eval_batch_size=FLAGS.eval_batch_size)
 
     sys.exit()
 
