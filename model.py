@@ -86,9 +86,11 @@ class ElectraConfig(object):
         """Serializes this instance to a JSON string."""
         return json.dumps(self.to_dict(), indent=2, sort_keys=True) + "\n"
 
+
 def model_summary():
     model_vars = tf.trainable_variables()
     slim.model_analyzer.analyze_vars(model_vars, print_info=True)
+
 
 class Generator(object):
     """
@@ -129,29 +131,30 @@ class Generator(object):
         if token_type_ids is None:
             token_type_ids = tf.zeros(shape=[batch_size, seq_length], dtype=tf.int32)
 
-            with tf.variable_scope("embeddings"):
-                # Perform embedding lookup on the word ids.
-                (self.embedding_output, self.embedding_table) = embedding_lookup(
-                    input_ids=input_ids,
-                    vocab_size=config.vocab_size,
-                    embedding_size=config.embedding_size,
-                    initializer_range=config.initializer_range,
-                    word_embedding_name="word_embeddings",
-                    use_one_hot_embeddings=use_one_hot_embeddings)
+        with tf.variable_scope("embeddings"):
+            # Perform embedding lookup on the word ids.
+            (self.embedding_output, self.embedding_table) = embedding_lookup(
+                input_ids=input_ids,
+                vocab_size=config.vocab_size,
+                embedding_size=config.embedding_size,
+                initializer_range=config.initializer_range,
+                word_embedding_name="word_embeddings",
+                use_one_hot_embeddings=use_one_hot_embeddings)
 
-                # Add positional embeddings and token type embeddings, then layer
-                # normalize and perform dropout.
-                self.embedding_output = embedding_postprocessor(
-                    input_tensor=self.embedding_output,
-                    use_token_type=True,
-                    token_type_ids=token_type_ids,
-                    token_type_vocab_size=config.type_vocab_size,
-                    token_type_embedding_name="token_type_embeddings",
-                    use_position_embeddings=True,
-                    position_embedding_name="position_embeddings",
-                    initializer_range=config.initializer_range,
-                    max_position_embeddings=config.max_position_embeddings,
-                    dropout_prob=config.hidden_dropout_prob)
+            # Add positional embeddings and token type embeddings, then layer
+            # normalize and perform dropout.
+            self.embedding_output = embedding_postprocessor(
+                input_tensor=self.embedding_output,
+                use_token_type=True,
+                token_type_ids=token_type_ids,
+                token_type_vocab_size=config.type_vocab_size,
+                token_type_embedding_name="token_type_embeddings",
+                use_position_embeddings=True,
+                position_embedding_name="position_embeddings",
+                initializer_range=config.initializer_range,
+                max_position_embeddings=config.max_position_embeddings,
+                dropout_prob=config.hidden_dropout_prob)
+
         with tf.variable_scope(scope, default_name="generator"):
             with tf.variable_scope("encoder"):
                 self.all_encoder_layers = transformer_model(
@@ -178,6 +181,98 @@ class Generator(object):
               to the final hidden of the transformer encoder.
             """
         return self.sequence_output
+
+
+class Discriminator(object):
+    """
+    Discriminator
+    """
+
+    def __init__(self,
+                 config,
+                 is_training,
+                 input_ids,
+                 input_mask=None,
+                 token_type_ids=None,
+                 use_one_hot_embeddings=False,
+                 scope=None):
+        """
+        Constructor for ElectraModel.
+
+        :param config:
+        :param is_training:
+        :param input_ids:
+        :param input_mask:
+        :param token_type_ids:
+        :param use_one_hot_embeddings:
+        :param scope:
+        """
+        config = copy.deepcopy(config)
+        if not is_training:
+            config.hidden_dropout_prob = 0.0
+            config.attention_probs_dropout_prob = 0.0
+
+        input_shape = get_shape_list(input_ids, expected_rank=2)
+        batch_size = input_shape[0]
+        seq_length = input_shape[1]
+
+        if input_mask is None:
+            input_mask = tf.ones(shape=[batch_size, seq_length], dtype=tf.int32)
+
+        if token_type_ids is None:
+            token_type_ids = tf.zeros(shape=[batch_size, seq_length], dtype=tf.int32)
+
+        with tf.variable_scope("embeddings"):
+            # Perform embedding lookup on the word ids.
+            (self.embedding_output, self.embedding_table) = embedding_lookup(
+                input_ids=input_ids,
+                vocab_size=config.vocab_size,
+                embedding_size=config.embedding_size,
+                initializer_range=config.initializer_range,
+                word_embedding_name="word_embeddings",
+                use_one_hot_embeddings=use_one_hot_embeddings)
+
+            # Add positional embeddings and token type embeddings, then layer
+            # normalize and perform dropout.
+            self.embedding_output = embedding_postprocessor(
+                input_tensor=self.embedding_output,
+                use_token_type=True,
+                token_type_ids=token_type_ids,
+                token_type_vocab_size=config.type_vocab_size,
+                token_type_embedding_name="token_type_embeddings",
+                use_position_embeddings=True,
+                position_embedding_name="position_embeddings",
+                initializer_range=config.initializer_range,
+                max_position_embeddings=config.max_position_embeddings,
+                dropout_prob=config.hidden_dropout_prob)
+
+        with tf.variable_scope(scope, default_name="generator"):
+            with tf.variable_scope("encoder"):
+                self.all_encoder_layers = transformer_model(
+                    input_tensor=self.embedding_output,
+                    attention_mask=input_mask,
+                    hidden_size=config.hidden_size,
+                    num_hidden_layers=config.num_hidden_layers,
+                    num_hidden_groups=config.num_hidden_groups,
+                    num_attention_heads=config.num_attention_heads,
+                    intermediate_size=config.intermediate_size,
+                    inner_group_num=config.inner_group_num,
+                    intermediate_act_fn=get_activation(config.hidden_act),
+                    hidden_dropout_prob=config.hidden_dropout_prob,
+                    attention_probs_dropout_prob=config.attention_probs_dropout_prob,
+                    initializer_range=config.initializer_range,
+                    do_return_all_layers=True)
+
+            self.sequence_output = self.all_encoder_layers[-1]
+
+    def get_sequence_output(self):
+        """Gets final hidden layer of encoder.
+            Returns:
+              float Tensor of shape [batch_size, seq_length, hidden_size] corresponding
+              to the final hidden of the transformer encoder.
+            """
+        return self.sequence_output
+
 
 def get_activation(activation_string):
     """Maps a string to a Python function, e.g., "relu" => `tf.nn.relu`.

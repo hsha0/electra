@@ -38,7 +38,11 @@ def get_config():
 
 def create_generator(config, is_training, input_ids):
     generator = Generator(config, is_training, input_ids)
-    print(generator.get_sequence_output())
+    return generator
+
+def create_discriminator(config, is_training, input_ids):
+    discriminator = Discriminator(config, is_training, input_ids)
+    return discriminator
 
 def model_fn_builder(config, init_checkpoint, learning_rate,
                      num_train_steps, num_warmup_steps, use_tpu,
@@ -103,6 +107,9 @@ def main():
 
     config = get_config()
     create_generator(config=config, is_training=True, input_ids=input_ids)
+    model_summary()
+
+    create_discriminator(config=config, is_training=True, input_ids=input_ids)
     model_summary()
 
 
