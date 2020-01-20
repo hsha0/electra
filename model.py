@@ -166,7 +166,7 @@ class Generator(object):
                     num_hidden_layers=int(config.num_hidden_layers * config.generator_size),
                     num_hidden_groups=config.num_hidden_groups,
                     num_attention_heads=int(config.num_attention_heads * config.generator_size),
-                    intermediate_size=config.intermediate_size,
+                    intermediate_size=int(config.intermediate_size * config.generator_size),
                     inner_group_num=config.inner_group_num,
                     intermediate_act_fn=get_activation(config.hidden_act),
                     hidden_dropout_prob=config.hidden_dropout_prob,
