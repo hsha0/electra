@@ -5,6 +5,7 @@ import tokenization
 import numpy as np
 import modeling
 import optimization
+import sys
 
 flags = tf.flags
 FLAGS = flags.FLAGS
@@ -274,6 +275,10 @@ def main():
         num_warmup_steps=FLAGS.num_warmup_steps,
         use_tpu=FLAGS.use_tpu,
         use_one_hot_embeddings=FLAGS.use_tpu)
+
+    print("finish building model")
+
+    sys.exit()
 
     input_ids = tokenize(data, tokenizer)
     print(len(input_ids))
