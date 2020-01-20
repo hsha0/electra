@@ -282,7 +282,7 @@ def main():
             per_host_input_for_training=is_per_host))
 
     model_fn = model_fn_builder(
-        bert_config=electra_config,
+        electra_config=electra_config,
         init_checkpoint=FLAGS.init_checkpoint,
         learning_rate=FLAGS.learning_rate,
         num_train_steps=FLAGS.num_train_steps,
