@@ -32,7 +32,9 @@ flags.DEFINE_boolean('do_lower_case', True, "Whether do lower case.")
 
 flags.DEFINE_float('mask_percentage', 0.15, "Percentage of words to be masked for the generator.")
 
-flags.DEFINE_float("learning_rate", 3e-4, "The initial learning rate for Adam.")
+flags.DEFINE_float("learning_rate", 3e-4, "The initial learning rate for glue.")
+
+flags.DEFINE_integer("num_train_steps", 100000, "Number of training steps.")
 
 flags.DEFINE_integer("save_checkpoints_steps", 1000,
                      "How often to save the model checkpoint.")
