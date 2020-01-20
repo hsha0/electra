@@ -22,6 +22,10 @@ flags.DEFINE_string('output_dir', 'results', "Path to output directory.")
 
 flags.DEFINE_integer('max_seq_length', 128, "The maximum total input sequence length after WordPiece tokenization.")
 
+flags.DEFINE_string(
+    "init_checkpoint", None,
+    "Initial checkpoint (usually from a pre-trained BERT model).")
+
 flags.DEFINE_string('vocab_file', 'vocab.txt', "Path to vocabulary file.")
 
 flags.DEFINE_boolean('do_lower_case', True, "Whether do lower case.")
