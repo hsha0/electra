@@ -246,7 +246,7 @@ class Discriminator(object):
                 max_position_embeddings=config.max_position_embeddings,
                 dropout_prob=config.hidden_dropout_prob)
 
-        with tf.variable_scope(scope, default_name="generator"):
+        with tf.variable_scope(scope, default_name="discriminator"):
             with tf.variable_scope("encoder"):
                 self.all_encoder_layers = transformer_model(
                     input_tensor=self.embedding_output,
