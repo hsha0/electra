@@ -184,6 +184,9 @@ class Generator(object):
             """
         return self.sequence_output
 
+    def get_embedding_table(self):
+        return self.output_embedding_table
+
 
 class Discriminator(object):
     """
