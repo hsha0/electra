@@ -92,11 +92,6 @@ def get_config():
     return config
 
 
-def create_generator(config, is_training, input_ids):
-    generator = modeling.Generator(config, is_training, input_ids)
-    return generator
-
-
 def create_discriminator(config, is_training, input_ids):
     discriminator = modeling.Discriminator(config, is_training, input_ids)
     return discriminator
@@ -162,16 +157,18 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
 
         input_ids = features["input_ids"]
         input_mask = features["input_mask"]
+        segment_ids = features["segment_ids"]
         masked_lm_positions = features["masked_lm_positions"]
         masked_lm_ids = features["masked_lm_ids"]
         masked_lm_weights = features["masked_lm_weights"]
 
         is_training = (mode == tf.estimator.ModeKeys.TRAIN)
 
-        generator = create_generator(config=electra_config,
+        generator = modeling.Generator(config=electra_config,
                                      is_training=is_training,
                                      input_ids=input_ids,
                                      input_mask=input_mask,
+                                     token_type_ids=segment_ids,
                                      use_one_hot_embeddings=use_one_hot_embeddings)
 
         (masked_lm_loss,
