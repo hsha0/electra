@@ -46,7 +46,7 @@ flags.DEFINE_bool(
     "do_whole_word_mask", False,
     "Whether to use whole word masking rather than per-WordPiece masking.")
 
-flags.DEFINE_integer("max_seq_length", 128, "Maximum sequence length.")
+flags.DEFINE_integer("max_seq_length", 256, "Maximum sequence length.")
 
 flags.DEFINE_integer("max_predictions_per_seq", 20,
                      "Maximum number of masked LM predictions per sequence.")
@@ -299,7 +299,7 @@ def create_instances_from_document(
           is_random_next = False
           for j in range(a_end, len(current_chunk)):
             tokens_b.extend(current_chunk[j])
-          truncate_seq_pair(tokens_a, tokens_b, max_num_tokens, rng)
+        truncate_seq_pair(tokens_a, tokens_b, max_num_tokens, rng)
 
         assert len(tokens_a) >= 1
         assert len(tokens_b) >= 1
