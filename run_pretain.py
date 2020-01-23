@@ -24,6 +24,11 @@ flags.DEFINE_string('output_dir', None, "Path to output directory.")
 
 flags.DEFINE_integer('max_seq_length', 128, "The maximum total input sequence length after WordPiece tokenization.")
 
+flags.DEFINE_integer(
+    "max_predictions_per_seq", 20,
+    "Maximum number of masked LM predictions per sequence. "
+    "Must match data generation.")
+
 flags.DEFINE_string(
     "init_checkpoint", None,
     "Initial checkpoint (usually from a pre-trained BERT model).")
