@@ -272,6 +272,7 @@ def create_instances_from_document(
         # Random next
         is_random_next = False
         if len(current_chunk) == 1: #or rng.random() < 0.5:
+          print(current_chunk)
           is_random_next = True
           target_b_length = target_seq_length - len(tokens_a)
 
