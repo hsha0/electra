@@ -266,6 +266,8 @@ def create_instances_from_document(
           tokens_a.extend(current_chunk[j])
 
         tokens_b = []
+
+        '''
         # Random next
         is_random_next = False
         if len(current_chunk) == 1 or rng.random() < 0.5:
@@ -294,8 +296,9 @@ def create_instances_from_document(
         # Actual next
         else:
           is_random_next = False
-          for j in range(a_end, len(current_chunk)):
-            tokens_b.extend(current_chunk[j])
+        '''
+        for j in range(a_end, len(current_chunk)):
+          tokens_b.extend(current_chunk[j])
         truncate_seq_pair(tokens_a, tokens_b, max_num_tokens, rng)
 
         assert len(tokens_a) >= 1
