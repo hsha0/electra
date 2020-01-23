@@ -108,7 +108,7 @@ def get_masked_lm_output(electra_config, input_tensor, output_weights, positions
         with tf.variable_scope("transform"):
             input_tensor = tf.layers.dense(
                 input_tensor,
-                units=electra_config.hidden_size,
+                units=int(electra_config.hidden_size * electra_config.generator_siez),
                 activation=modeling.get_activation(electra_config.hidden_act),
                 kernel_initializer=modeling.create_initializer(
                     electra_config.initializer_range))
@@ -243,8 +243,6 @@ def input_fn_builder(input_files,
                 tf.FixedLenFeature([max_predictions_per_seq], tf.int64),
             "masked_lm_weights":
                 tf.FixedLenFeature([max_predictions_per_seq], tf.float32),
-            "next_sentence_labels":
-                tf.FixedLenFeature([1], tf.int64),
         }
 
         # For training, we want a lot of parallel reading and shuffling.
