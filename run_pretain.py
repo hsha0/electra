@@ -22,7 +22,7 @@ flags.DEFINE_string(
 
 flags.DEFINE_string('output_dir', None, "Path to output directory.")
 
-flags.DEFINE_integer('max_seq_length', 128, "The maximum total input sequence length after WordPiece tokenization.")
+flags.DEFINE_integer('max_seq_length', 256, "The maximum total input sequence length after WordPiece tokenization.")
 
 flags.DEFINE_integer(
     "max_predictions_per_seq", 20,
