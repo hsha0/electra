@@ -22,7 +22,7 @@ flags.DEFINE_string(
 
 flags.DEFINE_string('output_dir', None, "Path to output directory.")
 
-flags.DEFINE_integer('max_seq_length', 256, "The maximum total input sequence length after WordPiece tokenization.")
+flags.DEFINE_integer('max_seq_length', 128, "The maximum total input sequence length after WordPiece tokenization.")
 
 flags.DEFINE_integer(
     "max_predictions_per_seq", 20,
@@ -95,7 +95,6 @@ def get_config():
 def create_discriminator(config, is_training, input_ids):
     discriminator = modeling.Discriminator(config, is_training, input_ids)
     return discriminator
-
 
 def get_masked_lm_output(electra_config, input_tensor, output_weights, positions,
                          label_ids, label_weights):
@@ -383,6 +382,10 @@ def main():
         num_warmup_steps=FLAGS.num_warmup_steps,
         use_tpu=FLAGS.use_tpu,
         use_one_hot_embeddings=FLAGS.use_tpu)
+
+    modeling.model_summary()
+
+    sys.exit()
 
     print("finish building model")
 
