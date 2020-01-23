@@ -18,7 +18,7 @@ flags.DEFINE_string(
 
 flags.DEFINE_string('data_dir', None, "Path to data directory.")
 
-flags.DEFINE_string('output_dir', 'results', "Path to output directory.")
+flags.DEFINE_string('output_dir', None, "Path to output directory.")
 
 flags.DEFINE_integer('max_seq_length', 128, "The maximum total input sequence length after WordPiece tokenization.")
 
@@ -328,15 +328,19 @@ def main():
 
     tf.gfile.MakeDirs(FLAGS.output_dir)
 
+    input_files = []
+    for input_pattern in FLAGS.input_file.split(","):
+        input_files.extend(tf.gfile.Glob(input_pattern))
+
+    tf.logging.info("*** Input Files ***")
+    for input_file in input_files:
+        tf.logging.info("  %s" % input_file)
 
 
-    data_dir = FLAGS.data_dir
-    data = read_data(data_dir)
-    print(data)
+    #data_dir = FLAGS.data_dir
+    #data = read_data(data_dir)
+    #print(data)
 
-
-    tokenizer = tokenization.FullTokenizer(
-        vocab_file=FLAGS.vocab_file, do_lower_case=FLAGS.do_lower_case)
 
     tpu_cluster_resolver = None
     if FLAGS.use_tpu and FLAGS.tpu_name:
