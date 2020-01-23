@@ -175,6 +175,7 @@ class Generator(object):
                     do_return_all_layers=True)
 
             self.sequence_output = self.all_encoder_layers[-1]
+            print(self.sequence_output)
 
         model_summary()
 
