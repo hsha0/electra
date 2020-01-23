@@ -272,7 +272,6 @@ def create_instances_from_document(
         # Random next
         is_random_next = False
         if len(current_chunk) == 1: #or rng.random() < 0.5:
-          print(current_chunk)
           is_random_next = True
           target_b_length = target_seq_length - len(tokens_a)
 
@@ -297,6 +296,7 @@ def create_instances_from_document(
           i -= num_unused_segments
         # Actual next
         else:
+          print(current_chunk)
           is_random_next = False
           for j in range(a_end, len(current_chunk)):
             tokens_b.extend(current_chunk[j])
