@@ -107,7 +107,7 @@ def get_masked_lm_output(electra_config, input_tensor, output_weights, positions
         with tf.variable_scope("transform"):
             input_tensor = tf.layers.dense(
                 input_tensor,
-                units=FLAGS.max_seq_length,
+                units=electra_config.embedding_size,
                 activation=modeling.get_activation(electra_config.hidden_act),
                 kernel_initializer=modeling.create_initializer(
                     electra_config.initializer_range))
