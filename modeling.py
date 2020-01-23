@@ -176,6 +176,8 @@ class Generator(object):
 
             self.sequence_output = self.all_encoder_layers[-1]
 
+        model_summary()
+
     def get_sequence_output(self):
         """Gets final hidden layer of encoder.
             Returns:

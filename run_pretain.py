@@ -383,10 +383,6 @@ def main():
         use_tpu=FLAGS.use_tpu,
         use_one_hot_embeddings=FLAGS.use_tpu)
 
-    modeling.model_summary()
-
-    sys.exit()
-
     print("finish building model")
 
     # If TPU is not available, this will fall back to normal Estimator on CPU
