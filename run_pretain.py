@@ -147,18 +147,17 @@ def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, 
     seq_length = sequence_shape[1]
     width = sequence_shape[2]
 
+    sequence_tensor = tf.reshape(sequence_tensor, [batch_size * seq_length, width])
+
     with tf.variable_scope("whether_replaced/predictions"):
-        logits = tf.layers.dense(sequence_tensor,
+        output = tf.layers.dense(sequence_tensor,
                                  units=2,
                                  activation=modeling.get_activation(electra_config.hidden_act),
                                  kernel_initializer=modeling.create_initializer(
                                      electra_config.initializer_range))
-
-        logits = modeling.layer_norm(logits)
+        logits = modeling.layer_norm(output)
 
         log_probs = tf.nn.log_softmax(logits, axis=-1)
-
-        print(log_probs)
 
         whether_replaced = tf.reshape(whether_replaced, [-1])
 
