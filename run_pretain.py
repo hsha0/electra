@@ -222,16 +222,14 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
                                               validate_indices=True, name="whether_replaced")
 
         zeros = tf.zeros(tf.shape(diff_cast), dtype=tf.int32)
-        print(diff_cast)
-        print(zeros)
-        print(modeling.get_shape_list(diff_cast))
-        print(modeling.get_shape_list(zeros))
-        masked_lm_mask = tf.sparse_to_dense(masked_lm_positions, tf.shape(input_ids), zeros, default_value=1,
+        masked_lm_mask = tf.sparse_to_dense(masked_lm_positions, tf.shape(input_ids), diff_cast, default_value=1,
                                             validate_indices=True, name="masked_lm_mask")
 
         input_ids_temp = tf.multiply(input_ids, masked_lm_mask)
 
-        masked_lm_predictions_temp = tf.sparse_to_dense(masked_lm_positions, tf.shape(input_ids), masked_lm_predictions, default_value=0, validate_indices=True, name=None)
+        #masked_lm_predictions_temp = tf.sparse_to_dense(masked_lm_positions, tf.shape(input_ids), masked_lm_predictions, default_value=0, validate_indices=True, name=None)
+        masked_lm_predictions_temp = tf.sparse_to_dense(masked_lm_positions, tf.shape(input_ids), diff_cast,
+                                                        default_value=0, validate_indices=True, name=None)
 
         input_ids_for_discriminator = input_ids_temp + masked_lm_predictions_temp
 
