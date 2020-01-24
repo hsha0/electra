@@ -222,7 +222,8 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         diff_cast = tf.cast(tf.not_equal(diff, zero), dtype=tf.int32)
 
         index = tf.expand_dims(tf.range(0, batch_size), 1)
-        print(index)
+        dup_index = tf.tile(index, multiples=[1, 32])
+        print(dup_index)
 
         positions = tf.concat(1, [index, masked_lm_positions])
         print(positions)
