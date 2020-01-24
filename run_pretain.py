@@ -276,7 +276,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
 
             output_spec = tf.contrib.tpu.TPUEstimatorSpec(
                 mode=mode,
-                loss=total_loss,
+                loss=masked_lm_loss,
                 train_op=gen_train_op,
                 scaffold_fn=scaffold_fn)
 
