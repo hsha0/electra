@@ -122,7 +122,6 @@ def get_masked_lm_output(electra_config, input_tensor, output_weights, positions
         logits = tf.matmul(input_tensor, output_weights, transpose_b=True)
         logits = tf.nn.bias_add(logits, output_bias)
         log_probs = tf.nn.log_softmax(logits, axis=-1)
-        print(log_probs)
 
         label_ids = tf.reshape(label_ids, [-1])
         label_weights = tf.reshape(label_weights, [-1])
@@ -176,8 +175,10 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
          electra_config, generator.get_sequence_output(), generator.get_embedding_table(),
          masked_lm_positions, masked_lm_ids, masked_lm_weights)
 
-        print(generator.get_sequence_output())
-        print(generator.get_embedding_table())
+        masked_lm_predictions = tf.argmax(
+            masked_lm_log_probs, axis=-1, output_type=tf.int32)
+
+        print(masked_lm_predictions)
 
         total_loss = masked_lm_loss
 
