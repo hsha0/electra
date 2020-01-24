@@ -216,10 +216,13 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
 
         zero = tf.constant(0, dtype=tf.int32)
         diff_cast = tf.cast(tf.not_equal(diff, zero), dtype=tf.int32)
+        print(diff_cast)
 
         whether_replaced = tf.sparse_to_dense(masked_lm_positions, tf.shape(input_ids), diff_cast, default_value=0, validate_indices=True, name="whether_replaced")
 
-        masked_lm_mask = tf.sparse_to_dense(masked_lm_positions, tf.shape(input_ids), tf.constant([0]*20), default_value=1, validate_indices=True, name="masked_lm_mask")
+        zeros = tf.zeros(tf.shape(diff_cast))
+        print(zeros)
+        masked_lm_mask = tf.sparse_to_dense(masked_lm_positions, tf.shape(input_ids), zeros, default_value=1, validate_indices=True, name="masked_lm_mask")
         input_ids_temp = tf.multiply(input_ids, masked_lm_mask)
 
         masked_lm_predictions_temp = tf.sparse_to_dense(masked_lm_positions, tf.shape(input_ids), masked_lm_predictions, default_value=0, validate_indices=True, name=None)
