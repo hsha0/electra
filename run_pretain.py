@@ -141,21 +141,35 @@ def get_masked_lm_output(electra_config, input_tensor, output_weights, positions
     return (loss, per_example_loss, log_probs)
 
 
-def get_discriminator_output(electra_config, sequence_tensor, whether_replaced):
+def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, label_weights):
     sequence_shape = modeling.get_shape_list(sequence_tensor, expected_rank=3)
     batch_size = sequence_shape[0]
     seq_length = sequence_shape[1]
     width = sequence_shape[2]
 
     with tf.variable_scope("whether_replaced/predictions"):
-        output = tf.layers.dense(sequence_tensor,
+        logits = tf.layers.dense(sequence_tensor,
                                  units=2,
                                  activation=modeling.get_activation(electra_config.hidden_act),
                                  kernel_initializer=modeling.create_initializer(
                                      electra_config.initializer_range))
 
-        print(output)
+        logits = modeling.layer_norm(logits)
 
+        log_probs = tf.nn.log_softmax(logits, axis=-1)
+
+        print(log_probs)
+
+        whether_replaced = tf.reshape(whether_replaced, [-1])
+
+        one_hot_labels = tf.one_hot(whether_replaced, depth=2, dtype=tf.float32)
+
+        per_example_loss = -tf.reduce_sum(log_probs * one_hot_labels, axis=[-1])
+        numerator = tf.reduce_sum(label_weights * per_example_loss)
+        denominator = tf.reduce_sum(label_weights) + 1e-5
+        loss = numerator / denominator
+
+    return (loss, per_example_loss, log_probs)
 
 
 def model_fn_builder(electra_config, init_checkpoint, learning_rate,
@@ -217,7 +231,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
                                                token_type_ids=segment_ids,
                                                use_one_hot_embeddings=use_one_hot_embeddings)
 
-        get_discriminator_output(electra_config, discriminator.get_sequence_output(), whether_replaced)
+        get_discriminator_output(electra_config, discriminator.get_sequence_output(), whether_replaced, input_mask)
 
 
 
