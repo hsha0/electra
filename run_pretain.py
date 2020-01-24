@@ -41,10 +41,10 @@ flags.DEFINE_float('mask_percentage', 0.15, "Percentage of words to be masked fo
 
 flags.DEFINE_float("learning_rate", 3e-4, "The initial learning rate for glue.")
 
-flags.DEFINE_integer("num_train_steps", 100, "Number of training steps.")
+flags.DEFINE_integer("num_train_steps", 1, "Number of training steps.")
 
 #10000
-flags.DEFINE_integer("num_warmup_steps", 100, "Number of warmup steps.")
+flags.DEFINE_integer("num_warmup_steps", 1, "Number of warmup steps.")
 
 flags.DEFINE_integer("save_checkpoints_steps", 1000,
                      "How often to save the model checkpoint.")
@@ -174,6 +174,9 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
          masked_lm_example_loss, masked_lm_log_probs) = get_masked_lm_output(
          electra_config, generator.get_sequence_output(), generator.get_embedding_table(),
          masked_lm_positions, masked_lm_ids, masked_lm_weights)
+
+        print(generator.get_sequence_output())
+        print(generator.get_embedding_table())
 
         total_loss = masked_lm_loss
 
