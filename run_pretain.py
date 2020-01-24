@@ -162,6 +162,7 @@ def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, 
         log_probs = tf.nn.log_softmax(logits, axis=-1)
 
         whether_replaced = tf.reshape(whether_replaced, [-1])
+        label_weights = tf.reshape(label_weights, [-1])
 
         one_hot_labels = tf.one_hot(whether_replaced, depth=2, dtype=tf.float32)
 
