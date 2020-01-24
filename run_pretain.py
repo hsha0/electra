@@ -220,6 +220,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         diff_cast = tf.cast(tf.not_equal(diff, zero), dtype=tf.int32)
 
         whether_replaced = tf.sparse_to_dense(masked_lm_positions, tf.shape(input_ids), diff_cast, default_value=0, validate_indices=True, name="whether_replaced")
+        print("!!!!!!!!!!!1\n\n\n")
         print(masked_lm_positions)
         print(tf.shape(input_ids))
         zeros = tf.zeros(tf.shape(diff_cast), dtype=tf.int32)
