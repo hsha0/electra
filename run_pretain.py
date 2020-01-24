@@ -185,7 +185,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         where = tf.not_equal(diff, zero)
         indices = tf.where(where)
 
-        tf.Print(indices)
+        tf.Print(indices, [indices])
 
 
         total_loss = masked_lm_loss
