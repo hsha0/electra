@@ -39,7 +39,7 @@ flags.DEFINE_boolean('do_lower_case', True, "Whether do lower case.")
 
 flags.DEFINE_float('mask_percentage', 0.15, "Percentage of words to be masked for the generator.")
 
-flags.DEFINE_float("learning_rate", 3e-4, "The initial learning rate for glue.")
+flags.DEFINE_float("learning_rate", 5e-4, "The initial learning rate for glue.")
 
 flags.DEFINE_integer("num_train_steps", 1, "Number of training steps.")
 
@@ -56,7 +56,7 @@ flags.DEFINE_bool("do_train", False, "Whether to run training.")
 
 flags.DEFINE_bool("do_eval", False, "Whether to run eval on the dev set.")
 
-flags.DEFINE_integer("train_batch_size", 32, "Total batch size for training.")
+flags.DEFINE_integer("train_batch_size", 8, "Total batch size for training.")
 
 flags.DEFINE_integer("eval_batch_size", 8, "Total batch size for eval.")
 
