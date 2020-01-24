@@ -224,6 +224,8 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         zeros = tf.zeros(tf.shape(diff_cast), dtype=tf.int32)
         print(diff_cast)
         print(zeros)
+        print(modeling.get_shape_list(diff_cast))
+        print(modeling.get_shape_list(zeros))
         masked_lm_mask = tf.sparse_to_dense(masked_lm_positions, tf.shape(input_ids), zeros, default_value=1,
                                             validate_indices=True, name="masked_lm_mask")
 
