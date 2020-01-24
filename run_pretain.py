@@ -220,7 +220,6 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         whether_replaced = tf.sparse_to_dense(masked_lm_positions, tf.shape(input_ids), diff_cast, default_value=0, validate_indices=True, name="whether_replaced")
 
         zeros = tf.zeros(tf.shape(diff_cast), dtype=tf.int32)
-
         masked_lm_mask = tf.sparse_to_dense(masked_lm_positions, tf.shape(input_ids), zeros, default_value=1, validate_indices=True, name="masked_lm_mask")
         input_ids_temp = tf.multiply(input_ids, masked_lm_mask)
 
@@ -239,8 +238,8 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
          disc_log_probs) = get_discriminator_output(electra_config, discriminator.get_sequence_output(),
                                                     whether_replaced, input_mask)
 
-        total_loss = masked_lm_loss + disc_loss
-        #total_loss = disc_loss
+        #total_loss = masked_lm_loss + disc_loss
+        total_loss = masked_lm_loss
 
         tvars = tf.trainable_variables()
 
@@ -270,7 +269,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         output_spec = None
         if mode == tf.estimator.ModeKeys.TRAIN:
             train_op = optimization.create_optimizer(
-                masked_lm_loss, learning_rate, num_train_steps, num_warmup_steps, use_tpu)
+                total_loss, learning_rate, num_train_steps, num_warmup_steps, use_tpu)
 
             output_spec = tf.contrib.tpu.TPUEstimatorSpec(
                 mode=mode,
