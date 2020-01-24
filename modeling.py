@@ -176,7 +176,6 @@ class Generator(object):
 
             self.sequence_output = self.all_encoder_layers[-1]
 
-
     def get_sequence_output(self):
         """Gets final hidden layer of encoder.
             Returns:
@@ -271,6 +270,8 @@ class Discriminator(object):
 
             self.sequence_output = self.all_encoder_layers[-1]
 
+        model_summary()
+
     def get_sequence_output(self):
         """Gets final hidden layer of encoder.
             Returns:
@@ -278,6 +279,9 @@ class Discriminator(object):
               to the final hidden of the transformer encoder.
             """
         return self.sequence_output
+
+    def get_embedding_table(self):
+        return self.embedding_table
 
 
 def get_activation(activation_string):

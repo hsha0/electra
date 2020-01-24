@@ -186,9 +186,19 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
 
         whether_replaced = tf.sparse_to_dense(masked_lm_positions, tf.shape(input_ids), diff_cast, default_value=0, validate_indices=True, name="whether_replaced")
 
+        masked_lm_mask = tf.sparse_to_dense(masked_lm_positions, tf.shape(input_ids), 0, default_value=1, validate_indices=True, name="masked_lm_mask")
+        input_ids_temp = tf.multiply(input_ids, masked_lm_mask)
 
-        masked_positions_one_hot = tf.sparse_to_dense(masked_lm_positions, tf.shape(input_ids), 0, default_value=1, validate_indices=True, name="masked_positions_one_hot")
-        print(masked_positions_one_hot)
+        masked_lm_predictions_temp = tf.sparse_to_dense(masked_lm_positions, tf.shape(input_ids), masked_lm_predictions, default_value=0, validate_indices=True, name=None)
+
+        input_ids_for_discriminator = input_ids_temp + masked_lm_predictions_temp
+
+        discriminator = modeling.Discriminator(config=electra_config,
+                                               is_training=is_training,
+                                               input_ids=input_ids_for_discriminator,
+                                               input_mask=input_mask,
+                                               token_type_ids=segment_ids,
+                                               use_one_hot_embeddings=use_one_hot_embeddings)
 
 
 
