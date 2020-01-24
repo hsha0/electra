@@ -240,8 +240,8 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
          disc_log_probs) = get_discriminator_output(electra_config, discriminator.get_sequence_output(),
                                                     whether_replaced, input_mask)
 
-        #total_loss = masked_lm_loss + disc_loss
-        total_loss = masked_lm_loss
+        total_loss = masked_lm_loss + disc_loss
+        #total_loss = masked_lm_loss
 
         tvars = tf.trainable_variables()
 
@@ -271,13 +271,13 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         """
         output_spec = None
         if mode == tf.estimator.ModeKeys.TRAIN:
-            train_op = optimization.create_optimizer(
+            gen_train_op = optimization.create_optimizer(
                 total_loss, learning_rate, num_train_steps, num_warmup_steps, use_tpu, "generator")
 
             output_spec = tf.contrib.tpu.TPUEstimatorSpec(
                 mode=mode,
                 loss=total_loss,
-                train_op=train_op,
+                train_op=gen_train_op,
                 scaffold_fn=scaffold_fn)
 
         return output_spec
