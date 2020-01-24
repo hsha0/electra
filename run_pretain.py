@@ -237,7 +237,8 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
          disc_log_probs) = get_discriminator_output(electra_config, discriminator.get_sequence_output(),
                                                     whether_replaced, input_mask)
 
-        total_loss = masked_lm_loss + disc_loss
+        #total_loss = masked_lm_loss + disc_loss
+        total_loss = masked_lm_loss
 
         tvars = tf.trainable_variables()
 
