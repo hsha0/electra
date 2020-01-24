@@ -233,12 +233,11 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
                                                token_type_ids=segment_ids,
                                                use_one_hot_embeddings=use_one_hot_embeddings)
 
-        get_discriminator_output(electra_config, discriminator.get_sequence_output(), whether_replaced, input_mask)
+        (disc_loss, disc_example_loss,
+         disc_log_probs) = get_discriminator_output(electra_config, discriminator.get_sequence_output(),
+                                                    whether_replaced, input_mask)
 
-
-
-
-        total_loss = masked_lm_loss
+        total_loss = masked_lm_loss + disc_loss
 
         tvars = tf.trainable_variables()
 
