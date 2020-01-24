@@ -76,7 +76,6 @@ def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, 
     disc_tvars = tf.trainable_variables(scope="discriminator")
     tvars.extend(disc_tvars)
 
-  print(tvars)
   grads = tf.gradients(loss, tvars)
 
   # This is how the model was pre-trained.
