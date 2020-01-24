@@ -178,6 +178,8 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         masked_lm_predictions = tf.argmax(
             masked_lm_log_probs, axis=-1, output_type=tf.int32)
 
+        masked_lm_predictions = tf.gather_nd(masked_lm_predictions, masked_lm_positions)
+
         print(masked_lm_predictions)
 
         total_loss = masked_lm_loss
