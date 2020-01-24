@@ -68,10 +68,10 @@ def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, 
     optimizer = tf.contrib.tpu.CrossShardOptimizer(optimizer)
 
   with tf.variable_scope("embeddings"):
-    tvars = tf.trainable_variables(scope="embeddings")
-    print(tvars)
+    embedding_tvars = tf.trainable_variables(scope="embeddings")
   if part == "generator":
-    tvars = tf.trainable_variables()
+    tvars = tf.trainable_variables(scope="generator")
+    print(tvars)
   else:
     pass
   grads = tf.gradients(loss, tvars)
