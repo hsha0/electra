@@ -238,7 +238,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
                                                     whether_replaced, input_mask)
 
         #total_loss = masked_lm_loss + disc_loss
-        total_loss = masked_lm_loss
+        total_loss = disc_loss
 
         tvars = tf.trainable_variables()
 
