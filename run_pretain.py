@@ -6,6 +6,9 @@ import numpy as np
 import modeling
 import optimization
 import sys
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+
 
 flags = tf.flags
 FLAGS = flags.FLAGS
@@ -85,6 +88,7 @@ tf.flags.DEFINE_string("master", None, "[Optional] TensorFlow master URL.")
 flags.DEFINE_integer(
     "num_tpu_cores", 8,
     "Only used if `use_tpu` is True. Total number of TPU cores to use.")
+
 
 
 def get_config():
@@ -234,7 +238,8 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
 
         input_ids_temp = tf.multiply(input_ids, masked_lm_mask)
 
-        masked_lm_predictions_temp = tf.sparse_to_dense(positions, tf.shape(input_ids), masked_lm_predictions, default_value=0, validate_indices=True, name=None)
+        masked_lm_predictions_temp = tf.sparse_to_dense(positions, tf.shape(input_ids), masked_lm_predictions,
+                                                        default_value=0, validate_indices=True, name=None)
 
         input_ids_for_discriminator = input_ids_temp + masked_lm_predictions_temp
 
