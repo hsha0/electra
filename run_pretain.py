@@ -274,10 +274,13 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
             gen_train_op = optimization.create_optimizer(
                 masked_lm_loss, learning_rate, num_train_steps, num_warmup_steps, use_tpu, "generator")
 
+            disc_train_op = optimization.create_optimizer(
+                disc_loss, learning_rate, num_train_steps, num_warmup_steps, use_tpu, "discriminator")
+
             output_spec = tf.contrib.tpu.TPUEstimatorSpec(
                 mode=mode,
                 loss=masked_lm_loss,
-                train_op=gen_train_op,
+                train_op=tf.group(gen_train_op, disc_train_op),
                 scaffold_fn=scaffold_fn)
 
         return output_spec
