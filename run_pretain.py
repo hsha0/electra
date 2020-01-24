@@ -223,21 +223,18 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
 
         index = tf.expand_dims(tf.range(0, batch_size), 1)
         dup_index = tf.expand_dims(tf.reshape(tf.tile(index, multiples=[1, 20]), [-1]), 1)
-        print(dup_index)
-
         positions = tf.concat([dup_index, tf.expand_dims(tf.reshape(masked_lm_positions, [-1]), 1)], 1)
-        print(positions)
 
-        whether_replaced = tf.sparse_to_dense(masked_lm_positions, tf.shape(input_ids), diff_cast, default_value=0,
+        whether_replaced = tf.sparse_to_dense(positions, tf.shape(input_ids), diff_cast, default_value=0,
                                               validate_indices=True, name="whether_replaced")
 
         zeros = tf.zeros(tf.shape(diff_cast), dtype=tf.int32)
-        masked_lm_mask = tf.sparse_to_dense(masked_lm_positions, tf.shape(input_ids), zeros, default_value=1,
+        masked_lm_mask = tf.sparse_to_dense(positions, tf.shape(input_ids), zeros, default_value=1,
                                             validate_indices=True, name="masked_lm_mask")
 
         input_ids_temp = tf.multiply(input_ids, masked_lm_mask)
 
-        masked_lm_predictions_temp = tf.sparse_to_dense(masked_lm_positions, tf.shape(input_ids), masked_lm_predictions, default_value=0, validate_indices=True, name=None)
+        masked_lm_predictions_temp = tf.sparse_to_dense(positions, tf.shape(input_ids), masked_lm_predictions, default_value=0, validate_indices=True, name=None)
 
         input_ids_for_discriminator = input_ids_temp + masked_lm_predictions_temp
 
