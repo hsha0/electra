@@ -141,6 +141,23 @@ def get_masked_lm_output(electra_config, input_tensor, output_weights, positions
     return (loss, per_example_loss, log_probs)
 
 
+def get_discriminator_output(electra_config, sequence_tensor, whether_replaced):
+    sequence_shape = modeling.get_shape_list(sequence_tensor, expected_rank=3)
+    batch_size = sequence_shape[0]
+    seq_length = sequence_shape[1]
+    width = sequence_shape[2]
+
+    with tf.variable_scope("whether_replaced/predictions"):
+        output = tf.layers.dense(sequence_tensor,
+                                 units=2,
+                                 activation=modeling.get_activation(electra_config.hidden_act),
+                                 kernel_initializer=modeling.create_initializer(
+                                     electra_config.initializer_range))
+
+        print(output)
+
+
+
 def model_fn_builder(electra_config, init_checkpoint, learning_rate,
                      num_train_steps, num_warmup_steps, use_tpu,
                      use_one_hot_embeddings):
@@ -199,6 +216,8 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
                                                input_mask=input_mask,
                                                token_type_ids=segment_ids,
                                                use_one_hot_embeddings=use_one_hot_embeddings)
+
+        get_discriminator_output(electra_config, discriminator.get_sequence_output(), whether_replaced)
 
 
 
