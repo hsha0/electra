@@ -225,7 +225,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         dup_index = tf.tile(index, multiples=[1, 20])
         print(dup_index)
 
-        positions = tf.concat(1, [dup_index, masked_lm_positions])
+        positions = tf.concat([dup_index, masked_lm_positions], 1)
         print(positions)
 
         whether_replaced = tf.sparse_to_dense(masked_lm_positions, tf.shape(input_ids), diff_cast, default_value=0,
