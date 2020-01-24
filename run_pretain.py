@@ -183,7 +183,9 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
 
         zero = tf.constant(0, dtype=tf.int32)
         diff_bool = tf.cast(tf.not_equal(diff, zero), dtype=tf.int32)
-        print(diff_bool)
+
+        print(masked_lm_positions)
+        print(input_ids)
 
 
 
