@@ -185,10 +185,10 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         diff_cast = tf.cast(tf.not_equal(diff, zero), dtype=tf.int32)
 
         whether_replaced = tf.sparse_to_dense(masked_lm_positions, tf.shape(input_ids), diff_cast, default_value=0, validate_indices=True, name="whether_replaced")
-        print(masked_lm_positions)
-        print(input_ids)
-        print(whether_replaced)
 
+
+        masked_positions_one_hot = tf.sparse_to_dense(masked_lm_positions, tf.shape(input_ids), 0, default_values=1, validate_indices=True, name="masked_positions_one_hot")
+        print(masked_positions_one_hot)
 
 
 
