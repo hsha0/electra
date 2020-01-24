@@ -196,6 +196,8 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         masked_lm_ids = features["masked_lm_ids"]
         masked_lm_weights = features["masked_lm_weights"]
 
+        batch_size = modeling.get_shape_list(input_ids)[0]
+
         is_training = (mode == tf.estimator.ModeKeys.TRAIN)
 
         generator = modeling.Generator(config=electra_config,
@@ -218,18 +220,23 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
 
         zero = tf.constant(0, dtype=tf.int32)
         diff_cast = tf.cast(tf.not_equal(diff, zero), dtype=tf.int32)
+
+        index = tf.expand_dims(tf.range(0, batch_size), 1)
+        print(index)
+
+        positions = tf.concat(1, [index, masked_lm_positions])
+        print(positions)
+
         whether_replaced = tf.sparse_to_dense(masked_lm_positions, tf.shape(input_ids), diff_cast, default_value=0,
                                               validate_indices=True, name="whether_replaced")
 
         zeros = tf.zeros(tf.shape(diff_cast), dtype=tf.int32)
-        masked_lm_mask = tf.sparse_to_dense(masked_lm_positions, tf.shape(input_ids), diff_cast, default_value=1,
+        masked_lm_mask = tf.sparse_to_dense(masked_lm_positions, tf.shape(input_ids), zeros, default_value=1,
                                             validate_indices=True, name="masked_lm_mask")
 
         input_ids_temp = tf.multiply(input_ids, masked_lm_mask)
 
-        #masked_lm_predictions_temp = tf.sparse_to_dense(masked_lm_positions, tf.shape(input_ids), masked_lm_predictions, default_value=0, validate_indices=True, name=None)
-        masked_lm_predictions_temp = tf.sparse_to_dense(masked_lm_positions, tf.shape(input_ids), diff_cast,
-                                                        default_value=0, validate_indices=True, name=None)
+        masked_lm_predictions_temp = tf.sparse_to_dense(masked_lm_positions, tf.shape(input_ids), masked_lm_predictions, default_value=0, validate_indices=True, name=None)
 
         input_ids_for_discriminator = input_ids_temp + masked_lm_predictions_temp
 
