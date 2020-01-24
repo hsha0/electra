@@ -180,7 +180,13 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
 
         masked_lm_ids = tf.reshape(masked_lm_ids, [-1])
         diff = masked_lm_predictions - masked_lm_ids
-        print(diff)
+
+        zero = tf.constant(0, dtype=tf.int32)
+        where = tf.not_equal(diff, zero)
+        indices = tf.where(where)
+
+        print(indices)
+
 
         total_loss = masked_lm_loss
 
