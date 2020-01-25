@@ -219,30 +219,30 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         masked_lm_predictions = tf.argmax(
             masked_lm_log_probs, axis=-1, output_type=tf.int32)
 
+        zero = tf.constant(0, dtype=tf.int32)
+        positions_col2 = tf.reshape(masked_lm_positions, [-1])
+        non_zeros_coords = tf.where(tf.not_equal(positions_col2, zero))
+
         masked_lm_ids = tf.reshape(masked_lm_ids, [-1])
         diff = masked_lm_predictions - masked_lm_ids
 
-        zero = tf.constant(0, dtype=tf.int32)
-        diff_cast = tf.cast(tf.not_equal(diff, zero), dtype=tf.int32)
+        diff_cast = tf.gather_nd(tf.cast(tf.not_equal(diff, zero), dtype=tf.int32), non_zeros_coords)
 
         index = tf.expand_dims(tf.range(0, batch_size), 1)
         dup_index = tf.expand_dims(tf.reshape(tf.tile(index, multiples=[1, 20]), [-1]), 1)
-
-        positions_col2 = tf.reshape(masked_lm_positions, [-1])
-        non_zeros_coords = tf.where(tf.not_equal(positions_col2, zero))
-        print(non_zeros_coords)
         positions = tf.gather_nd(tf.concat([dup_index, tf.expand_dims(positions_col2, 1)], 1), non_zeros_coords)
 
         whether_replaced = tf.sparse_to_dense(positions, tf.shape(input_ids), diff_cast, default_value=0,
                                               validate_indices=True, name="whether_replaced")
 
-        zeros = tf.zeros(tf.shape(diff_cast), dtype=tf.int32)
+        zeros = tf.zeros(tf.shape(non_zeros_coords), dtype=tf.int32)
         masked_lm_mask = tf.sparse_to_dense(positions, tf.shape(input_ids), zeros, default_value=1,
                                             validate_indices=True, name="masked_lm_mask")
 
         input_ids_temp = tf.multiply(input_ids, masked_lm_mask)
 
-        masked_lm_predictions_temp = tf.sparse_to_dense(positions, tf.shape(input_ids), masked_lm_predictions,
+        masked_lm_predictions_pos = tf.gather_nd(masked_lm_predictions, non_zeros_coords)
+        masked_lm_predictions_temp = tf.sparse_to_dense(positions, tf.shape(input_ids), masked_lm_predictions_pos,
                                                         default_value=0, validate_indices=True, name=None)
 
         input_ids_for_discriminator = input_ids_temp + masked_lm_predictions_temp
