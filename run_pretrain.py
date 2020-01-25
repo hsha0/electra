@@ -221,12 +221,12 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
 
         zero = tf.constant(0, dtype=tf.int32)
         positions_col2 = tf.reshape(masked_lm_positions, [-1])
-        non_zeros_coords = tf.reshape(tf.where(tf.not_equal(positions_col2, zero)), [-1])
+        non_zeros_coords = tf.where(tf.not_equal(positions_col2, zero)), [-1]
 
         masked_lm_ids = tf.reshape(masked_lm_ids, [-1])
         diff = masked_lm_predictions - masked_lm_ids
 
-        diff_cast = tf.gather_nd(tf.cast(tf.not_equal(diff, zero), dtype=tf.int32), non_zeros_coords)
+        diff_cast = tf.reshape(tf.gather_nd(tf.cast(tf.not_equal(diff, zero), dtype=tf.int32), non_zeros_coords), [-1])
 
         index = tf.expand_dims(tf.range(0, batch_size), 1)
         dup_index = tf.expand_dims(tf.reshape(tf.tile(index, multiples=[1, 20]), [-1]), 1)
