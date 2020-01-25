@@ -44,12 +44,12 @@ flags.DEFINE_float('mask_percentage', 0.15, "Percentage of words to be masked fo
 
 flags.DEFINE_float("learning_rate", 5e-4, "The initial learning rate for glue.")
 
-flags.DEFINE_integer("num_train_steps", 1, "Number of training steps.")
+flags.DEFINE_integer("num_train_steps", 1000, "Number of training steps.")
 
 #10000
 flags.DEFINE_integer("num_warmup_steps", 1, "Number of warmup steps.")
 
-flags.DEFINE_integer("save_checkpoints_steps", 1000,
+flags.DEFINE_integer("save_checkpoints_steps", 200,
                      "How often to save the model checkpoint.")
 
 flags.DEFINE_integer("iterations_per_loop", 1000,
@@ -299,7 +299,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
 
             output_spec = tf.contrib.tpu.TPUEstimatorSpec(
                 mode=mode,
-                loss=masked_lm_loss,
+                loss=masked_lm_loss + disc_loss,
                 train_op=tf.group(gen_train_op, disc_train_op),
                 scaffold_fn=scaffold_fn)
 
