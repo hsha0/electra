@@ -228,8 +228,9 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         diff = masked_lm_predictions - masked_lm_ids
 
         print(tf.not_equal(diff, zero))
-        print(non_zeros_coords_flat)
-        diff_cast = tf.gather_nd(tf.cast(tf.not_equal(diff, zero), dtype=tf.int32), non_zeros_coords_flat)
+        print(non_zeros_coords, modeling.get_shape_list(non_zeros_coords))
+        print(non_zeros_coords_flat, modeling.get_shape_list(non_zeros_coords_flat))
+        diff_cast = tf.gather_nd(tf.cast(tf.not_equal(diff, zero), dtype=tf.int32), non_zeros_coords)
 
         index = tf.expand_dims(tf.range(0, batch_size), 1)
         dup_index = tf.expand_dims(tf.reshape(tf.tile(index, multiples=[1, 20]), [-1]), 1)
