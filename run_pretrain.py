@@ -227,6 +227,8 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         masked_lm_ids = tf.reshape(masked_lm_ids, [-1])
         diff = masked_lm_predictions - masked_lm_ids
 
+        print(tf.not_equal(diff, zero))
+        print(non_zeros_coords_flat)
         diff_cast = tf.gather_nd(tf.cast(tf.not_equal(diff, zero), dtype=tf.int32), non_zeros_coords_flat)
 
         index = tf.expand_dims(tf.range(0, batch_size), 1)
