@@ -228,8 +228,6 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         diff = masked_lm_predictions - masked_lm_ids
 
         print(tf.not_equal(diff, zero))
-        print(non_zeros_coords, modeling.get_shape_list(non_zeros_coords))
-        print(non_zeros_coords_flat, modeling.get_shape_list(non_zeros_coords_flat))
         diff_cast = tf.gather_nd(tf.cast(tf.not_equal(diff, zero), dtype=tf.int32), non_zeros_coords)
 
         index = tf.expand_dims(tf.range(0, batch_size), 1)
@@ -246,7 +244,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
 
         input_ids_temp = tf.multiply(input_ids, masked_lm_mask)
 
-        masked_lm_predictions_pos = tf.gather_nd(masked_lm_predictions, non_zeros_coords_flat)
+        masked_lm_predictions_pos = tf.gather_nd(masked_lm_predictions, non_zeros_coords)
         masked_lm_predictions_temp = tf.sparse_to_dense(positions, tf.shape(input_ids), masked_lm_predictions_pos,
                                                         default_value=0, validate_indices=True, name=None)
 
