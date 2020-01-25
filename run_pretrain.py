@@ -231,9 +231,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         positions_col2 = tf.reshape(masked_lm_positions, [-1])
         non_zeros_coords = tf.where(tf.not_equal(positions_col2, zero))
         print(non_zeros_coords)
-        positions = tf.concat([dup_index, tf.expand_dims(positions_col2, 1)], 1)
-
-
+        positions = tf.gather_nd(tf.concat([dup_index, tf.expand_dims(positions_col2, 1)], 1), non_zeros_coords)
 
         whether_replaced = tf.sparse_to_dense(positions, tf.shape(input_ids), diff_cast, default_value=0,
                                               validate_indices=True, name="whether_replaced")
