@@ -232,9 +232,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         index = tf.expand_dims(tf.range(0, batch_size), 1)
         dup_index = tf.expand_dims(tf.reshape(tf.tile(index, multiples=[1, 20]), [-1]), 1)
         positions = tf.concat([dup_index, tf.expand_dims(positions_col2, 1)], 1)
-        print(positions)
-        print(tf.gather_nd(positions, non_zeros_coords_flat))
-        print(tf.gather_nd(positions, non_zeros_coords))
+        positions = tf.gather_nd(positions, non_zeros_coords)
 
         whether_replaced = tf.sparse_to_dense(positions, tf.shape(input_ids), diff_cast, default_value=0,
                                               validate_indices=True, name="whether_replaced")
