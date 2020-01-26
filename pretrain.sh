@@ -2,7 +2,7 @@ TPU_NAME='grpc://10.0.124.242:8470'
 ELECTRA_GC='gs://electra'
 
 python3 run_pretrain.py \
---input_file=test_256.tfrecord \
+--input_file=$ELECTRA_GC/test_256.tfrecord \
 --output_dir=$ELECTRA_GC/results \
 --vocab_file=vocab.txt \
 --do_train=True \
