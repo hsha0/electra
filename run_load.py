@@ -171,7 +171,6 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
             else:
                 tf.train.init_from_checkpoint(init_checkpoint, assignment_map)
 
-        """
         tf.logging.info("**** Trainable Variables ****")
         for var in tvars:
             init_string = ""
@@ -179,7 +178,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
                 init_string = ", *INIT_FROM_CKPT*"
             tf.logging.info("  name = %s, shape = %s%s", var.name, var.shape,
                             init_string)
-        """
+
         output_spec = None
         if mode == tf.estimator.ModeKeys.TRAIN:
 
