@@ -211,7 +211,9 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
 
         zero = tf.constant(0, dtype=tf.int32)
         positions_col2 = tf.reshape(masked_lm_positions, [-1])
+        print(masked_lm_positions)
         non_zeros_coords = tf.where(tf.not_equal(positions_col2, zero))
+        print(non_zeros_coords)
 
         masked_lm_ids = tf.reshape(masked_lm_ids, [-1])
         diff = masked_lm_predictions - masked_lm_ids
@@ -220,6 +222,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
 
         index = tf.expand_dims(tf.range(0, batch_size), 1)
         dup_index = tf.expand_dims(tf.reshape(tf.tile(index, multiples=[1, 20]), [-1]), 1)
+        print(dup_index)
         positions = tf.concat([dup_index, tf.expand_dims(positions_col2, 1)], 1)
         positions = tf.gather_nd(positions, non_zeros_coords)
 
