@@ -1,7 +1,7 @@
 TPU_NAME='grpc://10.0.124.242:8470'
 
-python run_pretrain.py \
---input_file=testing/test_256.tfrecord \
+python3 run_pretrain.py \
+--input_file=test_256.tfrecord \
 --output_dir=results \
 --vocab_file=vocab.txt \
 --do_train=True \
