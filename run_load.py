@@ -151,7 +151,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
                                                use_one_hot_embeddings=use_one_hot_embeddings)
 
 
-        whether_replaced = tf.zeros(tf.shape(input_ids))
+        whether_replaced = tf.zeros(tf.shape(input_ids), dtype=tf.int32)
         (disc_loss, disc_example_loss,
          disc_log_probs) = get_discriminator_output(electra_config, discriminator.get_sequence_output(),
                                                     whether_replaced, input_mask)
