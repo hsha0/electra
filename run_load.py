@@ -84,9 +84,45 @@ flags.DEFINE_integer(
     "num_tpu_cores", 8,
     "Only used if `use_tpu` is True. Total number of TPU cores to use.")
 
+
 def get_config():
     config = modeling.ElectraConfig(30522)
     return config
+
+
+def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, label_weights):
+    label_weights = tf.cast(label_weights, dtype=tf.float32)
+
+    sequence_shape = modeling.get_shape_list(sequence_tensor, expected_rank=3)
+    batch_size = sequence_shape[0]
+    seq_length = sequence_shape[1]
+    width = sequence_shape[2]
+
+    sequence_tensor = tf.reshape(sequence_tensor, [batch_size * seq_length, width])
+
+    with tf.variable_scope("discriminator"):
+        with tf.variable_scope("whether_replaced/predictions"):
+            output = tf.layers.dense(sequence_tensor,
+                                     units=2,
+                                     activation=modeling.get_activation(electra_config.hidden_act),
+                                     kernel_initializer=modeling.create_initializer(
+                                         electra_config.initializer_range))
+            logits = modeling.layer_norm(output)
+
+            log_probs = tf.nn.log_softmax(logits, axis=-1)
+
+            whether_replaced = tf.reshape(whether_replaced, [-1])
+            label_weights = tf.reshape(label_weights, [-1])
+
+            one_hot_labels = tf.one_hot(whether_replaced, depth=2, dtype=tf.float32)
+
+            per_example_loss = -tf.reduce_sum(log_probs * one_hot_labels, axis=[-1])
+            numerator = tf.reduce_sum(label_weights * per_example_loss)
+            denominator = tf.reduce_sum(label_weights) + 1e-5
+            loss = numerator / denominator
+
+    return (loss, per_example_loss, log_probs)
+
 
 def model_fn_builder(electra_config, init_checkpoint, learning_rate,
                      num_train_steps, num_warmup_steps, use_tpu,
@@ -114,7 +150,12 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
                                                token_type_ids=segment_ids,
                                                use_one_hot_embeddings=use_one_hot_embeddings)
 
-        disc_loss = 10.0
+
+        whether_replaced = tf.zeros(tf.shape(input_ids))
+        (disc_loss, disc_example_loss,
+         disc_log_probs) = get_discriminator_output(electra_config, discriminator.get_sequence_output(),
+                                                    whether_replaced, input_mask)
+
         tvars = tf.trainable_variables()
 
         initialized_variable_names = {}
