@@ -84,92 +84,9 @@ flags.DEFINE_integer(
     "num_tpu_cores", 8,
     "Only used if `use_tpu` is True. Total number of TPU cores to use.")
 
-
-
 def get_config():
     config = modeling.ElectraConfig(30522)
     return config
-
-
-def get_masked_lm_output(electra_config, input_tensor, output_weights, positions,
-                         label_ids, label_weights):
-    """Get loss and log probs for the masked LM."""
-    input_tensor = gather_indexes(input_tensor, positions)
-
-    with tf.variable_scope("generator"):
-        with tf.variable_scope("cls/predictions"):
-            # We apply one more non-linear transformation before the output layer.
-            # This matrix is not used after pre-training.
-            with tf.variable_scope("transform"):
-                input_tensor = tf.layers.dense(
-                    input_tensor,
-                    units=electra_config.embedding_size,
-                    activation=modeling.get_activation(electra_config.hidden_act),
-                    kernel_initializer=modeling.create_initializer(
-                        electra_config.initializer_range))
-                input_tensor = modeling.layer_norm(input_tensor)
-
-            # The output weights are the same as the input embeddings, but there is
-            # an output-only bias for each token.
-            output_bias = tf.get_variable(
-                "output_bias",
-                shape=[electra_config.vocab_size],
-                initializer=tf.zeros_initializer())
-            logits = tf.matmul(input_tensor, output_weights, transpose_b=True)
-            logits = tf.nn.bias_add(logits, output_bias)
-            log_probs = tf.nn.log_softmax(logits, axis=-1)
-
-            label_ids = tf.reshape(label_ids, [-1])
-            label_weights = tf.reshape(label_weights, [-1])
-
-            one_hot_labels = tf.one_hot(
-                label_ids, depth=electra_config.vocab_size, dtype=tf.float32)
-
-            # The `positions` tensor might be zero-padded (if the sequence is too
-            # short to have the maximum number of predictions). The `label_weights`
-            # tensor has a value of 1.0 for every real prediction and 0.0 for the
-            # padding predictions.
-            per_example_loss = -tf.reduce_sum(log_probs * one_hot_labels, axis=[-1])
-            numerator = tf.reduce_sum(label_weights * per_example_loss)
-            denominator = tf.reduce_sum(label_weights) + 1e-5
-            loss = numerator / denominator
-
-    return (loss, per_example_loss, log_probs)
-
-
-def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, label_weights):
-    label_weights = tf.cast(label_weights, dtype=tf.float32)
-
-    sequence_shape = modeling.get_shape_list(sequence_tensor, expected_rank=3)
-    batch_size = sequence_shape[0]
-    seq_length = sequence_shape[1]
-    width = sequence_shape[2]
-
-    sequence_tensor = tf.reshape(sequence_tensor, [batch_size * seq_length, width])
-
-    with tf.variable_scope("discriminator"):
-        with tf.variable_scope("whether_replaced/predictions"):
-            output = tf.layers.dense(sequence_tensor,
-                                     units=2,
-                                     activation=modeling.get_activation(electra_config.hidden_act),
-                                     kernel_initializer=modeling.create_initializer(
-                                         electra_config.initializer_range))
-            logits = modeling.layer_norm(output)
-
-            log_probs = tf.nn.log_softmax(logits, axis=-1)
-
-            whether_replaced = tf.reshape(whether_replaced, [-1])
-            label_weights = tf.reshape(label_weights, [-1])
-
-            one_hot_labels = tf.one_hot(whether_replaced, depth=2, dtype=tf.float32)
-
-            per_example_loss = -tf.reduce_sum(log_probs * one_hot_labels, axis=[-1])
-            numerator = tf.reduce_sum(label_weights * per_example_loss)
-            denominator = tf.reduce_sum(label_weights) + 1e-5
-            loss = numerator / denominator
-
-    return (loss, per_example_loss, log_probs)
-
 
 def model_fn_builder(electra_config, init_checkpoint, learning_rate,
                      num_train_steps, num_warmup_steps, use_tpu,
@@ -177,7 +94,6 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
     """Returns `model_fn` closure for TPUEstimator."""
 
     def model_fn(features, labels, mode, params):  # pylint: disable=unused-argument
-        """The `model_fn` for TPUEstimator."""
 
         tf.logging.info("*** Features ***")
         for name in sorted(features.keys()):
@@ -186,70 +102,19 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         input_ids = features["input_ids"]
         input_mask = features["input_mask"]
         segment_ids = features["segment_ids"]
-        masked_lm_positions = features["masked_lm_positions"]
-        masked_lm_ids = features["masked_lm_ids"]
-        masked_lm_weights = features["masked_lm_weights"]
 
         batch_size = modeling.get_shape_list(input_ids)[0]
 
         is_training = (mode == tf.estimator.ModeKeys.TRAIN)
 
-        generator = modeling.Generator(config=electra_config,
-                                     is_training=is_training,
-                                     input_ids=input_ids,
-                                     input_mask=input_mask,
-                                     token_type_ids=segment_ids,
-                                     use_one_hot_embeddings=use_one_hot_embeddings)
-
-        (masked_lm_loss,
-         masked_lm_example_loss, masked_lm_log_probs) = get_masked_lm_output(
-         electra_config, generator.get_sequence_output(), generator.get_embedding_table(),
-         masked_lm_positions, masked_lm_ids, masked_lm_weights)
-
-        masked_lm_predictions = tf.argmax(
-            masked_lm_log_probs, axis=-1, output_type=tf.int32)
-
-        zero = tf.constant(0, dtype=tf.int32)
-        positions_col2 = tf.reshape(masked_lm_positions, [-1])
-        non_zeros_coords = tf.where(tf.not_equal(positions_col2, zero))
-
-        masked_lm_ids = tf.reshape(masked_lm_ids, [-1])
-        diff = masked_lm_predictions - masked_lm_ids
-
-        diff_cast = tf.gather_nd(tf.cast(tf.not_equal(diff, zero), dtype=tf.int32), non_zeros_coords)
-
-        index = tf.expand_dims(tf.range(0, batch_size), 1)
-        dup_index = tf.expand_dims(tf.reshape(tf.tile(index, multiples=[1, 20]), [-1]), 1)
-        positions = tf.concat([dup_index, tf.expand_dims(positions_col2, 1)], 1)
-        positions = tf.gather_nd(positions, non_zeros_coords)
-
-        whether_replaced = tf.sparse_to_dense(positions, tf.shape(input_ids), diff_cast, default_value=0,
-                                              validate_indices=True, name="whether_replaced")
-
-        zeros = tf.zeros(tf.shape(non_zeros_coords)[0], dtype=tf.int32)
-        masked_lm_mask = tf.sparse_to_dense(positions, tf.shape(input_ids), zeros, default_value=1,
-                                            validate_indices=True, name="masked_lm_mask")
-
-        input_ids_temp = tf.multiply(input_ids, masked_lm_mask)
-
-        masked_lm_predictions_pos = tf.gather_nd(masked_lm_predictions, non_zeros_coords)
-        masked_lm_predictions_temp = tf.sparse_to_dense(positions, tf.shape(input_ids), masked_lm_predictions_pos,
-                                                        default_value=0, validate_indices=True, name=None)
-
-        input_ids_for_discriminator = input_ids_temp + masked_lm_predictions_temp
-
         discriminator = modeling.Discriminator(config=electra_config,
                                                is_training=is_training,
-                                               input_ids=input_ids_for_discriminator,
+                                               input_ids=input_ids,
                                                input_mask=input_mask,
                                                token_type_ids=segment_ids,
                                                use_one_hot_embeddings=use_one_hot_embeddings)
 
-        (disc_loss, disc_example_loss,
-         disc_log_probs) = get_discriminator_output(electra_config, discriminator.get_sequence_output(),
-                                                    whether_replaced, input_mask)
-
-
+        disc_loss = 10.0
         tvars = tf.trainable_variables()
 
         initialized_variable_names = {}
@@ -278,16 +143,14 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         """
         output_spec = None
         if mode == tf.estimator.ModeKeys.TRAIN:
-            gen_train_op = optimization.create_optimizer(
-                masked_lm_loss, learning_rate, num_train_steps, num_warmup_steps, use_tpu, "generator")
 
             disc_train_op = optimization.create_optimizer(
                 disc_loss, learning_rate, num_train_steps, num_warmup_steps, use_tpu, "discriminator")
 
             output_spec = tf.contrib.tpu.TPUEstimatorSpec(
                 mode=mode,
-                loss=masked_lm_loss + disc_loss,
-                train_op=tf.group(gen_train_op, disc_train_op),
+                loss=disc_loss,
+                train_op=disc_train_op,
                 scaffold_fn=scaffold_fn)
 
         return output_spec
@@ -359,7 +222,6 @@ def input_fn_builder(input_files,
 
     return input_fn
 
-
 def _decode_record(record, name_to_features):
     """Decodes a record to a TensorFlow example."""
     example = tf.parse_single_example(record, name_to_features)
@@ -373,36 +235,6 @@ def _decode_record(record, name_to_features):
         example[name] = t
 
     return example
-
-
-def gather_indexes(sequence_tensor, positions):
-  """Gathers the vectors at the specific positions over a minibatch."""
-  sequence_shape = modeling.get_shape_list(sequence_tensor, expected_rank=3)
-  batch_size = sequence_shape[0]
-  seq_length = sequence_shape[1]
-  width = sequence_shape[2]
-
-  flat_offsets = tf.reshape(
-      tf.range(0, batch_size, dtype=tf.int32) * seq_length, [-1, 1])
-  flat_positions = tf.reshape(positions + flat_offsets, [-1])
-  flat_sequence_tensor = tf.reshape(sequence_tensor,
-                                    [batch_size * seq_length, width])
-  output_tensor = tf.gather(flat_sequence_tensor, flat_positions)
-  return output_tensor
-
-
-def read_data(data_dir):
-    pre = os.getcwd()
-    os.chdir(data_dir)
-    data = ''
-    for file in glob.glob('*.txt')[:1]:
-        with open(file, 'r') as f:
-            lines = [x for x in f.read().splitlines() if x != '']
-            lines = ' '.join(lines)
-            data += lines + ' '
-    os.chdir(pre)
-
-    return data
 
 
 def main():
@@ -479,3 +311,6 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+
