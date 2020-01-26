@@ -1,8 +1,6 @@
-import glob
 import tensorflow as tf
 import modeling
 import optimization
-import os
 
 
 flags = tf.flags
