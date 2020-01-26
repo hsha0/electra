@@ -5,6 +5,7 @@ python run_pretrain \
 --output_dir=results \
 --vocab_file=vocab.txt \
 --do_train=True \
+--train_batch_size=128 \
 --max_seq_length=256 \
 --num_train_steps=1000 \
 --use_tpu=true \
