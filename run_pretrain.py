@@ -209,11 +209,11 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         masked_lm_predictions = tf.argmax(
             masked_lm_log_probs, axis=-1, output_type=tf.int32)
 
+        print(masked_lm_predictions.numpy(), '\n\n\n')
+
         zero = tf.constant(0, dtype=tf.int32)
         positions_col2 = tf.reshape(masked_lm_positions, [-1])
-        print(masked_lm_positions)
         non_zeros_coords = tf.where(tf.not_equal(positions_col2, zero))
-        print(non_zeros_coords)
 
         masked_lm_ids = tf.reshape(masked_lm_ids, [-1])
         diff = masked_lm_predictions - masked_lm_ids
@@ -221,8 +221,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         diff_cast = tf.gather_nd(tf.cast(tf.not_equal(diff, zero), dtype=tf.int32), non_zeros_coords)
 
         index = tf.expand_dims(tf.range(0, batch_size), 1)
-        dup_index = tf.expand_dims(tf.reshape(tf.tile(index, multiples=[1, 20]), [-1]), 1)
-        print(dup_index)
+        dup_index = tf.expand_dims(tf.reshape(tf.tile(index, multiples=[1, FLAGS.max_predictions_per_seq]), [-1]), 1)
         positions = tf.concat([dup_index, tf.expand_dims(positions_col2, 1)], 1)
         positions = tf.gather_nd(positions, non_zeros_coords)
 
@@ -410,6 +409,7 @@ def read_data(data_dir):
 
 def main():
     tf.logging.set_verbosity(tf.logging.INFO)
+    tf.executing_eagerly()
 
     if not FLAGS.do_train and not FLAGS.do_eval:
         raise ValueError("At least one of `do_train` or `do_eval` must be True.")
