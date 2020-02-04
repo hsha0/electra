@@ -4,6 +4,7 @@ import modeling
 import optimization
 import os
 
+tf.enable_eager_execution()
 
 flags = tf.flags
 FLAGS = flags.FLAGS
@@ -409,7 +410,6 @@ def read_data(data_dir):
 
 def main():
     tf.logging.set_verbosity(tf.logging.INFO)
-    tf.enable_eager_execution()
     tf.executing_eagerly()
 
     if not FLAGS.do_train and not FLAGS.do_eval:
