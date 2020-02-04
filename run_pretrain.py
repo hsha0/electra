@@ -410,7 +410,7 @@ def read_data(data_dir):
 
 def main():
     tf.logging.set_verbosity(tf.logging.INFO)
-    tf.executing_eagerly()
+    print(tf.executing_eagerly())
 
     if not FLAGS.do_train and not FLAGS.do_eval:
         raise ValueError("At least one of `do_train` or `do_eval` must be True.")
