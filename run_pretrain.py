@@ -444,6 +444,7 @@ def gather_indexes_rank2(sequence_tensor, positions):
   flat_sequence_tensor = tf.reshape(sequence_tensor,
                                     [batch_size * seq_length])
   output_tensor = tf.gather(flat_sequence_tensor, flat_positions)
+  output_tensor = tf.reshape(output_tensor, [batch_size, FLAGS.max_predictions_per_seq])
   return output_tensor
 
 def read_data(data_dir):
