@@ -183,7 +183,7 @@ def create_instances_from_document(
     document = all_documents[document_index]
 
     # Account for [CLS], [SEP], [SEP]
-    max_num_tokens = max_seq_length - 1
+    max_num_tokens = max_seq_length
 
     target_seq_length = max_num_tokens
 
