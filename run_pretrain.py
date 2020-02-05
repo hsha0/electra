@@ -265,20 +265,21 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
 
         zeros = tf.zeros(modeling.get_shape_list(input_ids), dtype=tf.int32)
         whether_replaced = replace_elements_by_indices(zeros, diff, masked_lm_positions)
-        print(whether_replaced)
+
+
+        #zeros = tf.zeros(tf.shape(non_zeros_coords)[0], dtype=tf.int32)
+        #masked_lm_mask = tf.sparse_to_dense(positions, tf.shape(input_ids), zeros, default_value=1,
+        #                                    validate_indices=True, name="masked_lm_mask")
+
+        #input_ids_temp = tf.multiply(input_ids, masked_lm_mask)
+
+        #masked_lm_predictions_positive = tf.gather_nd(masked_lm_predictions, non_zeros_coords)
+        #masked_lm_predictions_temp = tf.sparse_to_dense(positions, tf.shape(input_ids), masked_lm_predictions_positive,
+        #                                                default_value=0, validate_indices=True, name=None)
+
+        input_ids_for_discriminator = replace_elements_by_indices(masked_input_ids, masked_lm_predictions, masked_lm_positions)
+        print(input_ids_for_discriminator)
         sys.exit()
-
-        zeros = tf.zeros(tf.shape(non_zeros_coords)[0], dtype=tf.int32)
-        masked_lm_mask = tf.sparse_to_dense(positions, tf.shape(input_ids), zeros, default_value=1,
-                                            validate_indices=True, name="masked_lm_mask")
-
-        input_ids_temp = tf.multiply(input_ids, masked_lm_mask)
-
-        masked_lm_predictions_positive = tf.gather_nd(masked_lm_predictions, non_zeros_coords)
-        masked_lm_predictions_temp = tf.sparse_to_dense(positions, tf.shape(input_ids), masked_lm_predictions_positive,
-                                                        default_value=0, validate_indices=True, name=None)
-
-        input_ids_for_discriminator = input_ids_temp + masked_lm_predictions_temp
 
         discriminator = modeling.Discriminator(config=electra_config,
                                                is_training=is_training,
