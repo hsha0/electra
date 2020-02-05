@@ -247,7 +247,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         zero = tf.constant(0, dtype=tf.int32)
         positions_col2 = tf.reshape(masked_lm_positions, [-1])
         non_zeros_coords = tf.where(tf.not_equal(positions_col2, zero))
-        print(non_zeros_coords)
+        print(modeling.get_shape_list(non_zeros_coords))
 
         masked_lm_ids = tf.reshape(masked_lm_ids, [-1])
         diff = masked_lm_predictions - masked_lm_ids
