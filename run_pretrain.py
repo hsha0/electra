@@ -351,6 +351,7 @@ def input_fn_builder(input_files,
                 tf.FixedLenFeature([max_seq_length], tf.int64),
             "input_mask":
                 tf.FixedLenFeature([max_seq_length], tf.int64),
+            '''
             "segment_ids":
                 tf.FixedLenFeature([max_seq_length], tf.int64),
             "masked_lm_positions":
@@ -359,6 +360,7 @@ def input_fn_builder(input_files,
                 tf.FixedLenFeature([max_predictions_per_seq], tf.int64),
             "masked_lm_weights":
                 tf.FixedLenFeature([max_predictions_per_seq], tf.float32),
+            '''
         }
 
         # For training, we want a lot of parallel reading and shuffling.
