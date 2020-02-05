@@ -229,7 +229,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         masks_list = tf.constant([MASK_ID] * (FLAGS.max_predictions_per_seq * batch_size))
 
         masked_input_ids = replace_elements_by_indices(input_ids, masks_list, masked_lm_positions)
-        masked_lm_ids = gather_indexes(input_ids, masked_lm_positions)
+        masked_lm_ids = tf.gather_indexes_rank2(input_ids, masked_lm_positions)
         print(masked_lm_ids)
         sys.exit()
 
@@ -431,6 +431,20 @@ def gather_indexes(sequence_tensor, positions):
   output_tensor = tf.gather(flat_sequence_tensor, flat_positions)
   return output_tensor
 
+
+def gather_indexes_rank2(sequence_tensor, positions):
+  """Gathers the vectors at the specific positions over a minibatch."""
+  sequence_shape = modeling.get_shape_list(sequence_tensor, expected_rank=2)
+  batch_size = sequence_shape[0]
+  seq_length = sequence_shape[1]
+
+  flat_offsets = tf.reshape(
+      tf.range(0, batch_size, dtype=tf.int32) * seq_length, [-1, 1])
+  flat_positions = tf.reshape(positions + flat_offsets, [-1])
+  flat_sequence_tensor = tf.reshape(sequence_tensor,
+                                    [batch_size * seq_length])
+  output_tensor = tf.gather(flat_sequence_tensor, flat_positions)
+  return output_tensor
 
 def read_data(data_dir):
     pre = os.getcwd()
