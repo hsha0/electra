@@ -229,7 +229,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         masks_list = tf.constant([MASK_ID] * (FLAGS.max_predictions_per_seq * batch_size))
 
         masked_input_ids = replace_elements_by_indices(input_ids, masks_list, masked_lm_positions)
-        masked_lm_ids = tf.gather_indexes_rank2(input_ids, masked_lm_positions)
+        masked_lm_ids = gather_indexes_rank2(input_ids, masked_lm_positions)
         print(masked_lm_ids)
         sys.exit()
 
