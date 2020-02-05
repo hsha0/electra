@@ -183,8 +183,13 @@ def replace_elements_by_indices(old, new, indices):
     flat_positions = tf.reshape(indices + flat_offsets, [-1])
 
     zeros = tf.zeros(tf.shape(flat_positions)[0], dtype=tf.int32)
-    print(zeros)
 
+    flat_old = tf.reshape(old, [-1])
+
+    masked_lm_mask = tf.sparse_to_dense(flat_positions, tf.shape(flat_old), zeros, default_value=1,
+                                        validate_indices=True, name="masked_lm_mask")
+
+    print(masked_lm_mask)
     sys.exit()
 
 
