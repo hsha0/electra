@@ -60,7 +60,7 @@ flags.DEFINE_integer(
 flags.DEFINE_float("masked_lm_prob", 0.15, "Masked LM probability.")
 
 flags.DEFINE_float(
-    "short_seq_prob", 0.1,
+    "short_seq_prob", 0.0,
     "Probability of creating sequences which are shorter than the "
     "maximum length.")
 
