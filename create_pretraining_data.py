@@ -160,9 +160,6 @@ def create_training_instances(input_files, tokenizer, max_seq_length,
                 if tokens:
                     all_documents[-1].append(tokens)
 
-    print('len all doc:', len(all_documents))
-    sys.exit()
-
     # Remove empty documents
     all_documents = [x for x in all_documents if x]
     rng.shuffle(all_documents)
@@ -178,6 +175,88 @@ def create_training_instances(input_files, tokenizer, max_seq_length,
 
     rng.shuffle(instances)
     return instances
+
+
+def create_instances_from_document(
+        all_documents, document_index, max_seq_length, short_seq_prob,
+        masked_lm_prob, max_predictions_per_seq, vocab_words, rng):
+    """Creates `TrainingInstance`s for a single document."""
+    document = all_documents[document_index]
+
+    # Account for [CLS], [SEP], [SEP]
+    max_num_tokens = max_seq_length - 1
+
+    target_seq_length = max_num_tokens
+
+    # We DON'T just concatenate all of the tokens from a document into a long
+    # sequence and choose an arbitrary split point because this would make the
+    # next sentence prediction task too easy. Instead, we split the input into
+    # segments "A" and "B" based on the actual "sentences" provided by the user
+    # input.
+    instances = []
+    current_chunk = []
+    current_length = 0
+    i = 0
+    while i < len(document):
+        segment = document[i]
+        current_chunk.append(segment)
+        current_length += len(segment)
+        if i == len(document) - 1 or current_length >= target_seq_length:
+            if current_chunk:
+                # `a_end` is how many segments from `current_chunk` go into the `A`
+                # (first) sentence.
+                a_end = 1
+                if len(current_chunk) >= 2:
+                    a_end = rng.randint(1, len(current_chunk) - 1)
+
+                tokens_a = []
+                for j in range(a_end):
+                    tokens_a.extend(current_chunk[j])
+
+                tokens_b = []
+
+                for j in range(a_end, len(current_chunk)):
+                    tokens_b.extend(current_chunk[j])
+                truncate_seq_pair(tokens_a, tokens_b, max_num_tokens, rng)
+
+                assert len(tokens_a) >= 1
+                # assert len(tokens_b) >= 1
+
+                tokens = []
+                for token in tokens_a:
+                    tokens.append(token)
+
+
+                for token in tokens_b:
+                    tokens.append(token)
+
+                instance = TrainingInstance(
+                    tokens=tokens)
+                instances.append(instance)
+            current_chunk = []
+            current_length = 0
+        i += 1
+
+    return instances
+
+
+def truncate_seq_pair(tokens_a, tokens_b, max_num_tokens, rng):
+    """Truncates a pair of sequences to a maximum sequence length."""
+    while True:
+        total_length = len(tokens_a) + len(tokens_b)
+        if total_length <= max_num_tokens:
+            break
+
+        trunc_tokens = tokens_a if len(tokens_a) > len(tokens_b) else tokens_b
+        assert len(trunc_tokens) >= 1
+
+        # We want to sometimes truncate from the front and sometimes from the
+        # back to add more randomness and avoid biases.
+        if rng.random() < 0.5:
+            del trunc_tokens[0]
+        else:
+            trunc_tokens.pop()
+
 
 def main(_):
     tf.logging.set_verbosity(tf.logging.INFO)
