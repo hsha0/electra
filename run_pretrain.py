@@ -227,9 +227,10 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         batch_size = modeling.get_shape_list(input_ids)[0]
         masked_lm_positions = tf.constant([random.sample(range(0, 127), FLAGS.max_predictions_per_seq) for i in range(batch_size)])
         masks_list = tf.constant([MASK_ID] * (FLAGS.max_predictions_per_seq * batch_size))
-        print(masks_list)
+
+        masked_input_ids = replace_elements_by_indices(input_ids, masks_list, masked_lm_positions)
+        print(masked_input_ids)
         sys.exit()
-        replace_elements_by_indices(input_ids, 1, masked_lm_positions)
 
         is_training = (mode == tf.estimator.ModeKeys.TRAIN)
 
