@@ -278,8 +278,6 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         #                                                default_value=0, validate_indices=True, name=None)
 
         input_ids_for_discriminator = replace_elements_by_indices(masked_input_ids, masked_lm_predictions, masked_lm_positions)
-        print(input_ids_for_discriminator)
-        sys.exit()
 
         discriminator = modeling.Discriminator(config=electra_config,
                                                is_training=is_training,
