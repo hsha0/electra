@@ -86,7 +86,7 @@ flags.DEFINE_integer(
     "num_tpu_cores", 8,
     "Only used if `use_tpu` is True. Total number of TPU cores to use.")
 
-masked_token = "[MASK]"
+masked_token = ["[MASK]"]
 tokenizer = tokenization.FullTokenizer(
         vocab_file=FLAGS.vocab_file, do_lower_case=FLAGS.do_lower_case)
 mask_id = tokenizer.convert_tokens_to_ids(masked_token)
