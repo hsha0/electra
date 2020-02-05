@@ -189,7 +189,12 @@ def replace_elements_by_indices(old, new, indices):
     masked_lm_mask = tf.sparse_to_dense(flat_positions, tf.shape(flat_old), zeros, default_value=1,
                                         validate_indices=True, name="masked_lm_mask")
 
-    print(masked_lm_mask)
+    flat_old_temp = tf.multiply(flat_old, masked_lm_mask)
+    new_temp = tf.sparse_to_dense(flat_positions, tf.shape(flat_old), new,
+                                                        default_value=0, validate_indices=True, name=None)
+
+    updated_old = flat_old_temp + new_temp
+    print(updated_old)
     sys.exit()
 
 
@@ -259,8 +264,8 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
 
         input_ids_temp = tf.multiply(input_ids, masked_lm_mask)
 
-        masked_lm_predictions_pos = tf.gather_nd(masked_lm_predictions, non_zeros_coords)
-        masked_lm_predictions_temp = tf.sparse_to_dense(positions, tf.shape(input_ids), masked_lm_predictions_pos,
+        masked_lm_predictions_positive = tf.gather_nd(masked_lm_predictions, non_zeros_coords)
+        masked_lm_predictions_temp = tf.sparse_to_dense(positions, tf.shape(input_ids), masked_lm_predictions_positive,
                                                         default_value=0, validate_indices=True, name=None)
 
         input_ids_for_discriminator = input_ids_temp + masked_lm_predictions_temp
