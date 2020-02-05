@@ -160,8 +160,9 @@ def create_training_instances(input_files, tokenizer, max_seq_length,
                 if tokens:
                     all_documents[-1].append(tokens)
 
-    print(len(all_documents))
+    print('len all doc:', len(all_documents))
     sys.exit()
+
     # Remove empty documents
     all_documents = [x for x in all_documents if x]
     rng.shuffle(all_documents)
