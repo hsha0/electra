@@ -3,6 +3,8 @@ import tensorflow as tf
 import modeling
 import optimization
 import os
+import sys
+import random
 
 flags = tf.flags
 FLAGS = flags.FLAGS
@@ -170,6 +172,15 @@ def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, 
     return (loss, per_example_loss, log_probs)
 
 
+def replace_elements_by_indices(old, new, indices):
+    old_shape = modeling.get_shape_list(old)
+    batch_size = old_shape[0]
+    seq_length = old_shape[1]
+    print(old_shape)
+
+    sys.exit()
+
+
 def model_fn_builder(electra_config, init_checkpoint, learning_rate,
                      num_train_steps, num_warmup_steps, use_tpu,
                      use_one_hot_embeddings):
@@ -189,7 +200,13 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         masked_lm_ids = features["masked_lm_ids"]
         masked_lm_weights = features["masked_lm_weights"]
 
+        replace_elements_by_indices(input_ids, 1,1)
+
+
+
         batch_size = modeling.get_shape_list(input_ids)[0]
+        #masked_lm_positions = [random.sample(range(0, 127), FLAGS.max_predictions_per_seq) for i in range(batch_size)]
+
 
         is_training = (mode == tf.estimator.ModeKeys.TRAIN)
 
