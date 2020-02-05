@@ -89,9 +89,8 @@ flags.DEFINE_integer(
 masked_token = ["[MASK]"]
 tokenizer = tokenization.FullTokenizer(
         vocab_file=FLAGS.vocab_file, do_lower_case=FLAGS.do_lower_case)
-mask_id = tokenizer.convert_tokens_to_ids(masked_token)
-print(mask_id)
-sys.exit()
+MASK_ID = tokenizer.convert_tokens_to_ids(masked_token)[0]
+
 
 def get_config():
     config = modeling.ElectraConfig(30522)
@@ -227,7 +226,9 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
 
         batch_size = modeling.get_shape_list(input_ids)[0]
         masked_lm_positions = tf.constant([random.sample(range(0, 127), FLAGS.max_predictions_per_seq) for i in range(batch_size)])
-        masks_list = tf.constant()
+        masks_list = tf.constant([MASK_ID] * (FLAGS.max_predictions_per_seq * batch_size))
+        print(masks_list)
+        sys.exit()
         replace_elements_by_indices(input_ids, 1, masked_lm_positions)
 
         is_training = (mode == tf.estimator.ModeKeys.TRAIN)
