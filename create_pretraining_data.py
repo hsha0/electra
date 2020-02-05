@@ -54,7 +54,7 @@ flags.DEFINE_integer("max_predictions_per_seq", 20,
 flags.DEFINE_integer("random_seed", 12345, "Random seed for data generation.")
 
 flags.DEFINE_integer(
-    "dupe_factor", 10,
+    "dupe_factor", 1,
     "Number of times to duplicate the input data (with different masks).")
 
 flags.DEFINE_float("masked_lm_prob", 0.15, "Masked LM probability.")

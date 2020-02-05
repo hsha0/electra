@@ -4,8 +4,6 @@ import modeling
 import optimization
 import os
 
-tf.enable_eager_execution()
-
 flags = tf.flags
 FLAGS = flags.FLAGS
 
@@ -210,8 +208,6 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         masked_lm_predictions = tf.argmax(
             masked_lm_log_probs, axis=-1, output_type=tf.int32)
 
-        print(masked_lm_predictions.numpy(), '\n\n\n')
-
         zero = tf.constant(0, dtype=tf.int32)
         positions_col2 = tf.reshape(masked_lm_positions, [-1])
         non_zeros_coords = tf.where(tf.not_equal(positions_col2, zero))
@@ -410,7 +406,6 @@ def read_data(data_dir):
 
 def main():
     tf.logging.set_verbosity(tf.logging.INFO)
-    print(tf.executing_eagerly())
 
     if not FLAGS.do_train and not FLAGS.do_eval:
         raise ValueError("At least one of `do_train` or `do_eval` must be True.")
