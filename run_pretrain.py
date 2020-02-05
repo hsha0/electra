@@ -193,7 +193,7 @@ def replace_elements_by_indices(old, new, indices):
     new_temp = tf.sparse_to_dense(flat_positions, tf.shape(flat_old), new,
                                                         default_value=0, validate_indices=True, name=None)
 
-    updated_old = flat_old_temp + new_temp
+    updated_old = tf.reshape(flat_old_temp + new_temp, old_shape)
     print(updated_old)
     sys.exit()
 
