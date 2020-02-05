@@ -181,7 +181,9 @@ def replace_elements_by_indices(old, new, indices):
     flat_offsets = tf.reshape(
         tf.range(0, batch_size, dtype=tf.int32) * seq_length, [-1, 1])
     flat_positions = tf.reshape(indices + flat_offsets, [-1])
-    print(flat_positions)
+
+    zeros = tf.zeros(tf.shape(flat_positions)[0], dtype=tf.int32)
+    print(zeros)
 
     sys.exit()
 
