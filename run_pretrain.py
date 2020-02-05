@@ -263,7 +263,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         #whether_replaced = tf.sparse_to_dense(positions, tf.shape(input_ids), diff_cast, default_value=0,
                                               #validate_indices=True, name="whether_replaced")
 
-        whether_replaced = tf.constant([[0]*FLAGS.max_predictions_per_seq]*batch_size)
+        whether_replaced = tf.zeros(modeling.get_shape_list(input_ids))
         print(whether_replaced)
         sys.exit()
 
