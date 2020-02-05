@@ -93,7 +93,10 @@ def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, 
   # Normally the global step update is done inside of `apply_gradients`.
   # However, `AdamWeightDecayOptimizer` doesn't do this. But if you use
   # a different optimizer, you should probably take this line out.
-  # new_global_step = global_step + 1
+  if part == "discriminator":
+    new_global_step = global_step + 1
+  else:
+    new_global_step = global_step
   train_op = tf.group(train_op, [global_step.assign(new_global_step)])
   return train_op
 
