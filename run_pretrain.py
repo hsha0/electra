@@ -85,7 +85,12 @@ flags.DEFINE_integer(
     "num_tpu_cores", 8,
     "Only used if `use_tpu` is True. Total number of TPU cores to use.")
 
-
+masked_token = "[MASK]"
+tokenizer = tokenization.FullTokenizer(
+        vocab_file=FLAGS.vocab_file, do_lower_case=FLAGS.do_lower_case)
+mask_id = tokenizer.convert_tokens_to_ids(masked_token)
+print(mask_id)
+sys.exit()
 
 def get_config():
     config = modeling.ElectraConfig(30522)
@@ -194,8 +199,8 @@ def replace_elements_by_indices(old, new, indices):
                                                         default_value=0, validate_indices=True, name=None)
 
     updated_old = tf.reshape(flat_old_temp + new_temp, old_shape)
-    print(updated_old)
-    sys.exit()
+
+    return updated_old
 
 
 
@@ -221,7 +226,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
 
         batch_size = modeling.get_shape_list(input_ids)[0]
         masked_lm_positions = tf.constant([random.sample(range(0, 127), FLAGS.max_predictions_per_seq) for i in range(batch_size)])
-
+        masks_list = tf.constant()
         replace_elements_by_indices(input_ids, 1, masked_lm_positions)
 
         is_training = (mode == tf.estimator.ModeKeys.TRAIN)
