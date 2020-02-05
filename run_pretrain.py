@@ -244,13 +244,15 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         masked_lm_predictions = tf.argmax(
             masked_lm_log_probs, axis=-1, output_type=tf.int32)
 
-        zero = tf.constant(0, dtype=tf.int32)
-        positions_col2 = tf.reshape(masked_lm_positions, [-1])
-        non_zeros_coords = tf.where(tf.not_equal(positions_col2, zero))
-        print(modeling.get_shape_list(non_zeros_coords))
+        #zero = tf.constant(0, dtype=tf.int32)
+        #positions_col2 = tf.reshape(masked_lm_positions, [-1])
+        #non_zeros_coords = tf.where(tf.not_equal(positions_col2, zero))
+        #print(modeling.get_shape_list(non_zeros_coords))
 
         masked_lm_ids = tf.reshape(masked_lm_ids, [-1])
         diff = masked_lm_predictions - masked_lm_ids
+        print(diff)
+        sys.exit()
 
         diff_cast = tf.gather_nd(tf.cast(tf.not_equal(diff, zero), dtype=tf.int32), non_zeros_coords)
 
