@@ -5,6 +5,7 @@ import optimization
 import os
 import sys
 import random
+import tokenization
 
 flags = tf.flags
 FLAGS = flags.FLAGS
