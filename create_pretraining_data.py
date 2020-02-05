@@ -177,3 +177,38 @@ def create_training_instances(input_files, tokenizer, max_seq_length,
 
     rng.shuffle(instances)
     return instances
+
+def main(_):
+    tf.logging.set_verbosity(tf.logging.INFO)
+
+    tokenizer = tokenization.FullTokenizer(
+        vocab_file=FLAGS.vocab_file, do_lower_case=FLAGS.do_lower_case)
+
+    input_files = []
+    for input_pattern in FLAGS.input_file.split(","):
+        input_files.extend(tf.gfile.Glob(input_pattern))
+
+    tf.logging.info("*** Reading from input files ***")
+    for input_file in input_files:
+        tf.logging.info("  %s", input_file)
+
+    rng = random.Random(FLAGS.random_seed)
+    instances = create_training_instances(
+        input_files, tokenizer, FLAGS.max_seq_length, FLAGS.dupe_factor,
+        FLAGS.short_seq_prob, FLAGS.masked_lm_prob, FLAGS.max_predictions_per_seq,
+        rng)
+
+    output_files = FLAGS.output_file.split(",")
+    tf.logging.info("*** Writing to output files ***")
+    for output_file in output_files:
+        tf.logging.info("  %s", output_file)
+
+    write_instance_to_example_files(instances, tokenizer, FLAGS.max_seq_length,
+                                    FLAGS.max_predictions_per_seq, output_files)
+
+
+if __name__ == "__main__":
+    flags.mark_flag_as_required("input_file")
+    flags.mark_flag_as_required("output_file")
+    flags.mark_flag_as_required("vocab_file")
+    tf.app.run()
