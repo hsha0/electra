@@ -219,9 +219,6 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
 
         input_ids = features["input_ids"]
         input_mask = features["input_mask"]
-        segment_ids = features["segment_ids"]
-        #masked_lm_positions = features["masked_lm_positions"]
-        masked_lm_ids = features["masked_lm_ids"]
         masked_lm_weights = features["masked_lm_weights"]
 
         batch_size = modeling.get_shape_list(input_ids)[0]
@@ -230,16 +227,13 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
 
         masked_input_ids = replace_elements_by_indices(input_ids, masks_list, masked_lm_positions)
         masked_lm_ids = gather_indexes_rank2(input_ids, masked_lm_positions)
-        print(masked_lm_ids)
-        sys.exit()
 
         is_training = (mode == tf.estimator.ModeKeys.TRAIN)
 
         generator = modeling.Generator(config=electra_config,
                                      is_training=is_training,
-                                     input_ids=input_ids,
+                                     input_ids=masked_input_ids,
                                      input_mask=input_mask,
-                                     token_type_ids=segment_ids,
                                      use_one_hot_embeddings=use_one_hot_embeddings)
 
         (masked_lm_loss,
