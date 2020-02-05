@@ -177,8 +177,11 @@ def replace_elements_by_indices(old, new, indices):
     batch_size = old_shape[0]
     seq_length = old_shape[1]
 
-    indices_shape = modeling.get_shape_list(indices)
-    print(indices_shape)
+
+    flat_offsets = tf.reshape(
+        tf.range(0, batch_size, dtype=tf.int32) * seq_length, [-1, 1])
+    flat_positions = tf.reshape(indices + flat_offsets, [-1])
+    print(flat_positions)
 
     sys.exit()
 
