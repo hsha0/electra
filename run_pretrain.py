@@ -251,18 +251,21 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
 
         masked_lm_ids = tf.reshape(masked_lm_ids, [-1])
         diff = masked_lm_predictions - masked_lm_ids
-        print(diff)
+
+
+        #diff_cast = tf.gather_nd(tf.cast(tf.not_equal(diff, zero), dtype=tf.int32), non_zeros_coords)
+
+        #index = tf.expand_dims(tf.range(0, batch_size), 1)
+        #dup_index = tf.expand_dims(tf.reshape(tf.tile(index, multiples=[1, FLAGS.max_predictions_per_seq]), [-1]), 1)
+        #positions = tf.concat([dup_index, tf.expand_dims(positions_col2, 1)], 1)
+        #positions = tf.gather_nd(positions, non_zeros_coords)
+
+        #whether_replaced = tf.sparse_to_dense(positions, tf.shape(input_ids), diff_cast, default_value=0,
+                                              #validate_indices=True, name="whether_replaced")
+
+        whether_replaced = tf.constant([[0]*FLAGS.max_predictions_per_seq]*batch_size)
+        print(whether_replaced)
         sys.exit()
-
-        diff_cast = tf.gather_nd(tf.cast(tf.not_equal(diff, zero), dtype=tf.int32), non_zeros_coords)
-
-        index = tf.expand_dims(tf.range(0, batch_size), 1)
-        dup_index = tf.expand_dims(tf.reshape(tf.tile(index, multiples=[1, FLAGS.max_predictions_per_seq]), [-1]), 1)
-        positions = tf.concat([dup_index, tf.expand_dims(positions_col2, 1)], 1)
-        positions = tf.gather_nd(positions, non_zeros_coords)
-
-        whether_replaced = tf.sparse_to_dense(positions, tf.shape(input_ids), diff_cast, default_value=0,
-                                              validate_indices=True, name="whether_replaced")
 
         zeros = tf.zeros(tf.shape(non_zeros_coords)[0], dtype=tf.int32)
         masked_lm_mask = tf.sparse_to_dense(positions, tf.shape(input_ids), zeros, default_value=1,
