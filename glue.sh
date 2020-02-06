@@ -5,7 +5,7 @@ python3 run_classifier.py \
 --task_name=MRPC \
 --data_dir=$ELECTRA_GC/glue_data \
 --output_dir=$ELECTRA_GC/glue_mrpc \
---init_checkpoint=$ELECTRA_GC/electra_ckpt/model.ckpt-62000
+--init_checkpoint=$ELECTRA_GC/electra_ckpt/model.ckpt-62000 \
 --vocab_file=vocab.txt \
 --do_train=True \
 --do_eval=True \
