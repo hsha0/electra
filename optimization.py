@@ -106,7 +106,7 @@ class AdamWeightDecayOptimizer(tf.train.Optimizer):
 
   def __init__(self,
                learning_rate,
-               weight_decay_rate=0.0,
+               weight_decay_rate=0.01,
                beta_1=0.9,
                beta_2=0.999,
                epsilon=1e-6,
