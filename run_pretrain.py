@@ -180,14 +180,14 @@ def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, 
 
             print(one_hot_labels)
             print(logits)
-            sys.exit()
+
             loss = tf.nn.sigmoid_cross_entropy_with_logits(
                 labels=one_hot_labels,
                 logits=logits,
-                name='sigmoid_cross_entropy'
+                name='sigmoid_cross_entropy',
             )
 
-    return (loss, per_example_loss, log_probs)
+    return (loss)
 
 
 def replace_elements_by_indices(old, new, indices):
@@ -298,8 +298,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
                                                input_mask=input_mask,
                                                use_one_hot_embeddings=use_one_hot_embeddings)
 
-        (disc_loss, disc_example_loss,
-         disc_log_probs) = get_discriminator_output(electra_config, discriminator.get_sequence_output(),
+        (disc_loss) = get_discriminator_output(electra_config, discriminator.get_sequence_output(),
                                                     whether_replaced, input_mask)
 
 
