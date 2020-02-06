@@ -6,6 +6,7 @@ python3 run_classifier.py \
 --task_name=$TASK \
 --data_dir=$ELECTRA_GC/glue/glue_data/$TASK \
 --output_dir=$ELECTRA_GC/glue/glue_results/glue_$TASK \
+--init_checkpoint=$ELECTRA_GC/electra_ckpt/model.ckpt-125000 \
 --vocab_file=vocab.txt \
 --do_train=True \
 --do_eval=True \
