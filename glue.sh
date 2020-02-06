@@ -1,10 +1,11 @@
 TPU_NAME='grpc://10.1.227.154:8470'
 ELECTRA_GC='gs://electra'
+TASK=MRPC
 
 python3 run_classifier.py \
---task_name=MRPC \
---data_dir=$ELECTRA_GC/glue_data/MRPC \
---output_dir=$ELECTRA_GC/glue_mrpc \
+--task_name=$TASK \
+--data_dir=$ELECTRA_GC/glue_data/$TASK \
+--output_dir=$ELECTRA_GC/glue_$TASK \
 --init_checkpoint=$ELECTRA_GC/electra_ckpt/model.ckpt-62000 \
 --vocab_file=vocab.txt \
 --do_train=True \
