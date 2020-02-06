@@ -25,7 +25,7 @@ flags.DEFINE_string('output_dir', None, "Path to output directory.")
 flags.DEFINE_integer('max_seq_length', 128, "The maximum total input sequence length after WordPiece tokenization.")
 
 flags.DEFINE_integer(
-    "max_predictions_per_seq", 20,
+    "max_predictions_per_seq", 39,
     "Maximum number of masked LM predictions per sequence. "
     "Must match data generation.")
 
@@ -44,7 +44,7 @@ flags.DEFINE_float("learning_rate", 5e-4, "The initial learning rate for glue.")
 flags.DEFINE_integer("num_train_steps", 10, "Number of training steps.")
 
 #10000
-flags.DEFINE_integer("num_warmup_steps", 1, "Number of warmup steps.")
+flags.DEFINE_integer("num_warmup_steps", 10000, "Number of warmup steps.")
 
 flags.DEFINE_integer("save_checkpoints_steps", 1000,
                      "How often to save the model checkpoint.")
@@ -56,7 +56,7 @@ flags.DEFINE_bool("do_train", False, "Whether to run training.")
 
 flags.DEFINE_bool("do_eval", False, "Whether to run eval on the dev set.")
 
-flags.DEFINE_integer("train_batch_size", 64, "Total batch size for training.")
+flags.DEFINE_integer("train_batch_size", 128, "Total batch size for training.")
 
 flags.DEFINE_integer("eval_batch_size", 8, "Total batch size for eval.")
 
