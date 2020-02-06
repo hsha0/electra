@@ -272,6 +272,16 @@ class Discriminator(object):
 
             self.sequence_output = self.all_encoder_layers[-1]
 
+            with tf.variable_scope("pooler"):
+                # We "pool" the model by simply taking the hidden state corresponding
+                # to the first token. We assume that this has been pre-trained
+                first_token_tensor = tf.squeeze(self.sequence_output[:, 0:1, :], axis=1)
+                self.pooled_output = tf.layers.dense(
+                    first_token_tensor,
+                    config.hidden_size,
+                    activation=tf.tanh,
+                    kernel_initializer=create_initializer(config.initializer_range))
+
     def get_sequence_output(self):
         """Gets final hidden layer of encoder.
             Returns:
@@ -279,6 +289,9 @@ class Discriminator(object):
               to the final hidden of the transformer encoder.
             """
         return self.sequence_output
+
+    def get_pooled_output(self):
+        return self.pooled_output
 
     def get_embedding_table(self):
         return self.embedding_table
