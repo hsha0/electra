@@ -181,11 +181,13 @@ def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, 
             print(one_hot_labels)
             print(logits)
 
-            loss = tf.nn.sigmoid_cross_entropy_with_logits(
+            sigmoid_cross_entropy = tf.nn.sigmoid_cross_entropy_with_logits(
                 labels=one_hot_labels,
                 logits=logits,
                 name='sigmoid_cross_entropy',
             )
+
+            loss = tf.reduce_sum(sigmoid_cross_entropy)
 
     return (loss)
 
