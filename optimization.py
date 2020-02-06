@@ -58,7 +58,7 @@ def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, 
   # loaded from init_checkpoint.)
   optimizer = AdamWeightDecayOptimizer(
       learning_rate=learning_rate,
-      weight_decay_rate=0.01,
+      weight_decay_rate=0,
       beta_1=0.9,
       beta_2=0.999,
       epsilon=1e-6,
@@ -97,6 +97,7 @@ def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, 
     new_global_step = global_step + 1
   else:
     new_global_step = global_step
+
   train_op = tf.group(train_op, [global_step.assign(new_global_step)])
   return train_op
 
