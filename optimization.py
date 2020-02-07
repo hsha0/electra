@@ -77,7 +77,7 @@ def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, 
 
   #if use_tpu:
   #  optimizer = tf.contrib.tpu.CrossShardOptimizer(optimizer)
-  '''
+
   with tf.variable_scope("embeddings"):
     tvars = tf.trainable_variables(scope="embeddings")
   if part == "generator":
@@ -86,12 +86,12 @@ def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, 
   else:
     disc_tvars = tf.trainable_variables(scope="discriminator")
     tvars.extend(disc_tvars)
-
+  '''
   grads = tf.gradients(loss, tvars)
 
   # This is how the model was pre-trained.
   (grads, _) = tf.clip_by_global_norm(grads, clip_norm=1.0)
-
+  
   if part == "generator":
     with tf.variable_scope("generator"):
       train_op = optimizer.apply_gradients(
@@ -100,7 +100,6 @@ def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, 
     with tf.variable_scope("discriminator"):
       train_op = optimizer.apply_gradients(
             zip(grads, tvars), global_step=global_step)
-
   # Normally the global step update is done inside of `apply_gradients`.
   # However, `AdamWeightDecayOptimizer` doesn't do this. But if you use
   # a different optimizer, you should probably take this line out.
@@ -112,11 +111,11 @@ def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, 
   train_op = tf.group(train_op, [global_step.assign(new_global_step)])
   return train_op
   '''
-  tvars = tf.trainable_variables()
+  #tvars = tf.trainable_variables()
 
   grads = tf.gradients(loss, tvars)
   # This is how the model was pre-trained.
-  #(grads, _) = tf.clip_by_global_norm(grads, clip_norm=1.0)
+  (grads, _) = tf.clip_by_global_norm(grads, clip_norm=1.0)
   if use_tpu:
       grads = [tf.compat.v1.tpu.cross_replica_sum(grad) for grad in grads]
   train_op = optimizer.apply_gradients(zip(grads, tvars), global_step=global_step)
