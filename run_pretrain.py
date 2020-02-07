@@ -490,11 +490,11 @@ def main():
 
     electra_config = get_config()
 
-    tf.gfile.MakeDirs(FLAGS.output_dir)
+    tf.io.gfile.MakeDirs(FLAGS.output_dir)
 
     input_files = []
     for input_pattern in FLAGS.input_file.split(","):
-        input_files.extend(tf.gfile.Glob(input_pattern))
+        input_files.extend(tf.io.gfile.Glob(input_pattern))
 
     tf.logging.info("*** Input Files ***")
     for input_file in input_files:
