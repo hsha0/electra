@@ -66,7 +66,7 @@ def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, 
 
   if use_tpu:
     optimizer = tf.contrib.tpu.CrossShardOptimizer(optimizer)
-
+  '''
   with tf.variable_scope("embeddings"):
     tvars = tf.trainable_variables(scope="embeddings")
   if part == "generator":
@@ -98,6 +98,17 @@ def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, 
   else:
     new_global_step = global_step
 
+  train_op = tf.group(train_op, [global_step.assign(new_global_step)])
+  return train_op
+  '''
+  tvars = tf.trainable_variables()
+
+  grads = tf.gradients(loss, tvars)
+  # This is how the model was pre-trained.
+  (grads, _) = tf.clip_by_global_norm(grads, clip_norm=1.0)
+  train_op = optimizer.apply_gradients(zip(grads, tvars), global_step=global_step)
+
+  new_global_step = global_step
   train_op = tf.group(train_op, [global_step.assign(new_global_step)])
   return train_op
 
