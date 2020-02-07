@@ -20,7 +20,7 @@ from __future__ import print_function
 
 import re
 import tensorflow as tf
-import tensorflow_addons as tfa
+import lamb
 
 
 def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, part='discriminator'):
@@ -66,7 +66,7 @@ def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, 
       epsilon=1e-6,
       exclude_from_weight_decay=["LayerNorm", "layer_norm", "bias"])
   '''
-  optimizer = tfa.optimizers.LAMB(learning_rate=learning_rate,
+  optimizer = lamb.LAMB(learning_rate=learning_rate,
                                   weight_decay_rate=0.01,
                                   beta_1=0.9,
                                   beta_2=0.999,
