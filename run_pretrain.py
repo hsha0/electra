@@ -238,6 +238,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         masked_lm_positions = tf.constant([sorted(random.sample(range(0, FLAGS.max_seq_length), FLAGS.max_predictions_per_seq)) for i in range(batch_size)])
         masks_list = tf.constant([MASK_ID] * (FLAGS.max_predictions_per_seq * batch_size))
         masked_lm_weights = tf.ones(modeling.get_shape_list(masked_lm_positions))
+        segment_ids = tf.zeros(modeling.get_shape_list(input_ids))
 
         masked_input_ids = replace_elements_by_indices(input_ids, masks_list, masked_lm_positions)
         masked_lm_ids = gather_indexes_rank2(input_ids, masked_lm_positions)
@@ -248,6 +249,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
                                      is_training=is_training,
                                      input_ids=masked_input_ids,
                                      input_mask=input_mask,
+                                     token_type_ids=segment_ids,
                                      use_one_hot_embeddings=use_one_hot_embeddings)
 
         (masked_lm_loss,
@@ -297,6 +299,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
                                                is_training=is_training,
                                                input_ids=input_ids_for_discriminator,
                                                input_mask=input_mask,
+                                               token_type_ids=segment_ids,
                                                use_one_hot_embeddings=use_one_hot_embeddings)
 
         (disc_loss) = get_discriminator_output(electra_config, discriminator.get_sequence_output(),
