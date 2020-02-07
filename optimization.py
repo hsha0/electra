@@ -71,7 +71,7 @@ def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, 
                                   beta_1=0.9,
                                   beta_2=0.999,
                                   epsilon=1e-6,
-                                  exclude_from_weight_decay=["LayerNorm", "layer_norm", "bias"],
+                                  exclude_from_weight_decay="LayerNorm, layer_norm, bias",
                                   name='LAMB'
   )
 
