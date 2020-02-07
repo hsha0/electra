@@ -122,7 +122,7 @@ def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, 
   train_op = optimizer.apply_gradients(zip(grads, tvars))
 
   new_global_step = global_step
-  train_op = tf.group(train_op, [global_step.assign(new_global_step)])
+  #train_op = tf.group(train_op, [global_step.assign(new_global_step)])
   return train_op
 
 
