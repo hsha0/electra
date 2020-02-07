@@ -136,9 +136,9 @@ def get_masked_lm_output(electra_config, input_tensor, output_weights, positions
             # tensor has a value of 1.0 for every real prediction and 0.0 for the
             # padding predictions.
             per_example_loss = -tf.reduce_sum(log_probs * one_hot_labels, axis=[-1])
-            numerator = tf.reduce_sum(label_weights * per_example_loss)
-            denominator = tf.reduce_sum(label_weights) + 1e-5
-            loss = numerator / denominator
+            loss = tf.reduce_sum(label_weights * per_example_loss)
+            #denominator = tf.reduce_sum(label_weights) + 1e-5
+            #loss = numerator / denominator
 
     return (loss, per_example_loss, log_probs)
 
