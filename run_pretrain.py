@@ -494,7 +494,7 @@ def main():
 
     input_files = []
     for input_pattern in FLAGS.input_file.split(","):
-        input_files.extend(tf.io.gfile.Glob(input_pattern))
+        input_files.extend(tf.io.gfile.glob(input_pattern))
 
     tf.compat.v1.logging.info("*** Input Files ***")
     for input_file in input_files:
