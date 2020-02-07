@@ -9,5 +9,5 @@ python3 run_pretrain.py \
 --train_batch_size=128 \
 --max_seq_length=256 \
 --num_train_steps=62500 \
---use_tpu=false \
+--use_tpu=true \
 --tpu_name=$TPU_NAME
