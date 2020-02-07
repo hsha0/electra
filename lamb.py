@@ -24,8 +24,6 @@ from typeguard import typechecked
 
 import tensorflow as tf
 
-
-@tf.keras.utils.register_keras_serializable(package="Addons")
 class LAMB(tf.keras.optimizers.Optimizer):
     """Optimizer that implements the Layer-wise Adaptive Moments (LAMB).
 
