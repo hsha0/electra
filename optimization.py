@@ -20,6 +20,7 @@ from __future__ import print_function
 
 import re
 import tensorflow as tf
+import tensorflow_addons as tfa
 
 
 def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, part='discriminator'):
@@ -56,6 +57,7 @@ def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, 
   # It is recommended that you use this optimizer for fine tuning, since this
   # is how the model was trained (note that the Adam m/v variables are NOT
   # loaded from init_checkpoint.)
+  '''
   optimizer = AdamWeightDecayOptimizer(
       learning_rate=learning_rate,
       weight_decay_rate=0,
@@ -63,6 +65,15 @@ def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, 
       beta_2=0.999,
       epsilon=1e-6,
       exclude_from_weight_decay=["LayerNorm", "layer_norm", "bias"])
+  '''
+  optimizer = tfa.optimizers.LAMB(learning_rate=learning_rate,
+                                  weight_decay_rate=0.01,
+                                  beta_1=0.9,
+                                  beta_2=0.999,
+                                  epsilon=1e-6,
+                                  exclude_from_weight_decay=["LayerNorm", "layer_norm", "bias"],
+                                  name='LAMB'
+  )
 
   if use_tpu:
     optimizer = tf.contrib.tpu.CrossShardOptimizer(optimizer)
@@ -108,7 +119,7 @@ def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, 
   (grads, _) = tf.clip_by_global_norm(grads, clip_norm=1.0)
   train_op = optimizer.apply_gradients(zip(grads, tvars), global_step=global_step)
 
-  new_global_step = global_step + 1
+  #new_global_step = global_step + 1
   train_op = tf.group(train_op, [global_step.assign(new_global_step)])
   return train_op
 
