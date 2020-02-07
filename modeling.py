@@ -274,7 +274,9 @@ class Discriminator(object):
                     first_token_tensor,
                     config.hidden_size,
                     activation=tf.tanh,
-                    kernel_initializer=create_initializer(config.initializer_range))
+                    kernel_initializer=create_initializer(config.initializer_range),
+                    trainable=False,
+                )
 
     def get_sequence_output(self):
         """Gets final hidden layer of encoder.
