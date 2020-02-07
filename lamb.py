@@ -23,7 +23,6 @@ from typing import Optional, Union, Callable
 from typeguard import typechecked
 
 import tensorflow as tf
-from tensorflow_addons.utils.types import FloatTensorLike
 
 
 @tf.keras.utils.register_keras_serializable(package="Addons")
