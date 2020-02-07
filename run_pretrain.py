@@ -7,7 +7,7 @@ import sys
 import random
 import tokenization
 
-flags = tf.flags
+flags = tf.compat.v1.flags
 FLAGS = flags.FLAGS
 
 ## Required parameters
