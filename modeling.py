@@ -4,7 +4,6 @@ import math
 import json
 import copy
 import numpy as np
-import tensorflow.contrib.slim as slim
 import collections
 import re
 
@@ -89,11 +88,6 @@ class ElectraConfig(object):
     def to_json_string(self):
         """Serializes this instance to a JSON string."""
         return json.dumps(self.to_dict(), indent=2, sort_keys=True) + "\n"
-
-
-def model_summary():
-    model_vars = tf.trainable_variables()
-    slim.model_analyzer.analyze_vars(model_vars, print_info=True)
 
 
 class Generator(object):
