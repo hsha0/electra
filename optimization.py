@@ -75,8 +75,8 @@ def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, 
                                   name='LAMB'
   )
 
-  #if use_tpu:
-  #  optimizer = tf.contrib.tpu.CrossShardOptimizer(optimizer)
+  if use_tpu:
+    optimizer = tf.contrib.tpu.CrossShardOptimizer(optimizer)
   '''
   with tf.variable_scope("embeddings"):
     tvars = tf.trainable_variables(scope="embeddings")
@@ -117,8 +117,8 @@ def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, 
   grads = tf.gradients(ys=loss, xs=tvars)
   # This is how the model was pre-trained.
   (grads, _) = tf.clip_by_global_norm(grads, clip_norm=1.0)
-  if use_tpu:
-      grads = [tf.compat.v1.tpu.cross_replica_sum(grad) for grad in grads]
+  #if use_tpu:
+  #    grads = [tf.compat.v1.tpu.cross_replica_sum(grad) for grad in grads]
   train_op = optimizer.apply_gradients(zip(grads, tvars))
 
   new_global_step = global_step
