@@ -102,12 +102,12 @@ def get_masked_lm_output(electra_config, input_tensor, output_weights, positions
     """Get loss and log probs for the masked LM."""
     input_tensor = gather_indexes(input_tensor, positions)
 
-    with tf.variable_scope("generator"):
-        with tf.variable_scope("cls/predictions"):
+    with tf.compat.v1.variable_scope("generator"):
+        with tf.compat.v1.variable_scope("cls/predictions"):
             # We apply one more non-linear transformation before the output layer.
             # This matrix is not used after pre-training.
-            with tf.variable_scope("transform"):
-                input_tensor = tf.layers.dense(
+            with tf.compat.v1.variable_scope("transform"):
+                input_tensor = tf.compat.v1.layers.dense(
                     input_tensor,
                     units=electra_config.embedding_size,
                     activation=modeling.get_activation(electra_config.hidden_act),
@@ -117,10 +117,10 @@ def get_masked_lm_output(electra_config, input_tensor, output_weights, positions
 
             # The output weights are the same as the input embeddings, but there is
             # an output-only bias for each token.
-            output_bias = tf.get_variable(
+            output_bias = tf.compat.v1.get_variable(
                 "output_bias",
                 shape=[electra_config.vocab_size],
-                initializer=tf.zeros_initializer())
+                initializer=tf.compat.v1.zeros_initializer())
             logits = tf.matmul(input_tensor, output_weights, transpose_b=True)
             logits = tf.nn.bias_add(logits, output_bias)
             log_probs = tf.nn.log_softmax(logits, axis=-1)
@@ -135,8 +135,8 @@ def get_masked_lm_output(electra_config, input_tensor, output_weights, positions
             # short to have the maximum number of predictions). The `label_weights`
             # tensor has a value of 1.0 for every real prediction and 0.0 for the
             # padding predictions.
-            per_example_loss = -tf.reduce_sum(log_probs * one_hot_labels, axis=[-1])
-            loss = tf.reduce_sum(label_weights * per_example_loss)
+            per_example_loss = -tf.reduce_sum(input_tensor=log_probs * one_hot_labels, axis=[-1])
+            loss = tf.reduce_sum(input_tensor=label_weights * per_example_loss)
             #denominator = tf.reduce_sum(label_weights) + 1e-5
             #loss = numerator / denominator
 
@@ -153,9 +153,9 @@ def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, 
 
     sequence_tensor = tf.reshape(sequence_tensor, [batch_size * seq_length, width])
 
-    with tf.variable_scope("discriminator"):
-        with tf.variable_scope("whether_replaced/predictions"):
-            output = tf.layers.dense(sequence_tensor,
+    with tf.compat.v1.variable_scope("discriminator"):
+        with tf.compat.v1.variable_scope("whether_replaced/predictions"):
+            output = tf.compat.v1.layers.dense(sequence_tensor,
                                      units=2,
                                      activation=modeling.get_activation(electra_config.hidden_act),
                                      kernel_initializer=modeling.create_initializer(
@@ -187,7 +187,7 @@ def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, 
                 name='sigmoid_cross_entropy',
             )
 
-            loss = tf.reduce_sum(sigmoid_cross_entropy)
+            loss = tf.reduce_sum(input_tensor=sigmoid_cross_entropy)
     return (loss)
 
 
@@ -201,15 +201,15 @@ def replace_elements_by_indices(old, new, indices):
         tf.range(0, batch_size, dtype=tf.int32) * seq_length, [-1, 1])
     flat_positions = tf.reshape(indices + flat_offsets, [-1])
 
-    zeros = tf.zeros(tf.shape(flat_positions)[0], dtype=tf.int32)
+    zeros = tf.zeros(tf.shape(input=flat_positions)[0], dtype=tf.int32)
 
     flat_old = tf.reshape(old, [-1])
 
-    masked_lm_mask = tf.sparse_to_dense(flat_positions, tf.shape(flat_old), zeros, default_value=1,
+    masked_lm_mask = tf.compat.v1.sparse_to_dense(flat_positions, tf.shape(input=flat_old), zeros, default_value=1,
                                         validate_indices=True, name="masked_lm_mask")
 
     flat_old_temp = tf.multiply(flat_old, masked_lm_mask)
-    new_temp = tf.sparse_to_dense(flat_positions, tf.shape(flat_old), new,
+    new_temp = tf.compat.v1.sparse_to_dense(flat_positions, tf.shape(input=flat_old), new,
                                                         default_value=0, validate_indices=True, name=None)
 
     updated_old = tf.reshape(flat_old_temp + new_temp, old_shape)
@@ -227,9 +227,9 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
     def model_fn(features, labels, mode, params):  # pylint: disable=unused-argument
         """The `model_fn` for TPUEstimator."""
 
-        tf.logging.info("*** Features ***")
+        tf.compat.v1.logging.info("*** Features ***")
         for name in sorted(features.keys()):
-            tf.logging.info("  name = %s, shape = %s" % (name, features[name].shape))
+            tf.compat.v1.logging.info("  name = %s, shape = %s" % (name, features[name].shape))
 
         input_ids = features["input_ids"]
         input_mask = features["input_mask"]
@@ -258,7 +258,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
          masked_lm_positions, masked_lm_ids, masked_lm_weights)
 
         masked_lm_predictions = tf.argmax(
-            masked_lm_log_probs, axis=-1, output_type=tf.int32)
+            input=masked_lm_log_probs, axis=-1, output_type=tf.int32)
 
         #zero = tf.constant(0, dtype=tf.int32)
         #positions_col2 = tf.reshape(masked_lm_positions, [-1])
@@ -306,7 +306,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
                                                     whether_replaced, input_mask)
 
 
-        tvars = tf.trainable_variables()
+        tvars = tf.compat.v1.trainable_variables()
 
         initialized_variable_names = {}
         scaffold_fn = None
@@ -316,12 +316,12 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
             if use_tpu:
 
                 def tpu_scaffold():
-                    tf.train.init_from_checkpoint(init_checkpoint, assignment_map)
-                    return tf.train.Scaffold()
+                    tf.compat.v1.train.init_from_checkpoint(init_checkpoint, assignment_map)
+                    return tf.compat.v1.train.Scaffold()
 
                 scaffold_fn = tpu_scaffold
             else:
-                tf.train.init_from_checkpoint(init_checkpoint, assignment_map)
+                tf.compat.v1.train.init_from_checkpoint(init_checkpoint, assignment_map)
 
         """
         tf.logging.info("**** Trainable Variables ****")
@@ -352,7 +352,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
             train_op = optimization.create_optimizer(
                 total_loss, learning_rate, num_train_steps, num_warmup_steps, use_tpu)
 
-            output_spec = tf.contrib.tpu.TPUEstimatorSpec(
+            output_spec = tf.compat.v1.estimator.tpu.TPUEstimatorSpec(
                 mode=mode,
                 loss=total_loss,
                 train_op=train_op,
@@ -377,9 +377,9 @@ def input_fn_builder(input_files,
 
         name_to_features = {
             "input_ids":
-                tf.FixedLenFeature([max_seq_length], tf.int64),
+                tf.io.FixedLenFeature([max_seq_length], tf.int64),
             "input_mask":
-                tf.FixedLenFeature([max_seq_length], tf.int64),
+                tf.io.FixedLenFeature([max_seq_length], tf.int64),
         }
 
 
@@ -396,7 +396,7 @@ def input_fn_builder(input_files,
             # `sloppy` mode means that the interleaving is not exact. This adds
             # even more randomness to the training pipeline.
             d = d.apply(
-                tf.contrib.data.parallel_interleave(
+                tf.data.experimental.parallel_interleave(
                     tf.data.TFRecordDataset,
                     sloppy=is_training,
                     cycle_length=cycle_length))
@@ -412,7 +412,7 @@ def input_fn_builder(input_files,
         # and we *don't* want to drop the remainder, otherwise we wont cover
         # every sample.
         d = d.apply(
-            tf.contrib.data.map_and_batch(
+            tf.data.experimental.map_and_batch(
                 lambda record: _decode_record(record, name_to_features),
                 batch_size=batch_size,
                 num_parallel_batches=num_cpu_threads,
@@ -424,14 +424,14 @@ def input_fn_builder(input_files,
 
 def _decode_record(record, name_to_features):
     """Decodes a record to a TensorFlow example."""
-    example = tf.parse_single_example(record, name_to_features)
+    example = tf.io.parse_single_example(serialized=record, features=name_to_features)
 
     # tf.Example only supports tf.int64, but the TPU only supports tf.int32.
     # So cast all int64 to int32.
     for name in list(example.keys()):
         t = example[name]
         if t.dtype == tf.int64:
-            t = tf.to_int32(t)
+            t = tf.cast(t, dtype=tf.int32)
         example[name] = t
 
     return example
@@ -483,7 +483,7 @@ def read_data(data_dir):
 
 
 def main():
-    tf.logging.set_verbosity(tf.logging.INFO)
+    tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.INFO)
 
     if not FLAGS.do_train and not FLAGS.do_eval:
         raise ValueError("At least one of `do_train` or `do_eval` must be True.")
@@ -496,9 +496,9 @@ def main():
     for input_pattern in FLAGS.input_file.split(","):
         input_files.extend(tf.io.gfile.Glob(input_pattern))
 
-    tf.logging.info("*** Input Files ***")
+    tf.compat.v1.logging.info("*** Input Files ***")
     for input_file in input_files:
-        tf.logging.info("  %s" % input_file)
+        tf.compat.v1.logging.info("  %s" % input_file)
 
 
     #data_dir = FLAGS.data_dir
@@ -508,16 +508,16 @@ def main():
 
     tpu_cluster_resolver = None
     if FLAGS.use_tpu and FLAGS.tpu_name:
-        tpu_cluster_resolver = tf.contrib.cluster_resolver.TPUClusterResolver(
+        tpu_cluster_resolver = tf.distribute.cluster_resolver.TPUClusterResolver(
             FLAGS.tpu_name, zone=FLAGS.tpu_zone, project=FLAGS.gcp_project)
 
-    is_per_host = tf.contrib.tpu.InputPipelineConfig.PER_HOST_V2
-    run_config = tf.contrib.tpu.RunConfig(
+    is_per_host = tf.compat.v1.estimator.tpu.InputPipelineConfig.PER_HOST_V2
+    run_config = tf.compat.v1.estimator.tpu.RunConfig(
         cluster=tpu_cluster_resolver,
         master=FLAGS.master,
         model_dir=FLAGS.output_dir,
         save_checkpoints_steps=FLAGS.save_checkpoints_steps,
-        tpu_config=tf.contrib.tpu.TPUConfig(
+        tpu_config=tf.compat.v1.estimator.tpu.TPUConfig(
             iterations_per_loop=FLAGS.iterations_per_loop,
             num_shards=FLAGS.num_tpu_cores,
             per_host_input_for_training=is_per_host))
@@ -535,7 +535,7 @@ def main():
 
     # If TPU is not available, this will fall back to normal Estimator on CPU
     # or GPU.
-    estimator = tf.contrib.tpu.TPUEstimator(
+    estimator = tf.compat.v1.estimator.tpu.TPUEstimator(
         use_tpu=FLAGS.use_tpu,
         model_fn=model_fn,
         config=run_config,
@@ -543,8 +543,8 @@ def main():
         eval_batch_size=FLAGS.eval_batch_size)
 
     if FLAGS.do_train:
-        tf.logging.info("***** Running training *****")
-        tf.logging.info("  Batch size = %d", FLAGS.train_batch_size)
+        tf.compat.v1.logging.info("***** Running training *****")
+        tf.compat.v1.logging.info("  Batch size = %d", FLAGS.train_batch_size)
         train_input_fn = input_fn_builder(
             input_files=input_files,
             max_seq_length=FLAGS.max_seq_length,

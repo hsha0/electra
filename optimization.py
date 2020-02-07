@@ -25,12 +25,12 @@ import lamb
 
 def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, part='discriminator'):
   """Creates an optimizer training op."""
-  global_step = tf.train.get_or_create_global_step()
+  global_step = tf.compat.v1.train.get_or_create_global_step()
 
   learning_rate = tf.constant(value=init_lr, shape=[], dtype=tf.float32)
 
   # Implements linear decay of the learning rate.
-  learning_rate = tf.train.polynomial_decay(
+  learning_rate = tf.compat.v1.train.polynomial_decay(
       learning_rate,
       global_step,
       num_train_steps,
@@ -112,9 +112,9 @@ def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, 
   train_op = tf.group(train_op, [global_step.assign(new_global_step)])
   return train_op
   '''
-  tvars = tf.trainable_variables()
+  tvars = tf.compat.v1.trainable_variables()
 
-  grads = tf.gradients(loss, tvars)
+  grads = tf.gradients(ys=loss, xs=tvars)
   # This is how the model was pre-trained.
   (grads, _) = tf.clip_by_global_norm(grads, clip_norm=1.0)
   if use_tpu:
@@ -156,18 +156,18 @@ class AdamWeightDecayOptimizer(tf.compat.v1.train.Optimizer):
 
       param_name = self._get_variable_name(param.name)
 
-      m = tf.get_variable(
+      m = tf.compat.v1.get_variable(
           name=param_name + "/adam_m",
           shape=param.shape.as_list(),
           dtype=tf.float32,
           trainable=False,
-          initializer=tf.zeros_initializer())
-      v = tf.get_variable(
+          initializer=tf.compat.v1.zeros_initializer())
+      v = tf.compat.v1.get_variable(
           name=param_name + "/adam_v",
           shape=param.shape.as_list(),
           dtype=tf.float32,
           trainable=False,
-          initializer=tf.zeros_initializer())
+          initializer=tf.compat.v1.zeros_initializer())
 
       # Standard Adam update.
       next_m = (
