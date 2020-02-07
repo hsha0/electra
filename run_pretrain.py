@@ -490,7 +490,7 @@ def main():
 
     electra_config = get_config()
 
-    tf.io.gfile.MakeDirs(FLAGS.output_dir)
+    tf.io.gfile.makedirs(FLAGS.output_dir)
 
     input_files = []
     for input_pattern in FLAGS.input_file.split(","):
