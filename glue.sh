@@ -1,4 +1,4 @@
-TPU_NAME='grpc://10.1.227.154:8470'
+TPU_NAME='grpc://10.25.79.122:8470'
 ELECTRA_GC='gs://electra'
 TASK=CoLA
 
