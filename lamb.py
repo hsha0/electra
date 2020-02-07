@@ -99,6 +99,7 @@ class LAMB(tf.keras.optimizers.Optimizer):
         # Create slots for the first and second moments.
         # Separate for-loops to respect the ordering of slot variables from v1.
         for var in var_list:
+            print('var:', var)
             self.add_slot(var, "m")
         for var in var_list:
             self.add_slot(var, "v")
