@@ -349,11 +349,13 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
             train_op = optimization.create_optimizer(
                 total_loss, learning_rate, num_train_steps, num_warmup_steps, use_tpu)
 
+            logging_hook = tf.train.LoggingTensorHook({"disc_loss": disc_loss})
             output_spec = tf.contrib.tpu.TPUEstimatorSpec(
                 mode=mode,
                 loss=total_loss,
                 train_op=train_op,
                 scaffold_fn=scaffold_fn,
+                training_hooks=[logging_hook]
             )
 
         return output_spec
