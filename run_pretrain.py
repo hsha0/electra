@@ -350,9 +350,6 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
             train_op = optimization.create_optimizer(
                 total_loss, learning_rate, num_train_steps, num_warmup_steps, use_tpu)
 
-            tf.summary.scalar('masked_lm_loss', masked_lm_loss)
-            tf.summary.scalar('discriminator_loss', disc_loss)
-
             output_spec = tf.contrib.tpu.TPUEstimatorSpec(
                 mode=mode,
                 loss=total_loss,
