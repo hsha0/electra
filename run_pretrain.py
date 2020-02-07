@@ -188,7 +188,7 @@ def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, 
             )
 
             loss = tf.reduce_sum(sigmoid_cross_entropy)
-
+            loss = tf.Print(loss, [loss])
     return (loss)
 
 
@@ -350,12 +350,10 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
             train_op = optimization.create_optimizer(
                 total_loss, learning_rate, num_train_steps, num_warmup_steps, use_tpu)
 
-            logging_hook = tf.train.LoggingTensorHook({"masked_lm_loss": masked_lm_loss, "disc_loss": disc_loss}, every_n_iter=1000)
             output_spec = tf.contrib.tpu.TPUEstimatorSpec(
                 mode=mode,
                 loss=total_loss,
                 train_op=train_op,
-                training_hooks=[logging_hook],
                 scaffold_fn=scaffold_fn,
             )
 
