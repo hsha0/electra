@@ -23,7 +23,7 @@ import tensorflow as tf
 import lamb
 
 
-def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, part='discriminator'):
+def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, global_batch_size, part='discriminator'):
   """Creates an optimizer training op."""
   global_step = tf.compat.v1.train.get_or_create_global_step()
 
@@ -114,6 +114,8 @@ def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, 
   '''
   tvars = tf.compat.v1.trainable_variables()
 
+  if use_tpu:
+      loss = loss / global_batch_size
   grads = tf.gradients(ys=loss, xs=tvars)
   # This is how the model was pre-trained.
   #(grads, _) = tf.clip_by_global_norm(grads, clip_norm=1.0)
