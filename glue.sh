@@ -1,6 +1,6 @@
 TPU_NAME='grpc://10.92.203.170:8470'
 ELECTRA_GC='gs://electra'
-TASK=MNLI
+TASK=CoLA
 
 python3 run_classifier.py \
 --task_name=$TASK \
@@ -12,7 +12,7 @@ python3 run_classifier.py \
 --do_eval=True \
 --train_batch_size=32 \
 --learning_rate=3e-4 \
---max_seq_length=256 \
+--max_seq_length=128 \
 --num_train_epochs=3.0 \
 --use_tpu=true \
 --tpu_name=$TPU_NAME
