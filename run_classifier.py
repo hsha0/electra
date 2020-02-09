@@ -584,7 +584,7 @@ def create_model(electra_config, is_training, input_ids, input_mask, segment_ids
   # instead.
   output_layer = model.get_pooled_output()
 
-  hidden_size = output_layer.shape[-1].value
+  hidden_size = output_layer.shape[-1]
 
   output_weights = tf.compat.v1.get_variable(
       "output_weights", [num_labels, hidden_size],
