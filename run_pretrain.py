@@ -148,7 +148,7 @@ def get_masked_lm_output(electra_config, input_tensor, output_weights, positions
     return (loss, per_example_loss, log_probs)
 
 
-def get_discriminator_output(electra_config, sequence_tensor, output_weight, whether_replaced, label_weights):
+def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, label_weights):
     label_weights = tf.cast(label_weights, dtype=tf.float32)
 
     sequence_shape = modeling.get_shape_list(sequence_tensor, expected_rank=3)
