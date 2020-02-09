@@ -414,7 +414,7 @@ def get_shape_list(tensor, expected_rank=None, name=None):
 
 def layer_norm(input_tensor, name=None):
     """Run layer normalization on the last dimension of the tensor."""
-    return tf.keras.layers.LayerNormalization(axis=-1)(input_tensor)
+    return tf.keras.layers.LayerNormalization(axis=-1, epsilon=1e-12, name=name)(input_tensor)
 
 
 def get_assignment_map_from_checkpoint(tvars, init_checkpoint):
@@ -437,7 +437,8 @@ def get_assignment_map_from_checkpoint(tvars, init_checkpoint):
     (name, var) = (x[0], x[1])
     if name not in name_to_variable:
       continue
-    assignment_map[name] = name
+    #assignment_map[name] = name
+    assignment_map[name] = name_to_variable[name]
     initialized_variable_names[name] = 1
     initialized_variable_names[name + ":0"] = 1
 
