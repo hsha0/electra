@@ -298,7 +298,6 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
                                                     whether_replaced, input_mask)
 
         model_summary()
-        sys.exit()
 
 
         tvars = tf.compat.v1.trainable_variables()
