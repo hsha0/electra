@@ -6,6 +6,8 @@ import os
 import sys
 import random
 import tokenization
+import tf_slim as slim
+
 
 flags = tf.compat.v1.flags
 FLAGS = flags.FLAGS
@@ -91,6 +93,9 @@ tokenizer = tokenization.FullTokenizer(
         vocab_file=FLAGS.vocab_file, do_lower_case=FLAGS.do_lower_case)
 MASK_ID = tokenizer.convert_tokens_to_ids(masked_token)[0]
 
+def model_summary():
+    model_vars = tf.trainable_variables()
+    slim.model_analyzer.analyze_vars(model_vars, print_info=True)
 
 def get_config():
     config = modeling.ElectraConfig(30522)
@@ -143,7 +148,7 @@ def get_masked_lm_output(electra_config, input_tensor, output_weights, positions
     return (loss, per_example_loss, log_probs)
 
 
-def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, label_weights):
+def get_discriminator_output(electra_config, sequence_tensor, output_weight, whether_replaced, label_weights):
     label_weights = tf.cast(label_weights, dtype=tf.float32)
 
     sequence_shape = modeling.get_shape_list(sequence_tensor, expected_rank=3)
@@ -162,30 +167,17 @@ def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, 
                                          electra_config.initializer_range))
             logits = modeling.layer_norm(output)
 
-            '''
-            log_probs = tf.nn.log_softmax(logits, axis=-1)
-
-            
-            label_weights = tf.reshape(label_weights, [-1])
-
-            one_hot_labels = tf.one_hot(whether_replaced, depth=2, dtype=tf.float32)
-
-            per_example_loss = -tf.reduce_sum(log_probs * one_hot_labels, axis=[-1])
-            numerator = tf.reduce_sum(label_weights * per_example_loss)
-            denominator = tf.reduce_sum(label_weights) + 1e-5
-            loss = numerator / denominator
-            '''
             whether_replaced = tf.reshape(whether_replaced, [-1])
             one_hot_labels = tf.one_hot(whether_replaced, depth=2, dtype=tf.float32)
-
-            print(one_hot_labels)
-            print(logits)
 
             sigmoid_cross_entropy = tf.nn.sigmoid_cross_entropy_with_logits(
                 labels=one_hot_labels,
                 logits=logits,
                 name='sigmoid_cross_entropy',
             )
+
+            print(sigmoid_cross_entropy)
+            #sys.exit()
 
             loss = tf.reduce_sum(input_tensor=sigmoid_cross_entropy)
     return (loss)
@@ -304,6 +296,9 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
 
         (disc_loss) = get_discriminator_output(electra_config, discriminator.get_sequence_output(),
                                                     whether_replaced, input_mask)
+
+        model_summary()
+        sys.exit()
 
 
         tvars = tf.compat.v1.trainable_variables()

@@ -20,14 +20,14 @@ class ElectraConfig(object):
                  num_hidden_layers=12,
                  num_hidden_groups=1,
                  num_attention_heads=4,
-                 generator_size=0.25,
+                 generator_size=0.5,
                  intermediate_size=1024,
                  inner_group_num=1,
                  down_scale_factor=1,
                  hidden_act="gelu",
                  hidden_dropout_prob=0.1,
                  attention_probs_dropout_prob=0.1,
-                 max_position_embeddings=512,
+                 max_position_embeddings=128,
                  type_vocab_size=2,
                  initializer_range=0.02):
         """
