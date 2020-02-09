@@ -1,4 +1,4 @@
-TPU_NAME='grpc://10.78.108.10:8470'
+TPU_NAME='grpc://10.77.129.26:8470'
 ELECTRA_GC='gs://electra'
 
 python3 run_pretrain.py \
