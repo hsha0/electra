@@ -842,9 +842,6 @@ def create_model(electra_config, is_training, input_ids, input_mask, segment_ids
 
     if regression:
         probabilities = logits
-        print(labels)
-        print(logits)
-        sys.exit()
         per_example_loss = tf.square(labels - logits)
         loss = tf.reduce_mean(input_tensor=per_example_loss)
 
