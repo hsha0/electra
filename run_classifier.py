@@ -716,7 +716,7 @@ def file_based_convert_examples_to_features(
       try:
         f = tf.train.Feature(int64_list=tf.train.Int64List(value=list(values)))
       except:
-        f = tf.train.Feature(float32_list=tf.train.Float32List(value=list(values)))
+        f = tf.train.Feature(float_list=tf.train.FloatList(value=list(values)))
       return f
 
     features = collections.OrderedDict()
