@@ -390,7 +390,7 @@ class SST2Processor(DataProcessor):
         """See base class."""
         return ["0", "1"]
 
-    def _create_example(self, lines, set_type):
+    def _create_examples(self, lines, set_type):
         """Creates examples for the training and dev sets."""
         examples = []
         for (i, line) in enumerate(lines):
@@ -428,7 +428,7 @@ class QQPProcessor(DataProcessor):
         """See base class."""
         return ["0", "1"]
 
-    def _create_example(self, lines, set_type):
+    def _create_examples(self, lines, set_type):
         """Create examples for the training and dev sets."""
         examples = []
         for (i, line) in enumerate(lines):
@@ -467,7 +467,7 @@ class STSBProcessor(DataProcessor):
         """See base class."""
         return ["0"]
 
-    def _create_example(self, lines, set_type):
+    def _create_examples(self, lines, set_type):
         """Create examples for the training and dev sets."""
         examples = []
         for (i, line) in enumerate(lines):
@@ -506,7 +506,7 @@ class QNLIProcessor(DataProcessor):
         """See base class."""
         return ["0", "1"]
 
-    def _create_example(self, lines, set_type):
+    def _create_examples(self, lines, set_type):
         """Create examples for the training and dev sets."""
         examples = []
         for (i, line) in enumerate(lines):
@@ -549,7 +549,7 @@ class RTEProcessor(DataProcessor):
         """See base class."""
         return ["0", "1"]
 
-    def _create_example(self, lines, set_type):
+    def _create_examples(self, lines, set_type):
         """Create examples for the training and dev sets."""
         examples = []
         for (i, line) in enumerate(lines):
@@ -592,7 +592,7 @@ class WNLIProcessor(DataProcessor):
         """See base class."""
         return ["0"]
 
-    def _create_example(self, lines, set_type):
+    def _create_examples(self, lines, set_type):
         """Create examples for the training and dev sets."""
         examples = []
         for (i, line) in enumerate(lines):
