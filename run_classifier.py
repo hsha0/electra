@@ -830,14 +830,13 @@ def create_model(electra_config, is_training, input_ids, input_mask, segment_ids
       output_layer = tf.nn.dropout(output_layer, rate=1 - (0.9))
 
     logits = tf.matmul(output_layer, output_weights, transpose_b=True)
+    print(logits)
+    print(output_bias)
     logits = tf.nn.bias_add(logits, output_bias)
 
     if regression:
         probabilities = logits
         per_example_loss = tf.square(labels - logits)
-        print(labels)
-        print(logits)
-        sys.exit()
         loss = tf.reduce_mean(input_tensor=per_example_loss)
 
 
