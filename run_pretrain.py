@@ -43,6 +43,8 @@ flags.DEFINE_float('mask_percentage', 0.15, "Percentage of words to be masked fo
 
 flags.DEFINE_float("learning_rate", 5e-4, "The initial learning rate for glue.")
 
+flags.DEFINE_integer("disc_loss_weight", 1, "The weight of discriminator loss.")
+
 flags.DEFINE_integer("num_train_steps", 10, "Number of training steps.")
 
 #10000
@@ -225,6 +227,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
 
         input_ids = features["input_ids"]
         input_mask = features["input_mask"]
+        segment_ids = features["segment_ids"]
 
         batch_size = modeling.get_shape_list(input_ids)[0]
         masked_lm_positions = tf.constant([sorted(random.sample(range(0, FLAGS.max_seq_length), FLAGS.max_predictions_per_seq)) for i in range(batch_size)])
@@ -327,7 +330,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
                             init_string)
         """
         output_spec = None
-        total_loss = masked_lm_loss + 50*disc_loss
+        total_loss = masked_lm_loss + FLAGS.disc_loss_weight*disc_loss
         if mode == tf.estimator.ModeKeys.TRAIN:
             '''
             gen_train_op = optimization.create_optimizer(
