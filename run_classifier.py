@@ -26,6 +26,7 @@ import modeling
 import optimization
 import tokenization
 import tensorflow as tf
+from scipy.stats import spearmanr
 
 flags = tf.compat.v1.flags
 
@@ -931,8 +932,10 @@ def model_fn_builder(electra_config, num_labels, init_checkpoint, learning_rate,
       def metric_fn(per_example_loss, label_ids, logits, is_real_example):
         if regression:
             loss = tf.compat.v1.metrics.mean(values=per_example_loss, weights=is_real_example)
+            spearman, _ = spearmanr(logits, label_ids)
             return {
                 "eval_loss": loss,
+                "spearman_correlation": spearman,
             }
         else:
             predictions = tf.argmax(input=logits, axis=-1, output_type=tf.int32)
