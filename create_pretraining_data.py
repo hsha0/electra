@@ -52,8 +52,9 @@ flags.DEFINE_float(
 class TrainingInstance(object):
     """A single training instance (sentence pair)."""
 
-    def __init__(self, tokens):
+    def __init__(self, tokens, segment_ids):
         self.tokens = tokens
+        self.segment_ids = segment_ids
 
     def __str__(self):
         s = ""
@@ -79,20 +80,24 @@ def write_instance_to_example_files(instances, tokenizer, max_seq_length,
     for (inst_index, instance) in enumerate(instances):
         input_ids = tokenizer.convert_tokens_to_ids(instance.tokens)
         input_mask = [1] * len(input_ids)
+        segment_ids = list(instance.segment_ids)
         assert len(input_ids) <= max_seq_length
 
         while len(input_ids) < max_seq_length:
             input_ids.append(0)
             input_mask.append(0)
+            segment_ids.append(0)
 
         assert len(input_ids) == max_seq_length
         assert len(input_mask) == max_seq_length
+        assert len(segment_ids) == max_seq_length
 
 
 
         features = collections.OrderedDict()
         features["input_ids"] = create_int_feature(input_ids)
         features["input_mask"] = create_int_feature(input_mask)
+        features["segment_ids"] = create_int_feature(segment_ids)
 
         tf_example = tf.train.Example(features=tf.train.Features(feature=features))
 
@@ -184,7 +189,7 @@ def create_instances_from_document(
     document = all_documents[document_index]
 
     # Account for [CLS], [SEP], [SEP]
-    max_num_tokens = max_seq_length
+    max_num_tokens = max_seq_length - 3
 
     target_seq_length = max_num_tokens
 
@@ -223,15 +228,26 @@ def create_instances_from_document(
                 # assert len(tokens_b) >= 1
 
                 tokens = []
+                segment_ids = []
+                tokens.append("[CLS]")
+                segment_ids.append(0)
                 for token in tokens_a:
                     tokens.append(token)
+                    segment_ids.append(0)
+
+                tokens.append("[SEP]")
+                segment_ids.append(0)
 
 
                 for token in tokens_b:
                     tokens.append(token)
+                    segment_ids.append(1)
+                tokens.append("[SEP]")
+                segment_ids.append(1)
 
                 instance = TrainingInstance(
-                    tokens=tokens)
+                    tokens=tokens,
+                    segment_ids=segment_ids)
                 instances.append(instance)
             current_chunk = []
             current_length = 0
