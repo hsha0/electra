@@ -6,9 +6,10 @@ python3 run_pretrain.py \
 --output_dir=$ELECTRA_GC/electra_pretrain/electra_gen_0.5 \
 --vocab_file=vocab.txt \
 --do_train=True \
+--learning_rate=1e-4 \
 --train_batch_size=128 \
 --max_seq_length=128 \
---num_train_steps=250000 \
+--num_train_steps=500000 \
 --max_predictions_per_seq=20 \
 --use_tpu=true \
 --tpu_name=$TPU_NAME

@@ -23,7 +23,7 @@ import tensorflow as tf
 import lamb
 
 
-def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, global_batch_size, part='discriminator'):
+def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, global_batch_size, weight_decay=0.0, part='discriminator'):
   """Creates an optimizer training op."""
   global_step = tf.compat.v1.train.get_or_create_global_step()
 
@@ -67,7 +67,7 @@ def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, 
       exclude_from_weight_decay=["LayerNorm", "layer_norm", "bias"])
   '''
   optimizer = lamb.LAMB(learning_rate=learning_rate,
-                                  weight_decay_rate=0.01,
+                                  weight_decay_rate=weight_decay,
                                   beta_1=0.9,
                                   beta_2=0.999,
                                   epsilon=1e-6,
