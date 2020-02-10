@@ -131,6 +131,8 @@ def get_masked_lm_output(electra_config, input_tensor, output_weights, positions
             logits = tf.matmul(input_tensor, output_weights, transpose_b=True)
             logits = tf.nn.bias_add(logits, output_bias)
             log_probs = tf.nn.log_softmax(logits, axis=-1)
+            print(log_probs)
+            sys.exit()
 
             label_ids = tf.reshape(label_ids, [-1])
             label_weights = tf.reshape(label_weights, [-1])
