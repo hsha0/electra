@@ -728,7 +728,7 @@ def file_based_convert_examples_to_features(
     if FLAGS.task_name == 'STS-B':
         features["label_ids"] = create_float_feature([features.label_id])
     else:
-        features["label_ids"] = create_int_feature([feature.label_id])
+        features["label_ids"] = create_int_feature([features.label_id])
     features["is_real_example"] = create_int_feature(
         [int(feature.is_real_example)])
 
