@@ -714,10 +714,10 @@ def file_based_convert_examples_to_features(
                                      max_seq_length, tokenizer)
 
     def create_int_feature(values):
-      if FLAGS.task_name == 'STS-B':
-          f = tf.train.Feature(float_list=tf.train.FloatList(value=list(values)))
-      else:
+      try:
           f = tf.train.Feature(int64_list=tf.train.Int64List(value=list(values)))
+      except:
+          f = tf.train.Feature(float_list=tf.train.FloatList(value=list(values)))
       return f
 
     features = collections.OrderedDict()
