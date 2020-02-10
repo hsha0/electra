@@ -735,14 +735,22 @@ def file_based_convert_examples_to_features(
 def file_based_input_fn_builder(input_file, seq_length, is_training,
                                 drop_remainder):
   """Creates an `input_fn` closure to be passed to TPUEstimator."""
-
-  name_to_features = {
+  if FLAGS.task_name == 'STS-B':
+      name_to_features = {
+          "input_ids": tf.io.FixedLenFeature([seq_length], tf.int64),
+          "input_mask": tf.io.FixedLenFeature([seq_length], tf.int64),
+          "segment_ids": tf.io.FixedLenFeature([seq_length], tf.int64),
+          "label_ids": tf.io.FixedLenFeature([], tf.float32),
+          "is_real_example": tf.io.FixedLenFeature([], tf.int64),
+      }
+  else:
+    name_to_features = {
       "input_ids": tf.io.FixedLenFeature([seq_length], tf.int64),
       "input_mask": tf.io.FixedLenFeature([seq_length], tf.int64),
       "segment_ids": tf.io.FixedLenFeature([seq_length], tf.int64),
-      "label_ids": tf.io.FixedLenFeature([], tf.float32),
+      "label_ids": tf.io.FixedLenFeature([], tf.int64),
       "is_real_example": tf.io.FixedLenFeature([], tf.int64),
-  }
+    }
 
   def _decode_record(record, name_to_features):
     """Decodes a record to a TensorFlow example."""
@@ -981,6 +989,8 @@ def input_fn_builder(features, seq_length, is_training, drop_remainder):
     # This is for demo purposes and does NOT scale to large data sets. We do
     # not use Dataset.from_generator() because that uses tf.py_func which is
     # not TPU compatible. The right way to load data is with TFRecordReader.
+    if FLAGS.task_name == 'STS-B': dtype = tf.float32
+    else: dtype = tf.int32
     d = tf.data.Dataset.from_tensor_slices({
         "input_ids":
             tf.constant(
@@ -997,7 +1007,7 @@ def input_fn_builder(features, seq_length, is_training, drop_remainder):
                 shape=[num_examples, seq_length],
                 dtype=tf.int32),
         "label_ids":
-            tf.constant(all_label_ids, shape=[num_examples], dtype=tf.int32),
+            tf.constant(all_label_ids, shape=[num_examples], dtype=dtype),
     })
 
     if is_training:
