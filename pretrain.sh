@@ -3,10 +3,10 @@ ELECTRA_GC='gs://electra'
 
 python3 run_pretrain.py \
 --input_file=$ELECTRA_GC/data_128/*.tfrecord \
---output_dir=$ELECTRA_GC/electra_pretrain/electra_4e-4 \
+--output_dir=$ELECTRA_GC/electra_pretrain/electra_5e-4 \
 --vocab_file=vocab.txt \
 --do_train=True \
---learning_rate=4e-4 \
+--learning_rate=5e-4 \
 --train_batch_size=128 \
 --max_seq_length=128 \
 --num_train_steps=62500 \
