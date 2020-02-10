@@ -679,7 +679,6 @@ def convert_single_example(ex_index, example, label_list, max_seq_length,
     label_id = label_map[example.label]
   except:
     label_id = float(example.label)
-    print(label_id)
 
   if ex_index < 5:
     tf.compat.v1.logging.info("*** Example ***")
@@ -836,6 +835,9 @@ def create_model(electra_config, is_training, input_ids, input_mask, segment_ids
     if regression:
         probabilities = logits
         per_example_loss = tf.square(labels - logits)
+        print(labels)
+        print(logits)
+        sys.exit()
         loss = tf.reduce_mean(input_tensor=per_example_loss)
 
 
