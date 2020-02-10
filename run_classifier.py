@@ -373,13 +373,11 @@ class SST2Processor(DataProcessor):
 
     def get_train_examples(self, data_dir):
         return self._create_examples(
-            self._read_tsv(os.path.join(data_dir, "train.tsv"), "train")
-        )
+            self._read_tsv(os.path.join(data_dir, "train.tsv")), "train")
 
     def get_dev_examples(self, data_dir):
         return self._create_examples(
-            self._read_tsv(os.path.join(data_dir, "dev.tsv"), "dev")
-        )
+            self._read_tsv(os.path.join(data_dir, "dev.tsv")), "dev")
 
     def get_test_examples(self, data_dir):
         """See base class."""
@@ -411,13 +409,11 @@ class QQPProcessor(DataProcessor):
     """Processor for the QQP data set (GLUE version)."""
     def get_train_examples(self, data_dir):
         return self._create_examples(
-            self._read_tsv(os.path.join(data_dir, "train.tsv"), "train")
-        )
+            self._read_tsv(os.path.join(data_dir, "train.tsv")), "train")
 
     def get_dev_examples(self, data_dir):
         return self._create_examples(
-            self._read_tsv(os.path.join(data_dir, "dev.tsv"), "dev")
-        )
+            self._read_tsv(os.path.join(data_dir, "dev.tsv")), "dev")
 
     def get_test_examples(self, data_dir):
         """See base class."""
@@ -450,13 +446,11 @@ class STSBProcessor(DataProcessor):
     """Processor for the STSB data set (GLUE version)."""
     def get_train_examples(self, data_dir):
         return self._create_examples(
-            self._read_tsv(os.path.join(data_dir, "train.tsv"), "train")
-        )
+            self._read_tsv(os.path.join(data_dir, "train.tsv")), "train")
 
     def get_dev_examples(self, data_dir):
         return self._create_examples(
-            self._read_tsv(os.path.join(data_dir, "dev.tsv"), "dev")
-        )
+            self._read_tsv(os.path.join(data_dir, "dev.tsv")), "dev")
 
     def get_test_examples(self, data_dir):
         """See base class."""
@@ -489,13 +483,11 @@ class QNLIProcessor(DataProcessor):
     """Processor for the QNLI data set (GLUE version)."""
     def get_train_examples(self, data_dir):
         return self._create_examples(
-            self._read_tsv(os.path.join(data_dir, "train.tsv"), "train")
-        )
+            self._read_tsv(os.path.join(data_dir, "train.tsv")), "train")
 
     def get_dev_examples(self, data_dir):
         return self._create_examples(
-            self._read_tsv(os.path.join(data_dir, "dev.tsv"), "dev")
-        )
+            self._read_tsv(os.path.join(data_dir, "dev.tsv")), "dev")
 
     def get_test_examples(self, data_dir):
         """See base class."""
@@ -504,7 +496,7 @@ class QNLIProcessor(DataProcessor):
 
     def get_labels(self):
         """See base class."""
-        return ["0", "1"]
+        return ["entailment", "not_entailment"]
 
     def _create_examples(self, lines, set_type):
         """Create examples for the training and dev sets."""
@@ -519,10 +511,6 @@ class QNLIProcessor(DataProcessor):
                 label = "0"
             else:
                 label = tokenization.convert_to_unicode(line[5])
-                if label == 'not_entailment':
-                    label = "0"
-                else:
-                    label = "1"
             examples.append(
                 InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label))
         return examples
@@ -532,13 +520,11 @@ class RTEProcessor(DataProcessor):
     """Processor for the RTE data set (GLUE version)."""
     def get_train_examples(self, data_dir):
         return self._create_examples(
-            self._read_tsv(os.path.join(data_dir, "train.tsv"), "train")
-        )
+            self._read_tsv(os.path.join(data_dir, "train.tsv")), "train")
 
     def get_dev_examples(self, data_dir):
         return self._create_examples(
-            self._read_tsv(os.path.join(data_dir, "dev.tsv"), "dev")
-        )
+            self._read_tsv(os.path.join(data_dir, "dev.tsv")), "dev")
 
     def get_test_examples(self, data_dir):
         """See base class."""
@@ -547,7 +533,7 @@ class RTEProcessor(DataProcessor):
 
     def get_labels(self):
         """See base class."""
-        return ["0", "1"]
+        return ["entailment", "not_entailment"]
 
     def _create_examples(self, lines, set_type):
         """Create examples for the training and dev sets."""
@@ -562,10 +548,6 @@ class RTEProcessor(DataProcessor):
                 label = "0"
             else:
                 label = tokenization.convert_to_unicode(line[3])
-                if label == 'not_entailment':
-                    label = "0"
-                else:
-                    label = "1"
             examples.append(
                 InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label))
         return examples
