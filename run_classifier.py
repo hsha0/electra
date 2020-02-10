@@ -859,11 +859,6 @@ def create_model(electra_config, is_training, input_ids, input_mask, segment_ids
     return (loss, per_example_loss, logits, probabilities)
 
 
-from scipy.stats import spearmanr
-def get_spearman_rankcor(y_true, y_pred):
-     return ( tf.py_function(spearmanr, [tf.cast(y_pred, tf.float32),
-                       tf.cast(y_true, tf.float32)], Tout = tf.float32))
-
 def model_fn_builder(electra_config, num_labels, init_checkpoint, learning_rate,
                      num_train_steps, num_warmup_steps, use_tpu,
                      use_one_hot_embeddings, regression=False):
@@ -930,16 +925,16 @@ def model_fn_builder(electra_config, num_labels, init_checkpoint, learning_rate,
     elif mode == tf.estimator.ModeKeys.EVAL:
 
       def metric_fn(per_example_loss, label_ids, logits, is_real_example):
-        predictions = tf.argmax(input=logits, axis=-1, output_type=tf.int32)
-        accuracy = tf.compat.v1.metrics.accuracy(
-            labels=label_ids, predictions=predictions, weights=is_real_example)
-        loss = tf.compat.v1.metrics.mean(values=per_example_loss, weights=is_real_example)
-        spearman = get_spearman_rankcor(label_ids, logits)
         if regression:
+            loss = tf.compat.v1.metrics.mean(values=per_example_loss, weights=is_real_example)
             return {
-                "spearman_correlation": spearman
+                "eval_loss": loss,
             }
         else:
+            predictions = tf.argmax(input=logits, axis=-1, output_type=tf.int32)
+            accuracy = tf.compat.v1.metrics.accuracy(
+                labels=label_ids, predictions=predictions, weights=is_real_example)
+            loss = tf.compat.v1.metrics.mean(values=per_example_loss, weights=is_real_example)
             return {
                 "eval_accuracy": accuracy,
                 "eval_loss": loss,
