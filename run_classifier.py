@@ -83,6 +83,8 @@ flags.DEFINE_float("learning_rate", 5e-5, "The initial learning rate for Adam.")
 flags.DEFINE_float("num_train_epochs", 3.0,
                    "Total number of training epochs to perform.")
 
+flags.DEFINE_integer("seed", 12345, "Random seed.")
+
 flags.DEFINE_float(
     "warmup_proportion", 0.1,
     "Proportion of training to perform linear learning rate warmup for. "
@@ -932,10 +934,8 @@ def model_fn_builder(electra_config, num_labels, init_checkpoint, learning_rate,
       def metric_fn(per_example_loss, label_ids, logits, is_real_example):
         if regression:
             loss = tf.compat.v1.metrics.mean(values=per_example_loss, weights=is_real_example)
-            spearman, _ = spearmanr(logits, label_ids)
             return {
                 "eval_loss": loss,
-                "spearman_correlation": spearman,
             }
         else:
             predictions = tf.argmax(input=logits, axis=-1, output_type=tf.int32)
@@ -1043,6 +1043,7 @@ def get_config():
     return config
 
 def main(_):
+  tf.random.set_seed(FLAGS.seed)
   tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.INFO)
 
   processors = {
