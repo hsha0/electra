@@ -1043,7 +1043,7 @@ def get_config():
     return config
 
 def main(_):
-  tf.random.set_seed(FLAGS.seed)
+  tf.set_random_seed(FLAGS.seed)
   tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.INFO)
 
   processors = {
