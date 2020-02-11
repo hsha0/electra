@@ -376,6 +376,8 @@ def input_fn_builder(input_files,
                 tf.io.FixedLenFeature([max_seq_length], tf.int64),
             "input_mask":
                 tf.io.FixedLenFeature([max_seq_length], tf.int64),
+            "segment_ids":
+                tf.io.FixedLenFeature([max_seq_length], tf.int64),
         }
 
 
