@@ -1,6 +1,6 @@
 TPU_NAME='grpc://10.57.129.2:8470'
 ELECTRA_GC='gs://electra'
-TASK=QQP
+TASK=QNLI
 
 python3 run_classifier.py \
 --task_name=$TASK \
