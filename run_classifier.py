@@ -820,6 +820,7 @@ def create_model(electra_config, is_training, input_ids, input_mask, segment_ids
       config=electra_config,
       is_training=is_training,
       input_ids=input_ids,
+      train_pooler=True,
       input_mask=input_mask,
       token_type_ids=segment_ids,
       use_one_hot_embeddings=use_one_hot_embeddings)

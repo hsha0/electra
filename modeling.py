@@ -193,6 +193,7 @@ class Discriminator(object):
                  config,
                  is_training,
                  input_ids,
+                 train_pooler=False,
                  input_mask=None,
                  token_type_ids=None,
                  use_one_hot_embeddings=False,
@@ -275,7 +276,7 @@ class Discriminator(object):
                     config.hidden_size,
                     activation=tf.tanh,
                     kernel_initializer=create_initializer(config.initializer_range),
-                    trainable=False,
+                    trainable=train_pooler,
                 )
 
     def get_sequence_output(self):
