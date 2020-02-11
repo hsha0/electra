@@ -518,7 +518,7 @@ class QNLIProcessor(DataProcessor):
             if set_type == "test":
                 label = "0"
             else:
-                label = tokenization.convert_to_unicode(line[5])
+                label = tokenization.convert_to_unicode(line[3])
             examples.append(
                 InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label))
         return examples
