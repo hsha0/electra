@@ -435,9 +435,6 @@ class QQPProcessor(DataProcessor):
             if i == 0:
                 continue
             guid = "%s-%s" % (set_type, tokenization.convert_to_unicode(line[0]))
-            if len(line) < 6:
-                print(i, len(line))
-            '''
             text_a = tokenization.convert_to_unicode(line[3])
             text_b = tokenization.convert_to_unicode(line[4])
             if set_type == "test":
@@ -446,8 +443,6 @@ class QQPProcessor(DataProcessor):
                 label = tokenization.convert_to_unicode(line[5])
             examples.append(
                 InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label))
-            '''
-        sys.exit()
         return examples
 
 
