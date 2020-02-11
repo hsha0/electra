@@ -1,4 +1,4 @@
-TPU_NAME='grpc://10.63.231.42:8470'
+TPU_NAME='grpc://10.25.94.122:8470'
 ELECTRA_GC='gs://electra'
 TASK=MNLI
 
