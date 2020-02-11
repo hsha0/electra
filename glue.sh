@@ -1,12 +1,12 @@
-TPU_NAME='grpc://10.24.108.226:8470'
+TPU_NAME='grpc://10.57.129.2:8470'
 ELECTRA_GC='gs://electra'
-TASK=MNLI
+TASK=MRPC
 
 python3 run_classifier.py \
 --task_name=$TASK \
 --data_dir=$ELECTRA_GC/glue/glue_data/$TASK \
 --output_dir=$ELECTRA_GC/glue/glue_results/glue_$TASK \
---init_checkpoint=$ELECTRA_GC/electra_pretrain/electra_5e-4_CLS_0.25/model.ckpt-1000000 \
+--init_checkpoint=$ELECTRA_GC/electra_pretrain/electra_5e-4_CLS_0.25/model.ckpt-0 \
 --vocab_file=vocab.txt \
 --do_train=True \
 --do_eval=True \
