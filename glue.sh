@@ -1,6 +1,6 @@
 TPU_NAME='grpc://10.63.231.42:8470'
 ELECTRA_GC='gs://electra'
-TASK=MRPC
+TASK=CoLA
 
 python3 run_classifier.py \
 --task_name=$TASK \
