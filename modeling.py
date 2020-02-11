@@ -193,7 +193,7 @@ class Discriminator(object):
                  config,
                  is_training,
                  input_ids,
-                 train_pooler=False,
+                 train_pooler=True,
                  input_mask=None,
                  token_type_ids=None,
                  use_one_hot_embeddings=False,

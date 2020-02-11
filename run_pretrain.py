@@ -293,6 +293,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
                                                is_training=is_training,
                                                input_ids=input_ids_for_discriminator,
                                                input_mask=input_mask,
+                                               train_pooler=False,
                                                token_type_ids=segment_ids,
                                                use_one_hot_embeddings=use_one_hot_embeddings)
 
