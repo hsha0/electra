@@ -980,8 +980,8 @@ def mcc_metric(y_true, y_pred):
     true_neg = tf.math.count_nonzero((predicted - tf.ones(shape=tf.shape(predicted), dtype=tf.int32)) * (y_true - tf.ones(shape=tf.shape(predicted), dtype=tf.int32)))
     false_pos = tf.math.count_nonzero(predicted * (y_true - tf.ones(shape=tf.shape(predicted) , dtype=tf.int32)))
     false_neg = tf.math.count_nonzero((predicted - tf.ones(shape=tf.shape(predicted), dtype=tf.int32)) * y_true)
-    x = tf.cast((true_pos + false_pos) * (true_pos + false_neg)
-        * (true_neg + false_pos) * (true_neg + false_neg), tf.float32)
+    x = tf.cast((true_pos + false_pos) * (true_pos + false_neg) * (true_neg + false_pos) * (true_neg + false_neg), tf.float32)
+    print(x)
     return tf.cast((true_pos * true_neg) - (false_pos * false_neg), tf.float32) / tf.sqrt(x)
 
 # This function is not used by this file but is still used by the Colab and
