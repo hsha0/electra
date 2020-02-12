@@ -975,14 +975,14 @@ def model_fn_builder(electra_config, num_labels, init_checkpoint, learning_rate,
 
 
 def mcc_metric(y_true, y_pred):
-  predicted = y_pred
-  true_pos = tf.math.count_nonzero(predicted * y_true)
-  true_neg = tf.math.count_nonzero((predicted - 1) * (y_true - 1))
-  false_pos = tf.math.count_nonzero(predicted * (y_true - 1))
-  false_neg = tf.math.count_nonzero((predicted - 1) * y_true)
-  x = tf.cast((true_pos + false_pos) * (true_pos + false_neg)
-      * (true_neg + false_pos) * (true_neg + false_neg), tf.float32)
-  return tf.cast((true_pos * true_neg) - (false_pos * false_neg), tf.float32) / tf.sqrt(x)
+    predicted = y_pred
+    true_pos = tf.math.count_nonzero(predicted * y_true)
+    true_neg = tf.math.count_nonzero((predicted - tf.ones(shape=tf.shape(predicted))) * (y_true - tf.ones(shape=tf.shape(predicted))))
+    false_pos = tf.math.count_nonzero(predicted * (y_true - tf.ones(shape=tf.shape(predicted))))
+    false_neg = tf.math.count_nonzero((predicted - tf.ones(shape=tf.shape(predicted))) * y_true)
+    x = tf.cast((true_pos + false_pos) * (true_pos + false_neg)
+        * (true_neg + false_pos) * (true_neg + false_neg), tf.float32)
+    return tf.cast((true_pos * true_neg) - (false_pos * false_neg), tf.float32) / tf.sqrt(x)
 
 # This function is not used by this file but is still used by the Colab and
 # people who depend on it.
