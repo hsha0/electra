@@ -942,7 +942,7 @@ def model_fn_builder(electra_config, num_labels, init_checkpoint, learning_rate,
         elif FLAGS.task_name == "CoLA":
             predictions = tf.argmax(input=logits, axis=-1, output_type=tf.int32)
             loss = tf.compat.v1.metrics.mean(values=per_example_loss, weights=is_real_example)
-            mcc = tf.compat.v1.metrics.mean([mcc_metric(y_true=label_ids, y_pred=predictions)])
+            mcc = tf.compat.v1.metrics.mean(mcc_metric(y_true=label_ids, y_pred=predictions))
             return {
                 "eval_mcc": mcc,
                 "eval_loss": loss,
@@ -982,7 +982,7 @@ def mcc_metric(y_true, y_pred):
     false_neg = tf.math.count_nonzero((predicted - tf.ones(shape=tf.shape(predicted), dtype=tf.int32)) * y_true)
     x = tf.cast((true_pos + false_pos) * (true_pos + false_neg) * (true_neg + false_pos) * (true_neg + false_neg), tf.float32)
 
-    return true_pos
+    return true_neg
     #return tf.cast((true_pos * true_neg) - (false_pos * false_neg), tf.float32) / tf.sqrt(x)
 
 # This function is not used by this file but is still used by the Colab and
