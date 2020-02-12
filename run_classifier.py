@@ -942,8 +942,7 @@ def model_fn_builder(electra_config, num_labels, init_checkpoint, learning_rate,
         elif FLAGS.task_name == "CoLA":
             predictions = tf.argmax(input=logits, axis=-1, output_type=tf.int32)
             loss = tf.compat.v1.metrics.mean(values=per_example_loss, weights=is_real_example)
-            mcc = mcc_metric(y_true=label_ids, y_pred=predictions)
-            print(mcc)
+            mcc = tf.reduce_mean(mcc_metric(y_true=label_ids, y_pred=predictions))
             return {
                 "eval_mcc": mcc,
                 "eval_loss": loss,
