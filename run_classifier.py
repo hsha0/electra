@@ -944,7 +944,7 @@ def model_fn_builder(electra_config, num_labels, init_checkpoint, learning_rate,
             loss = tf.compat.v1.metrics.mean(values=per_example_loss, weights=is_real_example)
             mcc = tf.compat.v1.metrics.mean(mcc_metric(y_true=label_ids, y_pred=predictions))
             return {
-                "eval_mcc": (mcc, None),
+                "eval_mcc": mcc,
                 "eval_loss": loss,
             }
         else:
