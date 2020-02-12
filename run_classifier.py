@@ -939,6 +939,14 @@ def model_fn_builder(electra_config, num_labels, init_checkpoint, learning_rate,
             return {
                 "eval_loss": loss,
             }
+        elif FLAGS.task_name == "CoLA":
+            predictions = tf.argmax(input=logits, axis=-1, output_type=tf.int32)
+            loss = tf.compat.v1.metrics.mean(values=per_example_loss, weights=is_real_example)
+            mcc = mcc_metric(y_true=label_ids, y_pred=predictions)
+            return {
+                "eval_mcc": mcc,
+                "eval_loss": loss,
+            }
         else:
             predictions = tf.argmax(input=logits, axis=-1, output_type=tf.int32)
             accuracy = tf.compat.v1.metrics.accuracy(
@@ -965,6 +973,16 @@ def model_fn_builder(electra_config, num_labels, init_checkpoint, learning_rate,
 
   return model_fn
 
+
+def mcc_metric(y_true, y_pred):
+  predicted = y_pred
+  true_pos = tf.math.count_nonzero(predicted * y_true)
+  true_neg = tf.math.count_nonzero((predicted - 1) * (y_true - 1))
+  false_pos = tf.math.count_nonzero(predicted * (y_true - 1))
+  false_neg = tf.math.count_nonzero((predicted - 1) * y_true)
+  x = tf.cast((true_pos + false_pos) * (true_pos + false_neg)
+      * (true_neg + false_pos) * (true_neg + false_neg), tf.float32)
+  return tf.cast((true_pos * true_neg) - (false_pos * false_neg), tf.float32) / tf.sqrt(x)
 
 # This function is not used by this file but is still used by the Colab and
 # people who depend on it.
