@@ -1,12 +1,12 @@
 TPU_NAME='grpc://10.84.229.210:8470'
 ELECTRA_GC='gs://electra'
-INIT_CKPT=$ELECTRA_GC/electra_pretrain/electra_h256_w50/model.ckpt-41000
+INIT_CKPT=$ELECTRA_GC/electra_pretrain/electra_h1024_w50/model.ckpt-8000
 TASK=MNLI
 
 python3 run_classifier.py \
 --task_name=$TASK \
 --data_dir=$ELECTRA_GC/glue/glue_data/$TASK \
---output_dir=$ELECTRA_GC/glue/glue_results/h256_w50/$TASK \
+--output_dir=$ELECTRA_GC/glue/glue_results/h1024_w50/$TASK \
 --init_checkpoint=$INIT_CKPT \
 --vocab_file=vocab.txt \
 --do_train=True \
