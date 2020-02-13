@@ -144,18 +144,11 @@ def get_masked_lm_output(electra_config, input_tensor, output_weights, positions
             # padding predictions.
             per_example_loss = -tf.reduce_sum(input_tensor=log_probs * one_hot_labels, axis=[-1])
             loss = tf.reduce_sum(input_tensor=label_weights * per_example_loss)
-            print(label_weights)
-            print(per_example_loss)
-            sys.exit()
-            #denominator = tf.reduce_sum(label_weights) + 1e-5
-            #loss = numerator / denominator
 
-    return (loss, per_example_loss, log_probs)
+    return (loss, per_example_loss, log_probs, logits)
 
 
 def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, label_weights):
-    label_weights = tf.cast(label_weights, dtype=tf.float32)
-
     sequence_shape = modeling.get_shape_list(sequence_tensor, expected_rank=3)
     batch_size = sequence_shape[0]
     seq_length = sequence_shape[1]
@@ -253,20 +246,15 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
                                      use_one_hot_embeddings=use_one_hot_embeddings)
 
         (masked_lm_loss,
-         masked_lm_example_loss, masked_lm_log_probs) = get_masked_lm_output(
+         masked_lm_example_loss, masked_lm_log_probs, masked_logits) = get_masked_lm_output(
          electra_config, generator.get_sequence_output(), generator.get_embedding_table(),
          masked_lm_positions, masked_lm_ids, masked_lm_weights)
 
-        masked_lm_predictions = tf.argmax(
-            input=masked_lm_log_probs, axis=-1, output_type=tf.int32)
-
-        #zero = tf.constant(0, dtype=tf.int32)
-        #positions_col2 = tf.reshape(masked_lm_positions, [-1])
-        #non_zeros_coords = tf.where(tf.not_equal(positions_col2, zero))
-        #print(modeling.get_shape_list(non_zeros_coords))
-
+        masked_lm_predictions = tf.argmax(input=masked_logits, axis=-1, output_type=tf.int32)
         masked_lm_ids = tf.reshape(masked_lm_ids, [-1])
         diff = masked_lm_predictions - masked_lm_ids
+        print(diff)
+        sys.exit()
 
 
         #diff_cast = tf.gather_nd(tf.cast(tf.not_equal(diff, zero), dtype=tf.int32), non_zeros_coords)
