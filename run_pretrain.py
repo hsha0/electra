@@ -144,6 +144,9 @@ def get_masked_lm_output(electra_config, input_tensor, output_weights, positions
             # padding predictions.
             per_example_loss = -tf.reduce_sum(input_tensor=log_probs * one_hot_labels, axis=[-1])
             loss = tf.reduce_sum(input_tensor=label_weights * per_example_loss)
+            print(label_weights)
+            print(per_example_loss)
+            sys.exit()
             #denominator = tf.reduce_sum(label_weights) + 1e-5
             #loss = numerator / denominator
 
@@ -190,11 +193,7 @@ def replace_elements_by_indices(old, new, indices):
     batch_size = old_shape[0]
     seq_length = old_shape[1]
 
-    print(old_shape)
     flat_offsets = tf.reshape(tf.range(0, batch_size, dtype=tf.int32) * seq_length, [-1, 1])
-    print(flat_offsets)
-
-    sys.exit()
     flat_positions = tf.reshape(indices + flat_offsets, [-1])
 
     zeros = tf.zeros(tf.shape(input=flat_positions)[0], dtype=tf.int32)
@@ -239,9 +238,9 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         masks_list = tf.constant([MASK_ID] * (FLAGS.max_predictions_per_seq * batch_size))
         #[B, 20]
         masked_lm_weights = tf.ones(modeling.get_shape_list(masked_lm_positions))
-
-
+        #[B, S]
         masked_input_ids = replace_elements_by_indices(input_ids, masks_list, masked_lm_positions)
+        #[B, 20]
         masked_lm_ids = gather_indexes_rank2(input_ids, masked_lm_positions)
 
         is_training = (mode == tf.estimator.ModeKeys.TRAIN)
