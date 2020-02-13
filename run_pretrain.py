@@ -187,26 +187,35 @@ def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, 
 
 def replace_elements_by_indices(old, new, indices):
     old_shape = modeling.get_shape_list(old)
+    print(old_shape)
     batch_size = old_shape[0]
     seq_length = old_shape[1]
 
-
     flat_offsets = tf.reshape(
         tf.range(0, batch_size, dtype=tf.int32) * seq_length, [-1, 1])
+    print(flat_offsets)
     flat_positions = tf.reshape(indices + flat_offsets, [-1])
+    print(flat_positions)
 
     zeros = tf.zeros(tf.shape(input=flat_positions)[0], dtype=tf.int32)
+    print(zeros)
 
     flat_old = tf.reshape(old, [-1])
+    print(flat_old)
 
     masked_lm_mask = tf.compat.v1.sparse_to_dense(flat_positions, tf.shape(input=flat_old), zeros, default_value=1,
-                                        validate_indices=True, name="masked_lm_mask")
+                                                  validate_indices=True, name="masked_lm_mask")
+    print(masked_lm_mask)
 
     flat_old_temp = tf.multiply(flat_old, masked_lm_mask)
+    print(flat_old_temp)
     new_temp = tf.compat.v1.sparse_to_dense(flat_positions, tf.shape(input=flat_old), new,
-                                                        default_value=0, validate_indices=True, name=None)
+                                            default_value=0, validate_indices=True, name=None)
+    print(new_temp)
 
     updated_old = tf.reshape(flat_old_temp + new_temp, old_shape)
+    print(updated_old)
+    sys.exit()
 
     return updated_old
 
@@ -229,10 +238,15 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         input_mask = features["input_mask"]
         segment_ids = features["segment_ids"]
 
-        batch_size = modeling.get_shape_list(input_ids)[0]
-        masked_lm_positions = tf.constant([sorted(random.sample(range(1, FLAGS.max_seq_length-1), FLAGS.max_predictions_per_seq)) for i in range(batch_size)])
+        batch_size = modeling.get_shape_list(input_ids)[0] #batch_size
+
+        #[B, 20]
+        masked_lm_positions = tf.constant([sorted(random.sample(range(1, FLAGS.max_seq_length-2), FLAGS.max_predictions_per_seq)) for i in range(batch_size)])
+        #[20*B]
         masks_list = tf.constant([MASK_ID] * (FLAGS.max_predictions_per_seq * batch_size))
+        #[B, 20]
         masked_lm_weights = tf.ones(modeling.get_shape_list(masked_lm_positions))
+
 
         masked_input_ids = replace_elements_by_indices(input_ids, masks_list, masked_lm_positions)
         masked_lm_ids = gather_indexes_rank2(input_ids, masked_lm_positions)
