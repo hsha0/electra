@@ -1,9 +1,9 @@
-TPU_NAME='grpc://10.122.63.170:8470'
+TPU_NAME='grpc://10.68.243.130:8470'
 ELECTRA_GC='gs://electra'
 
 python3 run_pretrain.py \
 --input_file=$ELECTRA_GC/data_128_sent_CLS/*.tfrecord \
---output_dir=$ELECTRA_GC/electra_pretrain/electra_h256_bz1024_lr0.001 \
+--output_dir=$ELECTRA_GC/electra_pretrain/electra_h256_w50 \
 --vocab_file=vocab.txt \
 --do_train=True \
 --learning_rate=0.001 \
