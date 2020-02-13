@@ -14,6 +14,6 @@ python3 run_classifier.py \
 --learning_rate=3e-4 \
 --max_seq_length=128 \
 --num_train_epochs=3.0 \
---seed=12345 \
+--seed=$1 \
 --use_tpu=True \
 --tpu_name=$TPU_NAME
