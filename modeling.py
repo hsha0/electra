@@ -189,7 +189,7 @@ class Generator(object):
     if token_type_ids is None:
       token_type_ids = tf.zeros(shape=[batch_size, seq_length], dtype=tf.int32)
 
-    with tf.variable_scope(scope, default_name="bert"):
+    with tf.variable_scope(scope, default_name="Generator"):
       with tf.variable_scope("embeddings"):
         # Perform embedding lookup on the word ids.
         (self.word_embedding_output,
@@ -345,7 +345,7 @@ class Discriminator(object):
     if token_type_ids is None:
       token_type_ids = tf.zeros(shape=[batch_size, seq_length], dtype=tf.int32)
 
-    with tf.variable_scope(scope, default_name="bert"):
+    with tf.variable_scope(scope, default_name="Discriminator"):
       with tf.variable_scope("embeddings"):
         # Perform embedding lookup on the word ids.
         (self.word_embedding_output,
