@@ -41,7 +41,7 @@ class ElectraConfig(object):
   def __init__(self,
                vocab_size,
                embedding_size=128,
-               hidden_size=256,
+               hidden_size=768,
                num_hidden_layers=12,
                num_hidden_groups=1,
                num_attention_heads=4,
@@ -99,6 +99,7 @@ class ElectraConfig(object):
     self.max_position_embeddings = max_position_embeddings
     self.type_vocab_size = type_vocab_size
     self.initializer_range = initializer_range
+    self.generator_size = generator_size
 
   @classmethod
   def from_dict(cls, json_object):
