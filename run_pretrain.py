@@ -187,35 +187,28 @@ def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, 
 
 def replace_elements_by_indices(old, new, indices):
     old_shape = modeling.get_shape_list(old)
-    print(old_shape)
     batch_size = old_shape[0]
     seq_length = old_shape[1]
 
+    print(old_shape)
     flat_offsets = tf.reshape(tf.range(0, batch_size, dtype=tf.int32) * seq_length, [-1, 1])
-    temp = indices + flat_offsets
-    print(temp)
+    print(flat_offsets)
+
+    sys.exit()
     flat_positions = tf.reshape(indices + flat_offsets, [-1])
-    print(flat_positions)
 
     zeros = tf.zeros(tf.shape(input=flat_positions)[0], dtype=tf.int32)
-    print(zeros)
 
     flat_old = tf.reshape(old, [-1])
-    print(flat_old)
 
     masked_lm_mask = tf.compat.v1.sparse_to_dense(flat_positions, tf.shape(input=flat_old), zeros, default_value=1,
                                                   validate_indices=True, name="masked_lm_mask")
-    print(masked_lm_mask)
 
     flat_old_temp = tf.multiply(flat_old, masked_lm_mask)
-    print(flat_old_temp)
     new_temp = tf.compat.v1.sparse_to_dense(flat_positions, tf.shape(input=flat_old), new,
                                             default_value=0, validate_indices=True, name=None)
-    print(new_temp)
 
     updated_old = tf.reshape(flat_old_temp + new_temp, old_shape)
-    print(updated_old)
-    sys.exit()
 
     return updated_old
 
