@@ -44,7 +44,7 @@ class ElectraConfig(object):
                hidden_size=256,
                num_hidden_layers=12,
                num_hidden_groups=1,
-               num_attention_heads=16,
+               num_attention_heads=4,
                intermediate_size=1024,
                generator_size=0.25,
                inner_group_num=1,

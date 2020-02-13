@@ -9,9 +9,9 @@ python3 run_pretrain.py \
 --learning_rate=0.001 \
 --train_batch_size=2048 \
 --max_seq_length=128 \
---num_train_steps=125000 \
+--num_train_steps=250000 \
 --max_predictions_per_seq=20 \
---save_checkpoints_steps=1000 \
---iterations_per_loop=1000 \
+--save_checkpoints_steps=6250 \
+--iterations_per_loop=6250 \
 --use_tpu=true \
 --tpu_name=$TPU_NAME
