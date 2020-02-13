@@ -257,6 +257,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         zero = tf.constant(0, dtype=tf.float32)
         diff_cast = tf.not_equal(diff, zero)
         print(diff_cast)
+        sys.exit()
 
         zeros = tf.zeros(modeling.get_shape_list(input_ids), dtype=tf.int32)
         whether_replaced = replace_elements_by_indices(zeros, diff, masked_lm_positions)
