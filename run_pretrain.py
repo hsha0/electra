@@ -252,20 +252,11 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
 
         masked_lm_predictions = tf.argmax(input=masked_logits, axis=-1, output_type=tf.int32)
         masked_lm_ids = tf.reshape(masked_lm_ids, [-1])
-        diff = masked_lm_predictions - masked_lm_ids
-        print(diff)
-        sys.exit()
+        diff = masked_lm_predictions - masked_lm_ids # [B*20]
 
-
-        #diff_cast = tf.gather_nd(tf.cast(tf.not_equal(diff, zero), dtype=tf.int32), non_zeros_coords)
-
-        #index = tf.expand_dims(tf.range(0, batch_size), 1)
-        #dup_index = tf.expand_dims(tf.reshape(tf.tile(index, multiples=[1, FLAGS.max_predictions_per_seq]), [-1]), 1)
-        #positions = tf.concat([dup_index, tf.expand_dims(positions_col2, 1)], 1)
-        #positions = tf.gather_nd(positions, non_zeros_coords)
-
-        #whether_replaced = tf.sparse_to_dense(positions, tf.shape(input_ids), diff_cast, default_value=0,
-                                              #validate_indices=True, name="whether_replaced")
+        zero = tf.constant(0, dtype=tf.float32)
+        diff_cast = tf.not_equal(diff, zero)
+        print(diff_cast)
 
         zeros = tf.zeros(modeling.get_shape_list(input_ids), dtype=tf.int32)
         whether_replaced = replace_elements_by_indices(zeros, diff, masked_lm_positions)
