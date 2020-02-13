@@ -1,4 +1,4 @@
-TPU_NAME='grpc://10.34.148.162:8470'
+TPU_NAME='grpc://10.64.170.218:8470'
 ELECTRA_GC='gs://electra'
 #INIT_CKPT=$ELECTRA_GC/electra_pretrain/electra_5e-4_bz1024/model.ckpt-125000
 TASK=MRPC
