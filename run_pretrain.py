@@ -174,10 +174,6 @@ def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, 
                 name='sigmoid_cross_entropy',
             )
 
-
-            print(sigmoid_cross_entropy)
-            sys.exit()
-
             loss = tf.reduce_sum(input_tensor=sigmoid_cross_entropy)
     return (loss)
 
@@ -305,7 +301,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
                             init_string)
         """
         output_spec = None
-        total_loss = masked_lm_loss + FLAGS.disc_loss_weight*disc_loss
+        total_loss = masked_lm_loss + FLAGS.disc_loss_weight * disc_loss
         if mode == tf.estimator.ModeKeys.TRAIN:
             '''
             gen_train_op = optimization.create_optimizer(
