@@ -1,6 +1,6 @@
 TPU_NAME='grpc://10.84.229.210:8470'
 ELECTRA_GC='gs://electra'
-INIT_CKPT=$ELECTRA_GC/electra_pretrain/electra_h256_w50/model.ckpt-28000
+INIT_CKPT=$ELECTRA_GC/electra_pretrain/electra_h256_w50/model.ckpt-41000
 TASK=MNLI
 
 python3 run_classifier.py \
