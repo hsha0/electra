@@ -154,10 +154,7 @@ def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, 
     seq_length = sequence_shape[1]
     width = sequence_shape[2]
 
-    print(whether_replaced)
-    print(sequence_tensor)
     sequence_tensor = tf.reshape(sequence_tensor, [batch_size * seq_length, width])
-    print(sequence_tensor)
 
     with tf.compat.v1.variable_scope("discriminator"):
         with tf.compat.v1.variable_scope("whether_replaced/predictions"):
@@ -169,7 +166,7 @@ def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, 
             logits = modeling.layer_norm(output)
 
             whether_replaced = tf.reshape(whether_replaced, [-1])
-            one_hot_labels = tf.one_hot(whether_replaced, depth=2, dtype=tf.int32)
+            one_hot_labels = tf.one_hot(whether_replaced, depth=2, dtype=tf.float32)
 
             sigmoid_cross_entropy = tf.nn.sigmoid_cross_entropy_with_logits(
                 labels=one_hot_labels,
