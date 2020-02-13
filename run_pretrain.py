@@ -254,7 +254,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         masked_lm_ids = tf.reshape(masked_lm_ids, [-1])
         diff = masked_lm_predictions - masked_lm_ids # [B*20]
 
-        zero = tf.constant(0, dtype=tf.float32)
+        zero = tf.constant(0, dtype=tf.int32)
         diff_cast = tf.not_equal(diff, zero)
         print(diff_cast)
         sys.exit()
