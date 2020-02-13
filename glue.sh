@@ -6,7 +6,7 @@ TASK=MNLI
 python3 run_classifier.py \
 --task_name=$TASK \
 --data_dir=$ELECTRA_GC/glue/glue_data/$TASK \
---output_dir=$ELECTRA_GC/glue/glue_results/bz1024/$TASK \
+--output_dir=$ELECTRA_GC/glue/glue_results/h768_s0/$TASK \
 --init_checkpoint=$INIT_CKPT \
 --vocab_file=vocab.txt \
 --do_train=True \
