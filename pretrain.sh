@@ -3,7 +3,7 @@ ELECTRA_GC='gs://electra'
 
 python3 run_pretrain.py \
 --input_file=$ELECTRA_GC/data_128_sent_CLS/*.tfrecord \
---output_dir=$ELECTRA_GC/electra_pretrain/electra_h768 \
+--output_dir=$ELECTRA_GC/electra_pretrain/electra_h1024 \
 --vocab_file=vocab.txt \
 --do_train=True \
 --learning_rate=0.001 \
