@@ -154,7 +154,9 @@ def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, 
     seq_length = sequence_shape[1]
     width = sequence_shape[2]
 
+    print(sequence_tensor)
     sequence_tensor = tf.reshape(sequence_tensor, [batch_size * seq_length, width])
+    print(sequence_tensor)
 
     with tf.compat.v1.variable_scope("discriminator"):
         with tf.compat.v1.variable_scope("whether_replaced/predictions"):
@@ -164,6 +166,8 @@ def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, 
                                      kernel_initializer=modeling.create_initializer(
                                          electra_config.initializer_range))
             logits = modeling.layer_norm(output)
+            print(logits)
+            sys.exit()
 
             whether_replaced = tf.reshape(whether_replaced, [-1])
             one_hot_labels = tf.one_hot(whether_replaced, depth=2, dtype=tf.float32)
@@ -255,23 +259,11 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         diff = masked_lm_predictions - masked_lm_ids # [B*20]
 
         zero = tf.constant(0, dtype=tf.int32)
+        #!!!!ERROR!!! fixed
         diff_cast = tf.cast(tf.not_equal(diff, zero), tf.int32)
-        print(diff_cast)
-        sys.exit()
 
         zeros = tf.zeros(modeling.get_shape_list(input_ids), dtype=tf.int32)
-        whether_replaced = replace_elements_by_indices(zeros, diff, masked_lm_positions)
-
-
-        #zeros = tf.zeros(tf.shape(non_zeros_coords)[0], dtype=tf.int32)
-        #masked_lm_mask = tf.sparse_to_dense(positions, tf.shape(input_ids), zeros, default_value=1,
-        #                                    validate_indices=True, name="masked_lm_mask")
-
-        #input_ids_temp = tf.multiply(input_ids, masked_lm_mask)
-
-        #masked_lm_predictions_positive = tf.gather_nd(masked_lm_predictions, non_zeros_coords)
-        #masked_lm_predictions_temp = tf.sparse_to_dense(positions, tf.shape(input_ids), masked_lm_predictions_positive,
-        #                                                default_value=0, validate_indices=True, name=None)
+        whether_replaced = replace_elements_by_indices(zeros, diff_cast, masked_lm_positions)
 
         input_ids_for_discriminator = replace_elements_by_indices(masked_input_ids, masked_lm_predictions, masked_lm_positions)
 
