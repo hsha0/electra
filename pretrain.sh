@@ -1,12 +1,12 @@
-TPU_NAME='grpc://10.11.225.90:8470'
+TPU_NAME='grpc://10.122.63.170:8470'
 ELECTRA_GC='gs://electra'
 
 python3 run_pretrain.py \
 --input_file=$ELECTRA_GC/data_128_sent_CLS/*.tfrecord \
---output_dir=$ELECTRA_GC/electra_pretrain/electra_3072 \
+--output_dir=$ELECTRA_GC/electra_pretrain/electra_h768 \
 --vocab_file=vocab.txt \
 --do_train=True \
---learning_rate=0.00176 \
+--learning_rate=0.001 \
 --train_batch_size=1024 \
 --max_seq_length=128 \
 --num_train_steps=125000 \
