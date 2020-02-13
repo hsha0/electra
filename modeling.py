@@ -188,9 +188,7 @@ class Generator(object):
 
     if token_type_ids is None:
       token_type_ids = tf.zeros(shape=[batch_size, seq_length], dtype=tf.int32)
-
-    with tf.variable_scope(scope, default_name="Generator"):
-      with tf.variable_scope("embeddings"):
+    with tf.variable_scope("embeddings"):
         # Perform embedding lookup on the word ids.
         (self.word_embedding_output,
          self.output_embedding_table) = embedding_lookup(
@@ -215,6 +213,7 @@ class Generator(object):
             max_position_embeddings=config.max_position_embeddings,
             dropout_prob=config.hidden_dropout_prob)
 
+    with tf.variable_scope(scope, default_name="Generator"):
       with tf.variable_scope("encoder"):
 
         # Run the stacked transformer.
@@ -345,7 +344,7 @@ class Discriminator(object):
     if token_type_ids is None:
       token_type_ids = tf.zeros(shape=[batch_size, seq_length], dtype=tf.int32)
 
-    with tf.variable_scope("embeddings"):
+    with tf.variable_scope("embeddings", reuse=tf.AUTO_REUSE):
         # Perform embedding lookup on the word ids.
         (self.word_embedding_output,
          self.output_embedding_table) = embedding_lookup(
