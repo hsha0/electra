@@ -154,6 +154,7 @@ def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, 
     seq_length = sequence_shape[1]
     width = sequence_shape[2]
 
+    print(whether_replaced)
     print(sequence_tensor)
     sequence_tensor = tf.reshape(sequence_tensor, [batch_size * seq_length, width])
     print(sequence_tensor)
