@@ -230,7 +230,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         segment_ids = features["segment_ids"]
 
         batch_size = modeling.get_shape_list(input_ids)[0]
-        masked_lm_positions = tf.constant([sorted(random.sample(range(0, FLAGS.max_seq_length), FLAGS.max_predictions_per_seq)) for i in range(batch_size)])
+        masked_lm_positions = tf.constant([sorted(random.sample(range(1, FLAGS.max_seq_length-1), FLAGS.max_predictions_per_seq)) for i in range(batch_size)])
         masks_list = tf.constant([MASK_ID] * (FLAGS.max_predictions_per_seq * batch_size))
         masked_lm_weights = tf.ones(modeling.get_shape_list(masked_lm_positions))
 
@@ -467,19 +467,6 @@ def gather_indexes_rank2(sequence_tensor, positions):
   output_tensor = tf.reshape(output_tensor, [batch_size, FLAGS.max_predictions_per_seq])
   return output_tensor
 
-def read_data(data_dir):
-    pre = os.getcwd()
-    os.chdir(data_dir)
-    data = ''
-    for file in glob.glob('*.txt')[:1]:
-        with open(file, 'r') as f:
-            lines = [x for x in f.read().splitlines() if x != '']
-            lines = ' '.join(lines)
-            data += lines + ' '
-    os.chdir(pre)
-
-    return data
-
 
 def main():
     tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.INFO)
@@ -499,12 +486,6 @@ def main():
     for input_file in input_files:
         tf.compat.v1.logging.info("  %s" % input_file)
 
-
-    #data_dir = FLAGS.data_dir
-    #data = read_data(data_dir)
-    #print(data)
-
-
     tpu_cluster_resolver = None
     if FLAGS.use_tpu and FLAGS.tpu_name:
         tpu_cluster_resolver = tf.distribute.cluster_resolver.TPUClusterResolver(
@@ -515,7 +496,7 @@ def main():
         cluster=tpu_cluster_resolver,
         master=FLAGS.master,
         model_dir=FLAGS.output_dir,
-        keep_checkpoint_max=0,
+        keep_checkpoint_max=None,
         save_checkpoints_steps=FLAGS.save_checkpoints_steps,
         tpu_config=tf.compat.v1.estimator.tpu.TPUConfig(
             iterations_per_loop=FLAGS.iterations_per_loop,
@@ -530,8 +511,6 @@ def main():
         num_warmup_steps=FLAGS.num_warmup_steps,
         use_tpu=FLAGS.use_tpu,
         use_one_hot_embeddings=FLAGS.use_tpu)
-
-    print("finish building model")
 
     # If TPU is not available, this will fall back to normal Estimator on CPU
     # or GPU.

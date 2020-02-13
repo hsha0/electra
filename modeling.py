@@ -159,7 +159,7 @@ class Generator(object):
                     input_tensor=self.embedding_output,
                     attention_mask=input_mask,
                     hidden_size=int(config.hidden_size * config.generator_size),
-                    num_hidden_layers=int(config.num_hidden_layers * config.generator_size),
+                    num_hidden_layers=config.num_hidden_layers,
                     num_hidden_groups=config.num_hidden_groups,
                     num_attention_heads=int(config.num_attention_heads * config.generator_size),
                     intermediate_size=int(config.intermediate_size * config.generator_size),
