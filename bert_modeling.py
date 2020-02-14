@@ -967,8 +967,6 @@ def transformer_model(input_tensor,
 
   attention_head_size = int(hidden_size / num_attention_heads)
   input_shape = get_shape_list(input_tensor, expected_rank=3)
-  batch_size = input_shape[0]
-  seq_length = input_shape[1]
   input_width = input_shape[2]
 
   # The Transformer performs sum residuals on all layers so the input needs
@@ -979,12 +977,16 @@ def transformer_model(input_tensor,
         None, name="embedding_hidden_mapping_in")
   else:
     prev_output = input_tensor
+  input_shape = get_shape_list(input_tensor, expected_rank=3)
+  batch_size = input_shape[0]
+  seq_length = input_shape[1]
 
   # We keep the representation as a 2D tensor to avoid re-shaping it back and
   # forth from a 3D tensor to a 2D tensor. Re-shapes are normally free on
   # the GPU/CPU but may not be free on the TPU, so we want to minimize them to
   # help the optimizer.
-  prev_output = reshape_to_matrix(input_tensor)
+
+  #prev_output = reshape_to_matrix(input_tensor)
 
   all_layer_outputs = []
   for layer_idx in range(num_hidden_layers):
