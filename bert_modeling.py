@@ -333,7 +333,7 @@ class Discriminator(object):
         (self.embedding_output, self.embedding_table) = embedding_lookup(
             input_ids=input_ids,
             vocab_size=config.vocab_size,
-            embedding_size=config.hidden_size,
+            embedding_size=config.embedding_size,
             initializer_range=config.initializer_range,
             word_embedding_name="word_embeddings",
             use_one_hot_embeddings=use_one_hot_embeddings)
