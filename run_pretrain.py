@@ -106,8 +106,12 @@ else:
     import bert_modeling as modeling
 
 def model_summary():
-    model_vars = tf.trainable_variables()
-    slim.model_analyzer.analyze_vars(model_vars, print_info=True)
+    with tf.variable_scope("embeddings"):
+        model_tvars = tf.trainable_variables(scope="embeddings")
+
+    disc_tvars = tf.trainable_variables(scope="discriminator")
+    model_tvars.extend(disc_tvars)
+    slim.model_analyzer.analyze_vars(model_tvars, print_info=True)
 
 def get_config():
     config = modeling.ElectraConfig(30522)
@@ -336,10 +340,11 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
                 train_op=train_op,
                 scaffold_fn=scaffold_fn,
             )
-
+            """
             tf.profiler.profile(
                 tf.get_default_graph(),
                 options=tf.profiler.ProfileOptionBuilder.float_operation())
+            """
 
         return output_spec
 
