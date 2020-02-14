@@ -1027,7 +1027,7 @@ def transformer_model(input_tensor,
               kernel_initializer=create_initializer(initializer_range))
           attention_output = dropout(attention_output, hidden_dropout_prob)
 
-          layer_input = tf.reshape(layer_input, [-1, 256])
+          layer_input = tf.reshape(layer_input, tf.shape(attention_output))
           attention_output = layer_norm(attention_output + layer_input)
 
       # The activation is only applied to the "intermediate" hidden layer.
