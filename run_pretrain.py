@@ -455,7 +455,7 @@ def main():
     if not FLAGS.do_train and not FLAGS.do_eval:
         raise ValueError("At least one of `do_train` or `do_eval` must be True.")
 
-    electra_config = get_config()
+    electra_config = modeling.ElectraConfig.from_json_file(FLAGS.electra_config_file)
 
     tf.io.gfile.makedirs(FLAGS.output_dir)
 

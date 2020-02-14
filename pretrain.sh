@@ -1,14 +1,15 @@
 TPU_NAME='grpc://10.68.243.130:8470'
 ELECTRA_GC='gs://electra'
-MODEL=bert
+MODEL=albert
+CONFIG='config/ale_small.json'
 
 python3 run_pretrain.py \
 --input_file=$ELECTRA_GC/data_128_sent_CLS/*.tfrecord \
---output_dir=$ELECTRA_GC/electra_pretrain/bert_ele_h256_l128 \
+--output_dir=$ELECTRA_GC/electra_pretrain/ele${MODEL}_h256_l128 \
 --vocab_file=vocab.txt \
 --model=$MODEL \
 --do_train=True \
---learning_rate=5e-4 \
+--learning_rate=5e-5 \
 --train_batch_size=1024 \
 --max_seq_length=128 \
 --num_train_steps=87500 \
