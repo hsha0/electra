@@ -176,10 +176,10 @@ class Generator(object):
 
     with tf.variable_scope("embeddings"):
         # Perform embedding lookup on the word ids.
-        (self.embedding_output, self.embedding_table) = embedding_lookup(
+        (self.word_embedding_output, self.embedding_table) = embedding_lookup(
             input_ids=input_ids,
             vocab_size=config.vocab_size,
-            embedding_size=config.hidden_size,
+            embedding_size=config.embedding_size,
             initializer_range=config.initializer_range,
             word_embedding_name="word_embeddings",
             use_one_hot_embeddings=use_one_hot_embeddings)
@@ -234,6 +234,18 @@ class Generator(object):
 
   def get_all_encoder_layers(self):
     return self.all_encoder_layers
+
+  def get_word_embedding_output(self):
+    """Get output of the word(piece) embedding lookup.
+
+    This is BEFORE positional embeddings and token type embeddings have been
+    added.
+
+    Returns:
+      float Tensor of shape [batch_size, seq_length, hidden_size] corresponding
+      to the output of the word(piece) embedding layer.
+    """
+    return self.word_embedding_output
 
   def get_embedding_output(self):
     """Gets output of the embedding lookup (i.e., input to the transformer).
@@ -317,7 +329,7 @@ class Discriminator(object):
       token_type_ids = tf.zeros(shape=[batch_size, seq_length], dtype=tf.int32)
 
 
-    with tf.variable_scope("embeddings"):
+    with tf.variable_scope("embeddings", resue=tf.AUTO_REUSE):
         # Perform embedding lookup on the word ids.
         (self.embedding_output, self.embedding_table) = embedding_lookup(
             input_ids=input_ids,
@@ -962,8 +974,11 @@ def transformer_model(input_tensor,
   # The Transformer performs sum residuals on all layers so the input needs
   # to be the same as the hidden size.
   if input_width != hidden_size:
-    raise ValueError("The width of the input tensor (%d) != hidden size (%d)" %
-                     (input_width, hidden_size))
+    prev_output = dense_layer_2d(
+        input_tensor, hidden_size, create_initializer(initializer_range),
+        None, name="embedding_hidden_mapping_in")
+  else:
+    prev_output = input_tensor
 
   # We keep the representation as a 2D tensor to avoid re-shaping it back and
   # forth from a 3D tensor to a 2D tensor. Re-shapes are normally free on
@@ -1039,6 +1054,43 @@ def transformer_model(input_tensor,
   else:
     final_output = reshape_from_matrix(prev_output, input_shape)
     return final_output
+
+
+def dense_layer_2d(input_tensor,
+                   output_size,
+                   initializer,
+                   activation,
+                   num_attention_heads=1,
+                   name=None):
+  """A dense layer with 2D kernel.
+
+  Args:
+    input_tensor: Float tensor with rank 3.
+    output_size: The size of output dimension.
+    initializer: Kernel initializer.
+    activation: Activation function.
+    num_attention_heads: number of attention head in attention layer.
+    name: The name scope of this layer.
+
+  Returns:
+    float logits Tensor.
+  """
+  del num_attention_heads  # unused
+  input_shape = get_shape_list(input_tensor)
+  hidden_size = input_shape[2]
+  with tf.variable_scope(name):
+    w = tf.get_variable(
+        name="kernel",
+        shape=[hidden_size, output_size],
+        initializer=initializer)
+    b = tf.get_variable(
+        name="bias", shape=[output_size], initializer=tf.zeros_initializer)
+    ret = tf.einsum("BFH,HO->BFO", input_tensor, w)
+    ret += b
+  if activation is not None:
+    return activation(ret)
+  else:
+    return ret
 
 
 def get_shape_list(tensor, expected_rank=None, name=None):
