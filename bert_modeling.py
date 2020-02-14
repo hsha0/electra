@@ -968,6 +968,8 @@ def transformer_model(input_tensor,
   attention_head_size = int(hidden_size / num_attention_heads)
   input_shape = get_shape_list(input_tensor, expected_rank=3)
   input_width = input_shape[2]
+  batch_size = input_shape[0]
+  seq_length = input_shape[1]
 
   # The Transformer performs sum residuals on all layers so the input needs
   # to be the same as the hidden size.
@@ -978,8 +980,7 @@ def transformer_model(input_tensor,
   else:
     prev_output = input_tensor
   input_shape = get_shape_list(input_tensor, expected_rank=3)
-  batch_size = input_shape[0]
-  seq_length = input_shape[1]
+
 
   # We keep the representation as a 2D tensor to avoid re-shaping it back and
   # forth from a 3D tensor to a 2D tensor. Re-shapes are normally free on
