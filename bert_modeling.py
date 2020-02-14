@@ -211,10 +211,10 @@ class Generator(object):
         self.all_encoder_layers = transformer_model(
             input_tensor=self.embedding_output,
             attention_mask=attention_mask,
-            hidden_size=config.hidden_size,
+            hidden_size=int(config.hidden_size * config.generator_size),
             num_hidden_layers=config.num_hidden_layers,
-            num_attention_heads=config.num_attention_heads,
-            intermediate_size=config.intermediate_size,
+            num_attention_heads=int(config.num_attention_heads * config.generator_size),
+            intermediate_size=int(config.intermediate_size * config.generator_size),
             intermediate_act_fn=get_activation(config.hidden_act),
             hidden_dropout_prob=config.hidden_dropout_prob,
             attention_probs_dropout_prob=config.attention_probs_dropout_prob,
