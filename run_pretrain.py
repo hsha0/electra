@@ -477,7 +477,7 @@ def main():
         cluster=tpu_cluster_resolver,
         master=FLAGS.master,
         model_dir=FLAGS.output_dir,
-        keep_checkpoint_max=None,
+        keep_checkpoint_max=5,
         save_checkpoints_steps=FLAGS.save_checkpoints_steps,
         tpu_config=tf.compat.v1.estimator.tpu.TPUConfig(
             iterations_per_loop=FLAGS.iterations_per_loop,
