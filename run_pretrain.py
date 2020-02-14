@@ -1,6 +1,5 @@
 import glob
 import tensorflow as tf
-import modeling
 import optimization
 import os
 import sys
@@ -21,6 +20,11 @@ flags.DEFINE_string(
 flags.DEFINE_string(
     "input_file", None,
     "Input TF example files (can be a glob or comma separated).")
+
+flags.DEFINE_string(
+    "model", None,
+    "Model for generator and discriminator. One of [bert, albert]"
+)
 
 flags.DEFINE_string('output_dir', None, "Path to output directory.")
 
@@ -94,6 +98,12 @@ masked_token = ["[MASK]"]
 tokenizer = tokenization.FullTokenizer(
         vocab_file=FLAGS.vocab_file, do_lower_case=FLAGS.do_lower_case)
 MASK_ID = tokenizer.convert_tokens_to_ids(masked_token)[0]
+
+
+if FLAGS.model == "albert":
+    import albert_modeling as modeling
+else:
+    import bert_modeling as modeling
 
 def model_summary():
     model_vars = tf.trainable_variables()

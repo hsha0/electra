@@ -22,7 +22,6 @@ import collections
 import csv
 import os
 import sys
-import modeling
 import optimization
 import tokenization
 import tensorflow as tf
@@ -42,6 +41,11 @@ flags.DEFINE_string("task_name", None, "The name of the task to train.")
 
 flags.DEFINE_string("vocab_file", None,
                     "The vocabulary file that the BERT model was trained on.")
+
+flags.DEFINE_string(
+    "model", None,
+    "Model for generator and discriminator. One of [bert, albert]"
+)
 
 flags.DEFINE_string(
     "output_dir", None,
@@ -121,6 +125,11 @@ flags.DEFINE_string("master", None, "[Optional] TensorFlow master URL.")
 flags.DEFINE_integer(
     "num_tpu_cores", 8,
     "Only used if `use_tpu` is True. Total number of TPU cores to use.")
+
+if FLAGS.model == "albert":
+    import albert_modeling as modeling
+else:
+    import bert_modeling as modeling
 
 
 class InputExample(object):
