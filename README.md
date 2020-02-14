@@ -3,7 +3,7 @@
 ## Introduction
 My own implementation of ELECTRA.
 
-## Usage Example
+## Pretraining
 ```commandline
 python3 run_pretrain.py \
 --electra_config_file=CONFIG_FILE \
