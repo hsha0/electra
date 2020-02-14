@@ -952,9 +952,12 @@ def model_fn_builder(electra_config, num_labels, init_checkpoint, learning_rate,
             predictions = tf.argmax(input=logits, axis=-1, output_type=tf.int32)
             loss = tf.compat.v1.metrics.mean(values=per_example_loss, weights=is_real_example)
             mcc = tf.compat.v1.metrics.mean(mcc_metric(y_true=label_ids, y_pred=predictions))
+            accuracy = tf.compat.v1.metrics.accuracy(
+                labels=label_ids, predictions=predictions, weights=is_real_example)
             return {
                 "eval_mcc": mcc,
                 "eval_loss": loss,
+                "eval_accuracy": accuracy,
             }
         else:
             predictions = tf.argmax(input=logits, axis=-1, output_type=tf.int32)
