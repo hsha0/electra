@@ -511,7 +511,10 @@ def main():
             max_predictions_per_seq=FLAGS.max_predictions_per_seq,
             is_training=True)
 
-        estimator.train(input_fn=train_input_fn, max_steps=1 )#FLAGS.num_train_steps)
+        estimator.train(input_fn=train_input_fn, max_steps= FLAGS.num_train_steps)
+        tf.profiler.profile(
+            tf.get_default_graph(),
+            options=tf.profiler.ProfileOptionBuilder.float_operation())
 
         estimator.export_savedmodel(FLAGS.model + '_ele_model', train_input_fn)
         sys.exit()

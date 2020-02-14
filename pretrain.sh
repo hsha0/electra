@@ -6,7 +6,7 @@ CONFIG='config/ale_small.json'
 python3 run_pretrain.py \
 --electra_config_file=$CONFIG \
 --input_file=$ELECTRA_GC/data_128_sent_CLS/*.tfrecord \
---output_dir=$ELECTRA_GC/electra_pretrain/ele${MODEL}_h256_l128 \
+--output_dir=$ELECTRA_GC/electra_pretrain/ele_${MODEL}_h256_l128 \
 --vocab_file=vocab.txt \
 --model=$MODEL \
 --do_train=True \
