@@ -7,7 +7,7 @@ TASK=SST-2
 python3 run_classifier.py \
 --task_name=$TASK \
 --data_dir=$ELECTRA_GC/glue/glue_data/$TASK \
---output_dir=$ELECTRA_GC/glue/glue_results/h256_0/$TASK \
+--output_dir=$ELECTRA_GC/glue/glue_results/h1024_w50/$TASK \
 --init_checkpoint=$INIT_CKPT \
 --vocab_file=vocab.txt \
 --model=$MODEL \
