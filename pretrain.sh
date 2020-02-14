@@ -4,7 +4,7 @@ MODEL=bert
 
 python3 run_pretrain.py \
 --input_file=$ELECTRA_GC/data_128_sent_CLS/*.tfrecord \
---output_dir=$ELECTRA_GC/electra_pretrain/$MODEL_electra_h256_l128 \
+--output_dir=$ELECTRA_GC/electra_pretrain/bert_ele_h256_l128 \
 --vocab_file=vocab.txt \
 --model=$MODEL \
 --do_train=True \
