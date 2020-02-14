@@ -337,6 +337,10 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
                 scaffold_fn=scaffold_fn,
             )
 
+            tf.profiler.profile(
+                tf.get_default_graph(),
+                options=tf.profiler.ProfileOptionBuilder.float_operation())
+
         return output_spec
 
     return model_fn
@@ -502,9 +506,6 @@ def main():
         train_batch_size=FLAGS.train_batch_size,
         eval_batch_size=FLAGS.eval_batch_size)
 
-    tf.profiler.profile(
-        tf.get_default_graph(),
-        options=tf.profiler.ProfileOptionBuilder.float_operation())
 
     if FLAGS.do_train:
         tf.compat.v1.logging.info("***** Running training *****")
