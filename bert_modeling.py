@@ -352,7 +352,7 @@ class Discriminator(object):
             max_position_embeddings=config.max_position_embeddings,
             dropout_prob=config.hidden_dropout_prob)
 
-    with tf.variable_scope(scope, default_name="Discriminator"):
+    with tf.variable_scope(scope, default_name="discriminator"):
       with tf.variable_scope("encoder"):
         # This converts a 2D mask of shape [batch_size, seq_length] to a 3D
         # mask of shape [batch_size, seq_length, seq_length] which is used
