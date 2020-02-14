@@ -15,7 +15,7 @@ python3 run_pretrain.py \
 --model=$MODEL \
 --do_train=True \
 --learning_rate=${LR} \
---train_batch_size=960 \
+--train_batch_size=1024 \
 --max_seq_length=${MAX_SEQ_L} \
 --num_train_steps=1 \
 --max_predictions_per_seq=20 \
