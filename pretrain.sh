@@ -1,6 +1,6 @@
 TPU_NAME='grpc://10.43.245.90:8470'
 MODEL=ale
-SIZE=small
+SIZE=base
 MAX_SEQ_L=128
 LR=5e-5
 
@@ -15,7 +15,7 @@ python3 run_pretrain.py \
 --model=$MODEL \
 --do_train=True \
 --learning_rate=${LR} \
---train_batch_size=1024 \
+--train_batch_size=960 \
 --max_seq_length=${MAX_SEQ_L} \
 --num_train_steps=1 \
 --max_predictions_per_seq=20 \
