@@ -1,6 +1,7 @@
 TPU_NAME='grpc://10.84.229.210:8470'
 ELECTRA_GC='gs://electra'
 INIT_CKPT=$ELECTRA_GC/electra_pretrain/electra_h1024_w50/model.ckpt-15000
+MODEL=albert
 TASK=MRPC
 
 python3 run_classifier.py \
@@ -9,6 +10,7 @@ python3 run_classifier.py \
 --output_dir=$ELECTRA_GC/glue/glue_results/h1024_w50/$TASK \
 --init_checkpoint=$INIT_CKPT \
 --vocab_file=vocab.txt \
+--model=$MODEL \
 --do_train=True \
 --do_eval=True \
 --train_batch_size=128 \
