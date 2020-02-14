@@ -2,7 +2,7 @@ TPU_NAME='grpc://10.23.181.186:8470'
 ELECTRA_GC='gs://electra'
 #INIT_CKPT=$ELECTRA_GC/electra_pretrain/electra_h1024_w50/model.ckpt-15000
 MODEL=albert
-TASK=QQP
+TASK=QNLI
 
 python3 run_classifier.py \
 --task_name=$TASK \
