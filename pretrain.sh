@@ -1,8 +1,8 @@
 TPU_NAME='grpc://10.43.245.90:8470'
 MODEL=ale
-SIZE=base
+SIZE=small
 MAX_SEQ_L=128
-LR=5e-5
+LR=5e-4
 
 ELECTRA_GC='gs://electra'
 CONFIG=config/${MODEL}_${SIZE}.json
@@ -17,7 +17,7 @@ python3 run_pretrain.py \
 --learning_rate=${LR} \
 --train_batch_size=1024 \
 --max_seq_length=${MAX_SEQ_L} \
---num_train_steps=1 \
+--num_train_steps=217000 \
 --max_predictions_per_seq=20 \
 --save_checkpoints_steps=1000 \
 --iterations_per_loop=1000 \
