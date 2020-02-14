@@ -187,7 +187,7 @@ class Generator(object):
         # Add positional embeddings and token type embeddings, then layer
         # normalize and perform dropout.
         self.embedding_output = embedding_postprocessor(
-            input_tensor=self.embedding_output,
+            input_tensor=self.word_embedding_output,
             use_token_type=True,
             token_type_ids=token_type_ids,
             token_type_vocab_size=config.type_vocab_size,
