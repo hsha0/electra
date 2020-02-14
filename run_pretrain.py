@@ -23,7 +23,7 @@ flags.DEFINE_string(
 
 flags.DEFINE_string(
     "model", None,
-    "Model for generator and discriminator. One of [bert, albert]"
+    "Model for generator and discriminator. One of [electra, ale]"
 )
 
 flags.DEFINE_string('output_dir', None, "Path to output directory.")
@@ -100,7 +100,7 @@ tokenizer = tokenization.FullTokenizer(
 MASK_ID = tokenizer.convert_tokens_to_ids(masked_token)[0]
 
 
-if FLAGS.model == "albert":
+if FLAGS.model == "ale":
     import albert_modeling as modeling
 else:
     import bert_modeling as modeling
@@ -502,6 +502,10 @@ def main():
         train_batch_size=FLAGS.train_batch_size,
         eval_batch_size=FLAGS.eval_batch_size)
 
+    tf.profiler.profile(
+        tf.get_default_graph(),
+        options=tf.profiler.ProfileOptionBuilder.float_operation())
+
     if FLAGS.do_train:
         tf.compat.v1.logging.info("***** Running training *****")
         tf.compat.v1.logging.info("  Batch size = %d", FLAGS.train_batch_size)
@@ -512,11 +516,8 @@ def main():
             is_training=True)
 
         estimator.train(input_fn=train_input_fn, max_steps= FLAGS.num_train_steps)
-        tf.profiler.profile(
-            tf.get_default_graph(),
-            options=tf.profiler.ProfileOptionBuilder.float_operation())
 
-        estimator.export_savedmodel(FLAGS.model + '_ele_model', train_input_fn)
+
         sys.exit()
 
 
