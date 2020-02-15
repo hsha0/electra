@@ -2,7 +2,7 @@ TPU_NAME='grpc://10.84.68.218:8470'
 MODEL=ale
 SIZE=small
 MAX_SEQ_L=128
-LR=5e-4
+LR=5e-5
 TRAIN_STEP=217000
 
 ELECTRA_GC='gs://electra'
