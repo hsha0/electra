@@ -2,6 +2,7 @@ TPU_NAME='grpc://10.23.181.186:8470'
 INIT_CKPT=$ELECTRA_GC/electra_pretrain/electra_h1024_w50/model.ckpt-15000
 MODEL=ale
 SIZE=small
+SEED=12345
 TASK_INDEX=0
 
 TASKS=(MRPC CoLA MNLI SST-2 QQP QNLI WNLI RTE STS-B)
@@ -29,6 +30,6 @@ python3 run_classifier.py \
 --learning_rate=${LR} \
 --max_seq_length=128 \
 --num_train_epochs=3.0 \
---seed=$1 \
+--seed=${SEED} \
 --use_tpu=True \
 --tpu_name=$TPU_NAME
