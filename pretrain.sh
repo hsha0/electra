@@ -1,9 +1,9 @@
-TPU_NAME='grpc://10.72.2.242:8470'
-MODEL=electra
-SIZE=small
+TPU_NAME='grpc://10.32.43.186:8470'
+MODEL=ale
+SIZE=base
 MAX_SEQ_L=128
 LR=5e-4
-TRAIN_STEP=100000
+TRAIN_STEP=208000
 
 ELECTRA_GC='gs://electra'
 CONFIG=config/${MODEL}_${SIZE}.json
