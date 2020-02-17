@@ -1,5 +1,5 @@
 TPU_NAME='grpc://10.32.43.186:8470'
-MODEL=ale
+MODEL=electra
 SIZE=small
 MAX_SEQ_L=128
 LR=2e-5
