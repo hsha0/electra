@@ -1,8 +1,8 @@
 TPU_NAME='grpc://10.32.43.186:8470'
-MODEL=electra
+MODEL=ale
 SIZE=small
 MAX_SEQ_L=128
-LR=2e-5
+LR=3e-5
 TRAIN_STEP=208000
 
 ELECTRA_GC='gs://electra'
