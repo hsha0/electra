@@ -26,7 +26,7 @@ import optimization
 import tokenization
 import tensorflow as tf
 from scipy.stats import spearmanr
-import tensorflow_addons as tfa
+from mcc import MatthewsCorrelationCoefficient
 
 flags = tf.compat.v1.flags
 
@@ -960,7 +960,7 @@ def model_fn_builder(electra_config, num_labels, init_checkpoint, learning_rate,
             accuracy = tf.compat.v1.metrics.accuracy(
                 labels=label_ids, predictions=predictions, weights=is_real_example)
 
-            mcc = tfa.metrics.MatthewsCorrelationCoefficient(num_classes=1)
+            mcc = MatthewsCorrelationCoefficient(num_classes=1)
             mcc.update_state(labels, predictions)
             return {
                 "eval_mcc": mcc,
