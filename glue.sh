@@ -1,5 +1,5 @@
 TPU_NAME='grpc://10.121.225.26:8470'
-#INIT_CKPT=$ELECTRA_GC/electra_pretrain/electra_h1024_w50/model.ckpt-15000
+INIT_CKPT=$ELECTRA_GC/electra_pretrain/electra_small_seq128_lr5e-4/model.ckpt-125000
 MODEL=ale
 SIZE=small
 SEED=12345
