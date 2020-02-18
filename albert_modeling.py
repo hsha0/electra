@@ -31,7 +31,7 @@ import numpy as np
 import six
 from six.moves import range
 import tensorflow.compat.v1 as tf
-from tensorflow.contrib import layers as contrib_layers
+from tensorflow.compat.v1.contrib import layers as contrib_layers
 
 
 class ElectraConfig(object):
