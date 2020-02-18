@@ -26,6 +26,7 @@ import optimization
 import tokenization
 import tensorflow as tf
 from scipy.stats import spearmanr
+import tensorflow_addons as tfa
 
 flags = tf.compat.v1.flags
 
@@ -951,13 +952,16 @@ def model_fn_builder(electra_config, num_labels, init_checkpoint, learning_rate,
         elif FLAGS.task_name == "CoLA":
             predictions = tf.argmax(input=logits, axis=-1, output_type=tf.int32)
             loss = tf.compat.v1.metrics.mean(values=per_example_loss, weights=is_real_example)
-            mcc = tf.compat.v1.metrics.mean(mcc_metric(y_true=label_ids, y_pred=predictions))
             accuracy = tf.compat.v1.metrics.accuracy(
                 labels=label_ids, predictions=predictions, weights=is_real_example)
+
+            mcc = tfa.metrics.MatthewsCorrelationCoefficient(num_classes=1)
+            mcc.update_state(labels, predictions)
             return {
                 "eval_mcc": mcc,
-                "eval_loss": loss,
                 "eval_accuracy": accuracy,
+                "eval_loss": loss,
+
             }
         else:
             predictions = tf.argmax(input=logits, axis=-1, output_type=tf.int32)
@@ -984,7 +988,6 @@ def model_fn_builder(electra_config, num_labels, init_checkpoint, learning_rate,
     return output_spec
 
   return model_fn
-
 
 def mcc_metric(y_true, y_pred):
     predicted = y_pred
