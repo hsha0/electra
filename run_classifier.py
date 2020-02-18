@@ -132,7 +132,7 @@ flags.DEFINE_integer(
     "num_tpu_cores", 8,
     "Only used if `use_tpu` is True. Total number of TPU cores to use.")
 
-if FLAGS.model == "albert":
+if FLAGS.model == "ale":
     import albert_modeling as modeling
 else:
     import bert_modeling as modeling
