@@ -30,8 +30,9 @@ import re
 import numpy as np
 import six
 from six.moves import range
-import tensorflow.compat.v1 as tf
-from tensorflow.compat.v1.contrib import layers as contrib_layers
+from tensorflow.contrib import layers as contrib_layers
+import tensorflow as tf
+
 
 
 class ElectraConfig(object):
@@ -112,7 +113,7 @@ class ElectraConfig(object):
   @classmethod
   def from_json_file(cls, json_file):
     """Constructs a `ElectraConfig` from a json file of parameters."""
-    with tf.gfile.GFile(json_file, "r") as reader:
+    with tf.io.gfile.GFile(json_file, "r") as reader:
       text = reader.read()
     return cls.from_dict(json.loads(text))
 
@@ -189,7 +190,7 @@ class Generator(object):
 
     if token_type_ids is None:
       token_type_ids = tf.zeros(shape=[batch_size, seq_length], dtype=tf.int32)
-    with tf.variable_scope("embeddings"):
+    with tf.compat.v1.variable_scope("embeddings"):
         # Perform embedding lookup on the word ids.
         (self.word_embedding_output,
          self.output_embedding_table) = embedding_lookup(
@@ -214,8 +215,8 @@ class Generator(object):
             max_position_embeddings=config.max_position_embeddings,
             dropout_prob=config.hidden_dropout_prob)
 
-    with tf.variable_scope(scope, default_name="generator"):
-      with tf.variable_scope("encoder"):
+    with tf.compat.v1.variable_scope(scope, default_name="generator"):
+      with tf.compat.v1.variable_scope("encoder"):
 
         # Run the stacked transformer.
         # `sequence_output` shape = [batch_size, seq_length, hidden_size].
@@ -345,7 +346,7 @@ class Discriminator(object):
     if token_type_ids is None:
       token_type_ids = tf.zeros(shape=[batch_size, seq_length], dtype=tf.int32)
 
-    with tf.variable_scope("embeddings", reuse=tf.AUTO_REUSE):
+    with tf.compat.v1.variable_scope("embeddings", reuse=tf.compat.v1.AUTO_REUSE):
         # Perform embedding lookup on the word ids.
         (self.word_embedding_output,
          self.output_embedding_table) = embedding_lookup(
@@ -370,8 +371,8 @@ class Discriminator(object):
             max_position_embeddings=config.max_position_embeddings,
             dropout_prob=config.hidden_dropout_prob)
 
-    with tf.variable_scope(scope, default_name="discriminator"):
-      with tf.variable_scope("encoder"):
+    with tf.compat.v1.variable_scope(scope, default_name="discriminator"):
+      with tf.compat.v1.variable_scope("encoder"):
 
         # Run the stacked transformer.
         # `sequence_output` shape = [batch_size, seq_length, hidden_size].
@@ -396,11 +397,11 @@ class Discriminator(object):
       # [batch_size, hidden_size]. This is necessary for segment-level
       # (or segment-pair-level) classification tasks where we need a fixed
       # dimensional representation of the segment.
-      with tf.variable_scope("pooler"):
+      with tf.compat.v1.variable_scope("pooler"):
         # We "pool" the model by simply taking the hidden state corresponding
         # to the first token. We assume that this has been pre-trained
         first_token_tensor = tf.squeeze(self.sequence_output[:, 0:1, :], axis=1)
-        self.pooled_output = tf.layers.dense(
+        self.pooled_output = tf.compat.v1.layers.dense(
             first_token_tensor,
             config.hidden_size,
             activation=tf.tanh,
@@ -538,9 +539,9 @@ def get_assignment_map_from_checkpoint(tvars, init_checkpoint, num_of_group=0):
       tvar_name = re.sub(r"/attention_\d+/", "/attention_1/",
                          six.ensure_str(name))
     else:
-      tf.logging.info("name %s does not get matched", name)
+      tf.compat.v1.logging.info("name %s does not get matched", name)
       continue
-    tf.logging.info("name %s match to %s", name, tvar_name)
+    tf.compat.v1.logging.info("name %s match to %s", name, tvar_name)
     if num_of_group > 0:
       group_matched = False
       for gid in range(1, num_of_group):
@@ -548,7 +549,7 @@ def get_assignment_map_from_checkpoint(tvars, init_checkpoint, num_of_group=0):
             ("/ffn_" + str(gid) + "/" in name) or
             ("/attention_" + str(gid) + "/" in name)):
           group_matched = True
-          tf.logging.info("%s belongs to %dth", name, gid)
+          tf.compat.v1.logging.info("%s belongs to %dth", name, gid)
           assignment_map[gid][tvar_name] = name
       if not group_matched:
         assignment_map[0][tvar_name] = name
@@ -593,7 +594,7 @@ def layer_norm_and_dropout(input_tensor, dropout_prob, name=None):
 
 def create_initializer(initializer_range=0.02):
   """Creates a `truncated_normal_initializer` with the given range."""
-  return tf.truncated_normal_initializer(stddev=initializer_range)
+  return tf.compat.v1.truncated_normal_initializer(stddev=initializer_range)
 
 
 def get_timing_signal_1d_given_position(channels,
@@ -618,14 +619,14 @@ def get_timing_signal_1d_given_position(channels,
   num_timescales = channels // 2
   log_timescale_increment = (
       math.log(float(max_timescale) / float(min_timescale)) /
-      (tf.to_float(num_timescales) - 1))
+      (tf.cast(num_timescales, dtype=tf.float32) - 1))
   inv_timescales = min_timescale * tf.exp(
-      tf.to_float(tf.range(num_timescales)) * -log_timescale_increment)
+      tf.cast(tf.range(num_timescales), dtype=tf.float32) * -log_timescale_increment)
   scaled_time = (
-      tf.expand_dims(tf.to_float(position), 2) * tf.expand_dims(
+      tf.expand_dims(tf.cast(position, dtype=tf.float32), 2) * tf.expand_dims(
           tf.expand_dims(inv_timescales, 0), 0))
   signal = tf.concat([tf.sin(scaled_time), tf.cos(scaled_time)], axis=2)
-  signal = tf.pad(signal, [[0, 0], [0, 0], [0, tf.mod(channels, 2)]])
+  signal = tf.pad(tensor=signal, paddings=[[0, 0], [0, 0], [0, tf.math.mod(channels, 2)]])
   return signal
 
 
@@ -658,7 +659,7 @@ def embedding_lookup(input_ids,
   if input_ids.shape.ndims == 2:
     input_ids = tf.expand_dims(input_ids, axis=[-1])
 
-  embedding_table = tf.get_variable(
+  embedding_table = tf.compat.v1.get_variable(
       name=word_embedding_name,
       shape=[vocab_size, embedding_size],
       initializer=create_initializer(initializer_range))
@@ -668,7 +669,7 @@ def embedding_lookup(input_ids,
     one_hot_input_ids = tf.one_hot(flat_input_ids, depth=vocab_size)
     output = tf.matmul(one_hot_input_ids, embedding_table)
   else:
-    output = tf.nn.embedding_lookup(embedding_table, input_ids)
+    output = tf.nn.embedding_lookup(params=embedding_table, ids=input_ids)
 
   input_shape = get_shape_list(input_ids)
 
@@ -725,7 +726,7 @@ def embedding_postprocessor(input_tensor,
     if token_type_ids is None:
       raise ValueError("`token_type_ids` must be specified if"
                        "`use_token_type` is True.")
-    token_type_table = tf.get_variable(
+    token_type_table = tf.compat.v1.get_variable(
         name=token_type_embedding_name,
         shape=[token_type_vocab_size, width],
         initializer=create_initializer(initializer_range))
@@ -739,9 +740,9 @@ def embedding_postprocessor(input_tensor,
     output += token_type_embeddings
 
   if use_position_embeddings:
-    assert_op = tf.assert_less_equal(seq_length, max_position_embeddings)
+    assert_op = tf.compat.v1.assert_less_equal(seq_length, max_position_embeddings)
     with tf.control_dependencies([assert_op]):
-      full_position_embeddings = tf.get_variable(
+      full_position_embeddings = tf.compat.v1.get_variable(
           name=position_embedding_name,
           shape=[max_position_embeddings, width],
           initializer=create_initializer(initializer_range))
@@ -796,16 +797,16 @@ def dense_layer_3d(input_tensor,
   input_shape = get_shape_list(input_tensor)
   hidden_size = input_shape[2]
 
-  with tf.variable_scope(name):
-    w = tf.get_variable(
+  with tf.compat.v1.variable_scope(name):
+    w = tf.compat.v1.get_variable(
         name="kernel",
         shape=[hidden_size, num_attention_heads * head_size],
         initializer=initializer)
     w = tf.reshape(w, [hidden_size, num_attention_heads, head_size])
-    b = tf.get_variable(
+    b = tf.compat.v1.get_variable(
         name="bias",
         shape=[num_attention_heads * head_size],
-        initializer=tf.zeros_initializer)
+        initializer=tf.compat.v1.zeros_initializer)
     b = tf.reshape(b, [num_attention_heads, head_size])
     ret = tf.einsum("BFH,HND->BFND", input_tensor, w)
     ret += b
@@ -838,14 +839,14 @@ def dense_layer_3d_proj(input_tensor,
   """
   input_shape = get_shape_list(input_tensor)
   num_attention_heads= input_shape[2]
-  with tf.variable_scope(name):
-    w = tf.get_variable(
+  with tf.compat.v1.variable_scope(name):
+    w = tf.compat.v1.get_variable(
         name="kernel",
         shape=[num_attention_heads * head_size, hidden_size],
         initializer=initializer)
     w = tf.reshape(w, [num_attention_heads, head_size, hidden_size])
-    b = tf.get_variable(
-        name="bias", shape=[hidden_size], initializer=tf.zeros_initializer)
+    b = tf.compat.v1.get_variable(
+        name="bias", shape=[hidden_size], initializer=tf.compat.v1.zeros_initializer)
     ret = tf.einsum("BFND,NDH->BFH", input_tensor, w)
     ret += b
   if activation is not None:
@@ -876,13 +877,13 @@ def dense_layer_2d(input_tensor,
   del num_attention_heads  # unused
   input_shape = get_shape_list(input_tensor)
   hidden_size = input_shape[2]
-  with tf.variable_scope(name):
-    w = tf.get_variable(
+  with tf.compat.v1.variable_scope(name):
+    w = tf.compat.v1.get_variable(
         name="kernel",
         shape=[hidden_size, output_size],
         initializer=initializer)
-    b = tf.get_variable(
-        name="bias", shape=[output_size], initializer=tf.zeros_initializer)
+    b = tf.compat.v1.get_variable(
+        name="bias", shape=[output_size], initializer=tf.compat.v1.zeros_initializer)
     ret = tf.einsum("BFH,HO->BFO", input_tensor, w)
     ret += b
   if activation is not None:
@@ -1016,9 +1017,9 @@ def attention_layer(from_tensor,
   # `value_layer` = [B, T, N, H]
   v = dense_layer_3d(to_tensor, num_attention_heads, size_per_head,
                      create_initializer(initializer_range), value_act, "value")
-  q = tf.transpose(q, [0, 2, 1, 3])
-  k = tf.transpose(k, [0, 2, 1, 3])
-  v = tf.transpose(v, [0, 2, 1, 3])
+  q = tf.transpose(a=q, perm=[0, 2, 1, 3])
+  k = tf.transpose(a=k, perm=[0, 2, 1, 3])
+  v = tf.transpose(a=v, perm=[0, 2, 1, 3])
   if attention_mask is not None:
     attention_mask = tf.reshape(
         attention_mask, [batch_size, 1, to_seq_length, 1])
@@ -1026,7 +1027,7 @@ def attention_layer(from_tensor,
   new_embeddings = dot_product_attention(q, k, v, attention_mask,
                                          attention_probs_dropout_prob)
 
-  return tf.transpose(new_embeddings, [0, 2, 1, 3])
+  return tf.transpose(a=new_embeddings, perm=[0, 2, 1, 3])
 
 
 def attention_ffn_block(layer_input,
@@ -1063,8 +1064,8 @@ def attention_ffn_block(layer_input,
     layer output
   """
 
-  with tf.variable_scope("attention_1"):
-    with tf.variable_scope("self"):
+  with tf.compat.v1.variable_scope("attention_1"):
+    with tf.compat.v1.variable_scope("self"):
       attention_output = attention_layer(
           from_tensor=layer_input,
           to_tensor=layer_input,
@@ -1075,7 +1076,7 @@ def attention_ffn_block(layer_input,
 
     # Run a linear projection of `hidden_size` then add a residual
     # with `layer_input`.
-    with tf.variable_scope("output"):
+    with tf.compat.v1.variable_scope("output"):
       attention_output = dense_layer_3d_proj(
           attention_output,
           hidden_size,
@@ -1085,8 +1086,8 @@ def attention_ffn_block(layer_input,
           name="dense")
       attention_output = dropout(attention_output, hidden_dropout_prob)
   attention_output = layer_norm(attention_output + layer_input)
-  with tf.variable_scope("ffn_1"):
-    with tf.variable_scope("intermediate"):
+  with tf.compat.v1.variable_scope("ffn_1"):
+    with tf.compat.v1.variable_scope("intermediate"):
       intermediate_output = dense_layer_2d(
           attention_output,
           intermediate_size,
@@ -1094,7 +1095,7 @@ def attention_ffn_block(layer_input,
           intermediate_act_fn,
           num_attention_heads=num_attention_heads,
           name="dense")
-      with tf.variable_scope("output"):
+      with tf.compat.v1.variable_scope("output"):
         ffn_output = dense_layer_2d(
             intermediate_output,
             hidden_size,
@@ -1176,14 +1177,14 @@ def transformer_model(input_tensor,
         None, name="embedding_hidden_mapping_in")
   else:
     prev_output = input_tensor
-  with tf.variable_scope("transformer", reuse=tf.AUTO_REUSE):
+  with tf.compat.v1.variable_scope("transformer", reuse=tf.compat.v1.AUTO_REUSE):
     for layer_idx in range(num_hidden_layers):
       group_idx = int(layer_idx / num_hidden_layers * num_hidden_groups)
-      with tf.variable_scope("group_%d" % group_idx):
-        with tf.name_scope("layer_%d" % layer_idx):
+      with tf.compat.v1.variable_scope("group_%d" % group_idx):
+        with tf.compat.v1.name_scope("layer_%d" % layer_idx):
           layer_output = prev_output
           for inner_group_idx in range(inner_group_num):
-            with tf.variable_scope("inner_group_%d" % inner_group_idx):
+            with tf.compat.v1.variable_scope("inner_group_%d" % inner_group_idx):
               layer_output = attention_ffn_block(
                   layer_output, hidden_size, attention_mask,
                   num_attention_heads, attention_head_size,
@@ -1228,7 +1229,7 @@ def get_shape_list(tensor, expected_rank=None, name=None):
   if not non_static_indexes:
     return shape
 
-  dyn_shape = tf.shape(tensor)
+  dyn_shape = tf.shape(input=tensor)
   for index in non_static_indexes:
     shape[index] = dyn_shape[index]
   return shape
@@ -1284,7 +1285,7 @@ def assert_rank(tensor, expected_rank, name=None):
 
   actual_rank = tensor.shape.ndims
   if actual_rank not in expected_rank_dict:
-    scope_name = tf.get_variable_scope().name
+    scope_name = tf.compat.v1.get_variable_scope().name
     raise ValueError(
         "For the tensor `%s` in scope `%s`, the actual rank "
         "`%d` (shape = %s) is not equal to the expected rank `%s`" %
