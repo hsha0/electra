@@ -549,11 +549,11 @@ def get_assignment_map_from_checkpoint(tvars, init_checkpoint, num_of_group=0):
             ("/attention_" + str(gid) + "/" in name)):
           group_matched = True
           tf.compat.v1.logging.info("%s belongs to %dth", name, gid)
-          assignment_map[gid][tvar_name] = name
+          assignment_map[gid][tvar_name] = name_to_variable[name]
       if not group_matched:
-        assignment_map[0][tvar_name] = name
+        assignment_map[0][tvar_name] = name_to_variable[name]
     else:
-      assignment_map[tvar_name] = name
+      assignment_map[tvar_name] = name_to_variable[name]
     initialized_variable_names[name] = 1
     initialized_variable_names[six.ensure_str(name) + ":0"] = 1
 
