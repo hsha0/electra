@@ -38,6 +38,11 @@ flags.DEFINE_string(
     "The input data dir. Should contain the .tsv files (or other data files) "
     "for the task.")
 
+flags.DEFINE_string(
+    "electra_config_file", None,
+    "The config json file corresponding to the pre-trained ALBERT model. "
+    "This specifies the model architecture.")
+
 flags.DEFINE_string("task_name", None, "The name of the task to train.")
 
 flags.DEFINE_string("vocab_file", None,
@@ -1101,7 +1106,7 @@ def main(_):
     raise ValueError(
         "At least one of `do_train`, `do_eval` or `do_predict' must be True.")
 
-  electra_config = get_config()
+  electra_config = modeling.ElectraConfig.from_json_file(FLAGS.electra_config_file)
 
   if FLAGS.max_seq_length > electra_config.max_position_embeddings:
     raise ValueError(
