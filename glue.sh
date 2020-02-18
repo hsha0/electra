@@ -1,3 +1,4 @@
+ELECTRA_GC='gs://electra'
 TPU_NAME='grpc://10.121.225.26:8470'
 INIT_CKPT=$ELECTRA_GC/electra_pretrain/electra_small_seq128_lr5e-4/model.ckpt-125000
 MODEL=ale
@@ -14,7 +15,7 @@ LR=${LRS[${TASK_INDEX}]}
 BZ=${BZS[${TASK_INDEX}]}
 
 CONFIG=config/${MODEL}_${SIZE}.json
-ELECTRA_GC='gs://electra'
+
 
 python3 run_classifier.py \
 --electra_config_file=$CONFIG \
