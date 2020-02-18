@@ -65,7 +65,7 @@ class MatthewsCorrelationCoefficient(tf.keras.metrics.Metric):
             dtype: (Optional) Data type of the metric result.
             Defaults to `tf.float32`.
         """
-        super().__init__(name=name, dtype=tf.float32)
+        super().__init__(name=name, dtype=dtype)
         self.num_classes = num_classes
         self.true_positives = self.add_weight(
             "true_positives",

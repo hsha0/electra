@@ -961,7 +961,7 @@ def model_fn_builder(electra_config, num_labels, init_checkpoint, learning_rate,
                 labels=label_ids, predictions=predictions, weights=is_real_example)
 
             mcc = MatthewsCorrelationCoefficient(num_classes=1)
-            mcc.update_state(labels, predictions)
+            mcc.update_state(label_ids, predictions)
             return {
                 "eval_mcc": mcc,
                 "eval_accuracy": accuracy,
