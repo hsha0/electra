@@ -54,7 +54,7 @@ class MatthewsCorrelationCoefficient(tf.keras.metrics.Metric):
         self,
         num_classes: float,
         name: str = "MatthewsCorrelationCoefficient",
-        dtype,
+        dtype = None,
         **kwargs
     ):
         """Creates a Matthews Correlation Coefficient instance.
