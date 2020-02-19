@@ -91,10 +91,8 @@ def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, 
   print(len(grads))
   print(len(tvars))
   for grad, var in zip(grads, tvars):
-      if grad is None:
-          print('None',var)
-      else: print(var)
-
+    if grad is None:
+      tvars.remove(var)
 
   if use_tpu:
       grads = [tf.compat.v1.tpu.cross_replica_sum(grad) for grad in grads if (grad is not None)]
