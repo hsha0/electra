@@ -95,7 +95,7 @@ def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, 
 
   for grad, var in zip(grads, tvars):
       if grad is None:
-          print(tvars)
+          print(var)
   # This is how the model was pre-trained.
   (grads, _) = tf.clip_by_global_norm(grads, clip_norm=1.0)
 
