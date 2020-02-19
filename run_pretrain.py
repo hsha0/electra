@@ -158,7 +158,7 @@ def get_masked_lm_output(electra_config, input_tensor, output_weights, positions
             # short to have the maximum number of predictions). The `label_weights`
             # tensor has a value of 1.0 for every real prediction and 0.0 for the
             # padding predictions.
-            per_example_loss = tf.reduce_sum(input_tensor=-1 * tf.multiply(log_probs, one_hot_labels), axis=[-1])
+            per_example_loss = tf.reduce_sum(input_tensor=tf.multiply(log_probs, one_hot_labels), axis=[-1])
             loss = tf.reduce_sum(input_tensor=label_weights * per_example_loss)
 
     return (loss, per_example_loss, log_probs, logits)
