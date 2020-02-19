@@ -96,11 +96,11 @@ def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, 
   if part == "gen":
     with tf.variable_scope("generator"):
       train_op = optimizer.apply_gradients(
-            zip(grads, tvars), global_step=global_step)
+            zip(grads, tvars))
   else:
     with tf.variable_scope("disc"):
       train_op = optimizer.apply_gradients(
-            zip(grads, tvars), global_step=global_step)
+            zip(grads, tvars))
 
   # Normally the global step update is done inside of `apply_gradients`.
   # However, `AdamWeightDecayOptimizer` doesn't do this. But if you use
