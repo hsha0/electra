@@ -88,6 +88,8 @@ def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, 
     tvars.extend(disc_tvars)
 
   grads = tf.gradients(loss, tvars)
+  print(len(grads))
+  print(len(tvars))
   if use_tpu:
       grads = [tf.compat.v1.tpu.cross_replica_sum(grad) for grad in grads if (grad is not None)]
   # This is how the model was pre-trained.
