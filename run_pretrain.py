@@ -144,9 +144,7 @@ def get_masked_lm_output(electra_config, input_tensor, output_weights, positions
                 initializer=tf.compat.v1.zeros_initializer())
             logits = tf.matmul(input_tensor, output_weights, transpose_b=True)
             logits = tf.nn.bias_add(logits, output_bias)
-            #log_probs = tf.nn.log_softmax(logits, axis=-1)
-            softmax = tf.nn.softmax(logits)
-            log_probs = tf.math.log(softmax)
+            log_probs = tf.nn.log_softmax(logits, axis=-1)
 
             label_ids = tf.reshape(label_ids, [-1])
             label_weights = tf.reshape(label_weights, [-1])
@@ -158,7 +156,7 @@ def get_masked_lm_output(electra_config, input_tensor, output_weights, positions
             # short to have the maximum number of predictions). The `label_weights`
             # tensor has a value of 1.0 for every real prediction and 0.0 for the
             # padding predictions.
-            per_example_loss = tf.reduce_sum(input_tensor=tf.multiply(log_probs, one_hot_labels), axis=[-1])
+            per_example_loss = tf.reduce_sum(input_tensor=-1 * tf.multiply(log_probs, one_hot_labels), axis=[-1])
             loss = tf.reduce_sum(input_tensor=label_weights * per_example_loss)
 
     return (loss, per_example_loss, log_probs, logits)
