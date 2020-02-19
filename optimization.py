@@ -80,7 +80,7 @@ def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, 
 
   with tf.variable_scope("embeddings"):
     tvars = tf.trainable_variables(scope="embeddings")
-  if part == "generator":
+  if part == "gen":
     generator_tvars = tf.trainable_variables(scope="generator")
     tvars.extend(generator_tvars)
   else:
