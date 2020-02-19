@@ -524,7 +524,11 @@ def get_assignment_map_from_checkpoint(tvars, init_checkpoint, num_of_group=0):
   else:
     assignment_map = collections.OrderedDict()
 
-  print(init_vars_name)
+  print('\n\n\n')
+  for name in init_vars_name:
+      print(name)
+  print('\n\n\n')
+
   for name in name_to_variable:
     print(name)
     if name in init_vars_name:
