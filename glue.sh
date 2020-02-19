@@ -1,7 +1,7 @@
 ELECTRA_GC='gs://electra'
 TPU_NAME='grpc://10.121.225.26:8470'
 INIT_CKPT=$ELECTRA_GC/electra_pretrain/electra_small_seq128_lr5e-4/model.ckpt-125000
-MODEL=ale
+MODEL=electra
 SIZE=small
 SEED=12345
 TASK_INDEX=1
