@@ -216,8 +216,6 @@ def replace_elements_by_indices(old, new, indices):
     return updated_old
 
 
-
-
 def model_fn_builder(electra_config, init_checkpoint, learning_rate,
                      num_train_steps, num_warmup_steps, use_tpu,
                      use_one_hot_embeddings):
@@ -237,7 +235,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         batch_size = modeling.get_shape_list(input_ids)[0] #batch_size
 
         #[B, 20]
-        masked_lm_positions = tf.constant([sorted(random.sample(range(1, FLAGS.max_seq_length-2), FLAGS.max_predictions_per_seq)) for i in range(batch_size)])
+        masked_lm_positions = tf.constant([sorted(random.sample(range(1, FLAGS.max_seq_length-1), FLAGS.max_predictions_per_seq)) for i in range(batch_size)])
         #[20*B]
         masks_list = tf.constant([MASK_ID] * (FLAGS.max_predictions_per_seq * batch_size))
         #[B, 20]
