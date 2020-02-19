@@ -113,9 +113,6 @@ def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, 
   return train_op
   '''
   tvars = tf.compat.v1.trainable_variables()
-
-  if use_tpu:
-      loss = loss / global_batch_size
   grads = tf.gradients(ys=loss, xs=tvars)
   # This is how the model was pre-trained.
 
