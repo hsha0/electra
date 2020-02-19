@@ -4,7 +4,7 @@ INIT_CKPT=$ELECTRA_GC/electra_pretrain/electra_small_seq128_lr5e-4/model.ckpt-12
 MODEL=electra
 SIZE=small
 SEED=12345
-TASK_INDEX=1
+TASK_INDEX=0
 
 TASKS=(MRPC CoLA MNLI SST-2 QQP QNLI WNLI RTE STS-B)
 LRS=(2e-5 1e-5 3e-5 1e-5 5e-5 1e-5 2e-5 3e-5 2e-5)
@@ -21,7 +21,7 @@ python3 run_classifier.py \
 --electra_config_file=$CONFIG \
 --task_name=${TASK} \
 --data_dir=$ELECTRA_GC/glue/glue_data/$TASK \
---output_dir=$ELECTRA_GC/glue/glue_results/${MODEL}_${SIZE}/$TASK \
+--output_dir=$ELECTRA_GC/glue/glue_results/${MODEL}_${SIZE}/$TASK_$SEED \
 --init_checkpoint=$INIT_CKPT \
 --vocab_file=vocab.txt \
 --model=$MODEL \
