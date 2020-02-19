@@ -261,7 +261,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
 
         masked_lm_predictions = tf.argmax(input=masked_logits, axis=-1, output_type=tf.int32)
         masked_lm_ids = tf.reshape(masked_lm_ids, [-1])
-        diff = masked_lm_predictions - masked_lm_ids # [B*20]
+        diff = masked_lm_predictions - masked_lm_ids  # [B*20]
 
         zero = tf.constant(0, dtype=tf.int32)
         #!!!!ERROR!!! fixed

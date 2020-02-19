@@ -1,9 +1,10 @@
 TPU_NAME='grpc://10.125.243.18:8470'
-MODEL=ale
-SIZE=base
+MODEL=electra
+SIZE=small
 MAX_SEQ_L=128
-LR=5e-4
-TRAIN_STEP=73000
+LR=0.00176
+DISC_W=1
+TRAIN_STEP=10000
 
 ELECTRA_GC='gs://electra'
 CONFIG=config/${MODEL}_${SIZE}.json
@@ -11,8 +12,9 @@ CONFIG=config/${MODEL}_${SIZE}.json
 python3 run_pretrain.py \
 --electra_config_file=$CONFIG \
 --input_file=$ELECTRA_GC/data_128_sent_CLS/*.tfrecord \
---output_dir=$ELECTRA_GC/electra_pretrain/${MODEL}_${SIZE}_seq${MAX_SEQ_L}_lr${LR} \
+--output_dir=$ELECTRA_GC/electra_pretrain/${MODEL}_${SIZE}_seq${MAX_SEQ_L}_lr${LR}_w${DISC_W} \
 --vocab_file=vocab.txt \
+--disc_loss_weight=${DISC_W} \
 --model=$MODEL \
 --do_train=True \
 --learning_rate=${LR} \
