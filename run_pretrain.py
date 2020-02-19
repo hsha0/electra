@@ -145,7 +145,7 @@ def get_masked_lm_output(electra_config, input_tensor, output_weights, positions
             logits = tf.matmul(input_tensor, output_weights, transpose_b=True)
             logits = tf.nn.bias_add(logits, output_bias)
             #log_probs = tf.nn.log_softmax(logits, axis=-1)
-            softmax = tf.nn.softmax(logits) + 1e-10
+            softmax = tf.nn.softmax(logits)
             log_probs = tf.math.log(softmax)
 
             label_ids = tf.reshape(label_ids, [-1])
@@ -314,7 +314,8 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
                             init_string)
         """
         output_spec = None
-        total_loss = masked_lm_loss + FLAGS.disc_loss_weight * disc_loss
+        #total_loss = masked_lm_loss + FLAGS.disc_loss_weight * disc_loss
+        total_loss = masked_lm_loss
         if mode == tf.estimator.ModeKeys.TRAIN:
             train_op = optimization.create_optimizer(
                 total_loss, learning_rate, num_train_steps, num_warmup_steps, use_tpu, FLAGS.train_batch_size, weight_decay=0.01)
