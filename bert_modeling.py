@@ -26,7 +26,7 @@ import re
 import numpy as np
 import six
 import tensorflow as tf
-
+from tensorflow.contrib import layers as contrib_layers
 
 class ElectraConfig(object):
   """Configuration for `BertModel`."""
@@ -522,7 +522,8 @@ def dropout(input_tensor, dropout_prob):
 
 def layer_norm(input_tensor, name=None):
   """Run layer normalization on the last dimension of the tensor."""
-  return tf.keras.layers.LayerNormalization(axis=-1, epsilon=1e-12, name='layer_norm')(input_tensor)
+  return contrib_layers.layer_norm(
+      inputs=input_tensor, begin_norm_axis=-1, begin_params_axis=-1, scope=name)
 
 
 def layer_norm_and_dropout(input_tensor, dropout_prob, name=None):
