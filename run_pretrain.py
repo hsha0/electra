@@ -313,7 +313,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         """
         output_spec = None
         #total_loss = masked_lm_loss + FLAGS.disc_loss_weight * disc_loss
-        total_loss = masked_lm_loss
+        total_loss = disc_loss
         if mode == tf.estimator.ModeKeys.TRAIN:
             train_op = optimization.create_optimizer(
                 total_loss, learning_rate, num_train_steps, num_warmup_steps, use_tpu, FLAGS.train_batch_size, weight_decay=0.01)
