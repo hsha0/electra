@@ -4,7 +4,7 @@ INIT_CKPT=$ELECTRA_GC/electra_pretrain/electra_small_seq128_lr5e-4/model.ckpt-12
 MODEL=electra
 SIZE=small
 SEED=12345
-TASK_INDEX=3
+TASK_INDEX=4
 
 TASKS=(MRPC CoLA MNLI SST-2 QQP QNLI WNLI RTE STS-B)
 LRS=(2e-5 1e-5 3e-5 1e-5 5e-5 1e-5 2e-5 3e-5 2e-5)
