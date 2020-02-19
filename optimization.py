@@ -23,7 +23,7 @@ import tensorflow as tf
 import lamb
 
 
-def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, global_batch_size, weight_decay=0.0, part='discriminator'):
+def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, weight_decay=0.0, part='disc'):
   """Creates an optimizer training op."""
   global_step = tf.compat.v1.train.get_or_create_global_step()
 
@@ -77,7 +77,7 @@ def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, 
 
   #if use_tpu:
   #  optimizer = tf.compat.v1.tpu.CrossShardOptimizer(optimizer)
-  '''
+
   with tf.variable_scope("embeddings"):
     tvars = tf.trainable_variables(scope="embeddings")
   if part == "generator":
@@ -88,29 +88,31 @@ def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, 
     tvars.extend(disc_tvars)
 
   grads = tf.gradients(loss, tvars)
-
+  if use_tpu:
+      grads = [tf.compat.v1.tpu.cross_replica_sum(grad) for grad in grads if (grad is not None)]
   # This is how the model was pre-trained.
   (grads, _) = tf.clip_by_global_norm(grads, clip_norm=1.0)
 
-  if part == "generator":
+  if part == "gen":
     with tf.variable_scope("generator"):
       train_op = optimizer.apply_gradients(
             zip(grads, tvars), global_step=global_step)
   else:
-    with tf.variable_scope("discriminator"):
+    with tf.variable_scope("disc"):
       train_op = optimizer.apply_gradients(
             zip(grads, tvars), global_step=global_step)
 
   # Normally the global step update is done inside of `apply_gradients`.
   # However, `AdamWeightDecayOptimizer` doesn't do this. But if you use
   # a different optimizer, you should probably take this line out.
-  if part == "discriminator":
+  if part == "disc":
     new_global_step = global_step + 1
   else:
     new_global_step = global_step
 
   train_op = tf.group(train_op, [global_step.assign(new_global_step)])
   return train_op
+
   '''
   tvars = tf.compat.v1.trainable_variables()
   grads = tf.gradients(ys=loss, xs=tvars)
@@ -124,7 +126,7 @@ def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, 
   new_global_step = global_step + 1
   train_op = tf.group(train_op, [global_step.assign(new_global_step)])
   return train_op
-
+  '''
 
 class AdamWeightDecayOptimizer(tf.compat.v1.train.Optimizer):
   """A basic Adam optimizer that includes "correct" L2 weight decay."""
