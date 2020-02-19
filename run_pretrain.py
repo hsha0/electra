@@ -156,7 +156,7 @@ def get_masked_lm_output(electra_config, input_tensor, output_weights, positions
             # short to have the maximum number of predictions). The `label_weights`
             # tensor has a value of 1.0 for every real prediction and 0.0 for the
             # padding predictions.
-            per_example_loss = -tf.reduce_sum(input_tensor=log_probs * one_hot_labels, axis=[-1])
+            per_example_loss = tf.reduce_sum(input_tensor=-1 * tf.multiply(log_probs, one_hot_labels), axis=[-1])
             loss = tf.reduce_sum(input_tensor=label_weights * per_example_loss)
 
     return (loss, per_example_loss, log_probs, logits)
@@ -285,7 +285,6 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
 
         model_summary()
 
-
         tvars = tf.compat.v1.trainable_variables()
 
         initialized_variable_names = {}
@@ -315,20 +314,6 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         output_spec = None
         total_loss = masked_lm_loss + FLAGS.disc_loss_weight * disc_loss
         if mode == tf.estimator.ModeKeys.TRAIN:
-            '''
-            gen_train_op = optimization.create_optimizer(
-                total_loss, learning_rate, num_train_steps, num_warmup_steps, use_tpu, "generator")
-
-            disc_train_op = optimization.create_optimizer(
-                total_loss, learning_rate, num_train_steps, num_warmup_steps, use_tpu, "discriminator")
-
-            output_spec = tf.contrib.tpu.TPUEstimatorSpec(
-                mode=mode,
-                #loss=masked_lm_loss + disc_loss,
-                loss=total_loss,
-                train_op=tf.group(gen_train_op, disc_train_op),
-                scaffold_fn=scaffold_fn)
-            '''
             train_op = optimization.create_optimizer(
                 total_loss, learning_rate, num_train_steps, num_warmup_steps, use_tpu, FLAGS.train_batch_size, weight_decay=0.01)
 
@@ -343,8 +328,6 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
                 tf.get_default_graph(),
                 options=tf.profiler.ProfileOptionBuilder.float_operation())
             """
-
-
         return output_spec
 
     return model_fn
