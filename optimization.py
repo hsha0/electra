@@ -88,8 +88,6 @@ def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, 
     tvars.extend(disc_tvars)
 
   grads = tf.gradients(loss, tvars)
-  print(len(grads))
-  print(len(tvars))
   for grad, var in zip(grads, tvars):
     if grad is None:
       tvars.remove(var)
@@ -100,9 +98,6 @@ def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, 
 
   # This is how the model was pre-trained.
   (grads, _) = tf.clip_by_global_norm(grads, clip_norm=1.0)
-
-  print(len(grads))
-  print(len(tvars))
   assert len(grads) == len(tvars)
   if part == "gen":
     with tf.variable_scope("generator"):

@@ -157,7 +157,11 @@ def get_masked_lm_output(electra_config, input_tensor, output_weights, positions
             # tensor has a value of 1.0 for every real prediction and 0.0 for the
             # padding predictions.
             per_example_loss = tf.reduce_sum(input_tensor=-1 * tf.multiply(log_probs, one_hot_labels), axis=[-1])
-            loss = tf.reduce_sum(input_tensor=label_weights * per_example_loss)
+
+            numerator = tf.reduce_sum(label_weights * per_example_loss)
+            denominator = tf.reduce_sum(label_weights) + 1e-5
+            loss = numerator / denominator
+            #loss = tf.reduce_sum(input_tensor=label_weights * per_example_loss)
 
     return (loss, per_example_loss, log_probs, logits)
 
@@ -188,6 +192,10 @@ def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, 
                 name='sigmoid_cross_entropy',
             )
 
+            print(sigmoid_cross_entropy)
+            per_example_loss = tf.reduce_sum(input_tensor=sigmoid_cross_entropy, axis=0)
+            print(per_example_loss)
+            sys.exit()
             loss = tf.reduce_sum(input_tensor=sigmoid_cross_entropy)
     return (loss)
 
