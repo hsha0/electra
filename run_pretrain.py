@@ -195,7 +195,7 @@ def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, 
 
             per_example_loss = tf.reduce_sum(input_tensor=sigmoid_cross_entropy, axis=1)
 
-            label_weights = tf.cast(label_weights, tf.float32)
+            label_weights = tf.reshape(tf.cast(label_weights, tf.float32), [-1])
             numerator = tf.reduce_sum(label_weights * per_example_loss)
             denominator = tf.reduce_sum(label_weights) + 1e-5
             loss = numerator / denominator
