@@ -369,7 +369,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
                 tf.get_default_graph(),
                 options=tf.profiler.ProfileOptionBuilder.float_operation())
             print(flops.total_float_ops, '\n\n\n')
-
+            sys.exit()
         return output_spec
 
     return model_fn
