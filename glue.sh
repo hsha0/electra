@@ -18,7 +18,7 @@ TASK=${TASKS[${TASK_INDEX}]}
 LR=${LRS[${TASK_INDEX}]}
 BZ=${BZS[${TASK_INDEX}]}
 EPOCH=${EPOCHS[${TASK_INDEX}]}
-INIT_CKPT=$ELECTRA_GC/electra_pretrain/electra_small_seq128_lr0.00176_w50_bz1024/model.ckpt-${CKPT}
+INIT_CKPT=$ELECTRA_GC/electra_pretrain/electra_small_seq128_lr0.002_w50_bz1024/model.ckpt-${CKPT}
 
 CONFIG=config/${MODEL}_${SIZE}.json
 
