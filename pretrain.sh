@@ -23,7 +23,7 @@ python3 run_pretrain.py \
 --max_seq_length=${MAX_SEQ_L} \
 --num_train_steps=${TRAIN_STEP} \
 --max_predictions_per_seq=20 \
---save_checkpoints_steps=100 \
---iterations_per_loop=100 \
+--save_checkpoints_steps=1000 \
+--iterations_per_loop=1000 \
 --use_tpu=true \
 --tpu_name=$TPU_NAME
