@@ -364,12 +364,12 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
                 train_op=tf.group(gen_train_op, disc_train_op),
                 scaffold_fn=scaffold_fn,
             )
-            """
+
             flops = tf.profiler.profile(
                 tf.get_default_graph(),
                 options=tf.profiler.ProfileOptionBuilder.float_operation())
             print(flops.total_float_ops, '\n\n\n')
-            """
+
         return output_spec
 
     return model_fn
