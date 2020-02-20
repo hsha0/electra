@@ -22,7 +22,7 @@ INIT_CKPT=$ELECTRA_GC/electra_pretrain/electra_small_seq128_lr5e-4_w50_bz1024/mo
 
 CONFIG=config/${MODEL}_${SIZE}.json
 
-echo ${RANDOM}
+echo ${SEED}
 
 python3 run_classifier.py \
 --electra_config_file=$CONFIG \
