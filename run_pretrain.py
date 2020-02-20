@@ -292,6 +292,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
 
         (disc_loss) = get_discriminator_output(electra_config, discriminator.get_sequence_output(),
                                                     whether_replaced, input_mask)
+        disc_loss = FLAGS.disc_loss_weight * disc_loss
 
         model_summary()
 
