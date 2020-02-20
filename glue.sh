@@ -3,7 +3,8 @@ TPU_NAME='grpc://10.50.82.74:8470'
 MODEL=electra
 SIZE=small
 CKPT=62500
-SEED=64329
+#SEED=64329
+RANDOM=$$
 TASK_INDEX=2
 
 TASKS=(MRPC CoLA MNLI SST-2 QQP QNLI WNLI RTE STS-B)
@@ -21,6 +22,7 @@ INIT_CKPT=$ELECTRA_GC/electra_pretrain/electra_small_seq128_lr3e-4_w1_bz128/mode
 
 CONFIG=config/${MODEL}_${SIZE}.json
 
+echo ${RANDOM}
 
 python3 run_classifier.py \
 --electra_config_file=$CONFIG \
@@ -36,6 +38,6 @@ python3 run_classifier.py \
 --learning_rate=${LR} \
 --max_seq_length=128 \
 --num_train_epochs=${EPOCH} \
---seed=${SEED} \
+--seed=${RANDOM} \
 --use_tpu=True \
 --tpu_name=$TPU_NAME

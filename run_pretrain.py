@@ -192,7 +192,6 @@ def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, 
                 name='sigmoid_cross_entropy',
             )
 
-
             per_example_loss = tf.reduce_sum(input_tensor=sigmoid_cross_entropy, axis=1)
 
             label_weights = tf.reshape(tf.cast(label_weights, tf.float32), [-1])
@@ -353,7 +352,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
 
             output_spec = tf.compat.v1.estimator.tpu.TPUEstimatorSpec(
                 mode=mode,
-                loss=masked_lm_loss,
+                loss=disc_loss,
                 train_op=tf.group(gen_train_op, disc_train_op),
                 scaffold_fn=scaffold_fn,
             )
