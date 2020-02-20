@@ -185,7 +185,7 @@ def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, 
 
             whether_replaced = tf.cast(tf.reshape(whether_replaced, [batch_size * seq_length, 1]), tf.float32)
             #one_hot_labels = tf.one_hot(whether_replaced, depth=2, dtype=tf.float32)
-            '''
+
             sigmoid_cross_entropy = tf.nn.sigmoid_cross_entropy_with_logits(
                 labels=whether_replaced,
                 logits=logits,
@@ -195,14 +195,15 @@ def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, 
             #per_example_loss = tf.reduce_sum(input_tensor=tf.multiply(sigmoid_cross_entropy, one_hot_labels), axis=[-1])
             per_example_loss = sigmoid_cross_entropy
 
-            label_weights = tf.reshape(tf.cast(label_weights, tf.float32), [-1])
+            #label_weights = tf.reshape(tf.cast(label_weights, tf.float32), [-1])
+            label_weights = tf.reshape(tf.ones(label_weights.shape()), [-1])
             numerator = tf.reduce_sum(label_weights * per_example_loss)
             denominator = tf.reduce_sum(label_weights) + 1e-5
             loss = numerator / denominator
-            '''
-            per_example_loss = tf.multiply(tf.log(tf.sigmoid(logits)), whether_replaced) + tf.multiply((1 - whether_replaced),
-                                                                              tf.log(1 - tf.sigmoid(logits)))
-            loss = -tf.reduce_mean(per_example_loss, name='loss')
+
+            #per_example_loss = tf.multiply(tf.log(tf.sigmoid(logits)), whether_replaced) + tf.multiply((1 - whether_replaced),
+            #                                                                  tf.log(1 - tf.sigmoid(logits)))
+            #loss = -tf.reduce_mean(per_example_loss, name='loss')
     return (loss)
 
 
