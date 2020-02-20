@@ -192,7 +192,7 @@ def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, 
                 name='sigmoid_cross_entropy',
             )
 
-            loss = -tf.reduce_mean(sigmoid_cross_entropy)
+            loss = tf.reduce_mean(sigmoid_cross_entropy)
             '''
             #per_example_loss = tf.reduce_sum(input_tensor=tf.multiply(sigmoid_cross_entropy, one_hot_labels), axis=[-1])
             per_example_loss = sigmoid_cross_entropy
