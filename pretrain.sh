@@ -1,10 +1,10 @@
 TPU_NAME='grpc://10.105.80.26:8470'
 MODEL=electra
 SIZE=small
-LR=2e-4
-DISC_W=1
-TRAIN_STEP=62500
-BZ=128
+LR=5e-4
+DISC_W=50
+TRAIN_STEP=10000
+BZ=1024
 
 ELECTRA_GC='gs://electra'
 CONFIG=config/${MODEL}_${SIZE}.json
