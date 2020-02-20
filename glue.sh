@@ -4,7 +4,7 @@ MODEL=electra
 SIZE=small
 CKPT=10000
 #SEED=64329
-RANDOM=$$
+SEED=$$
 TASK_INDEX=2
 
 TASKS=(MRPC CoLA MNLI SST-2 QQP QNLI WNLI RTE STS-B)
@@ -38,6 +38,6 @@ python3 run_classifier.py \
 --learning_rate=${LR} \
 --max_seq_length=128 \
 --num_train_epochs=${EPOCH} \
---seed=${RANDOM} \
+--seed=${SEED} \
 --use_tpu=True \
 --tpu_name=$TPU_NAME
