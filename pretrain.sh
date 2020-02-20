@@ -1,6 +1,6 @@
 TPU_NAME='grpc://10.105.80.26:8470'
-MODEL=ale
-SIZE=base
+MODEL=electra
+SIZE=small
 LR=0.002
 DISC_W=50
 TRAIN_STEP=125000
