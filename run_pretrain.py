@@ -200,6 +200,9 @@ def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, 
             label_weights = tf.reshape(tf.cast(label_weights, tf.float32), [-1])
             numerator = tf.reduce_sum(label_weights * per_example_loss)
             denominator = tf.reduce_sum(label_weights)
+
+            print(per_example_loss)
+            print(label_weights)
             loss = numerator / denominator
 
             #per_example_loss = tf.multiply(tf.log(tf.sigmoid(logits)), whether_replaced) + tf.multiply((1 - whether_replaced),
