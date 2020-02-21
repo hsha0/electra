@@ -378,7 +378,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
 
 
             train_op = optimization.create_optimizer(
-                total_loss, learning_rate, num_train_steps, num_warmup_steps, use_tpu, FLAGS.train_batch_size, weight_decay=0.01)
+                total_loss, learning_rate, num_train_steps, num_warmup_steps, use_tpu, weight_decay=0.01)
 
             output_spec = tf.compat.v1.estimator.tpu.TPUEstimatorSpec(
                 mode=mode,
