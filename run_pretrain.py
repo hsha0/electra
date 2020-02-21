@@ -353,9 +353,8 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         """
         output_spec = None
         total_loss = masked_lm_loss + disc_loss
-        #total_loss = disc_loss
         if mode == tf.estimator.ModeKeys.TRAIN:
-
+            '''
             gen_train_op = optimization.create_optimizer(
                 loss=masked_lm_loss,
                 init_lr=learning_rate,
@@ -375,15 +374,16 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
                 weight_decay=0.01,
                 part='disc'
             )
+            '''
 
 
-            #train_op = optimization.create_optimizer(
-            #    total_loss, learning_rate, num_train_steps, num_warmup_steps, use_tpu, FLAGS.train_batch_size, weight_decay=0.01)
+            train_op = optimization.create_optimizer(
+                total_loss, learning_rate, num_train_steps, num_warmup_steps, use_tpu, FLAGS.train_batch_size, weight_decay=0.01)
 
             output_spec = tf.compat.v1.estimator.tpu.TPUEstimatorSpec(
                 mode=mode,
-                loss=disc_loss,
-                train_op=tf.group(gen_train_op, disc_train_op),
+                loss=total_loss,
+                train_op=train_op,
                 scaffold_fn=scaffold_fn,
             )
 

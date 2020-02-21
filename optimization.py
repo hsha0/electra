@@ -77,7 +77,7 @@ def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, 
 
   #if use_tpu:
   #  optimizer = tf.compat.v1.tpu.CrossShardOptimizer(optimizer)
-
+  '''
   with tf.variable_scope("embeddings"):
     tvars = tf.trainable_variables(scope="embeddings")
   if part == "gen":
@@ -118,8 +118,9 @@ def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, 
 
   train_op = tf.group(train_op, [global_step.assign(new_global_step)])
   return train_op
-
   '''
+
+
   tvars = tf.compat.v1.trainable_variables()
   grads = tf.gradients(ys=loss, xs=tvars)
   # This is how the model was pre-trained.
@@ -132,7 +133,6 @@ def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, 
   new_global_step = global_step + 1
   train_op = tf.group(train_op, [global_step.assign(new_global_step)])
   return train_op
-  '''
 
 class AdamWeightDecayOptimizer(tf.compat.v1.train.Optimizer):
   """A basic Adam optimizer that includes "correct" L2 weight decay."""
