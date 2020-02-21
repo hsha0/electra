@@ -177,7 +177,7 @@ def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, 
     with tf.compat.v1.variable_scope("discriminator"):
         with tf.compat.v1.variable_scope("whether_replaced/predictions"):
             output = tf.compat.v1.layers.dense(sequence_tensor,
-                                     units=2,
+                                     units=1,
                                      activation=modeling.get_activation(electra_config.hidden_act),
                                      kernel_initializer=modeling.create_initializer(
                                          electra_config.initializer_range))
@@ -208,13 +208,20 @@ def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, 
             #per_example_loss = tf.multiply(tf.log(tf.sigmoid(logits)), whether_replaced) + tf.multiply((1 - whether_replaced),
             #                                                               tf.log(1 - tf.sigmoid(logits)))
             #loss = -tf.reduce_mean(per_example_loss, name='loss')
-            '''
-            one_hot_labels = tf.reshape(tf.one_hot(whether_replaced, depth=2, dtype=tf.float32), [batch_size * seq_length, 2])
-            loss = tf.compat.v1.losses.sigmoid_cross_entropy(
-                one_hot_labels,
-                logits,
-                weights=tf.reshape(label_weights, [batch_size * seq_length, 1]),
+            
+
+            sigmoid_cross_entropy = tf.nn.sigmoid_cross_entropy_with_logits(
+                labels=tf.cast(tf.reshape(whether_replaced, [batch_size * seq_length, 1]), tf.float32),
+                logits=logits,
+                name='sigmoid_cross_entropy',
             )
+            label_weights = tf.reshape(tf.cast(label_weights, tf.float32), [-1])
+            print(sigmoid_cross_entropy)
+            loss = tf.reduce_mean(sigmoid_cross_entropy)
+            '''
+            sigmoid = tf.math.sigmoid(logits)
+            print(sigmoid)
+            sys.exit()
 
     return (loss)
 
