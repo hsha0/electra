@@ -321,7 +321,6 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
 
         (disc_loss) = get_discriminator_output(electra_config, discriminator.get_sequence_output(),
                                                     whether_replaced, input_mask)
-        disc_loss = FLAGS.disc_loss_weight * disc_loss
 
         model_summary()
 
@@ -352,7 +351,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
                             init_string)
         """
         output_spec = None
-        total_loss = masked_lm_loss + disc_loss
+        total_loss = masked_lm_loss + FLAGS.disc_loss_weight * disc_loss
         if mode == tf.estimator.ModeKeys.TRAIN:
             '''
             gen_train_op = optimization.create_optimizer(
@@ -380,11 +379,14 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
             train_op = optimization.create_optimizer(
                 total_loss, learning_rate, num_train_steps, num_warmup_steps, use_tpu, weight_decay=0.01)
 
+            logging_hook = tf.train.LoggingTensorHook({"gen_loss": masked_lm_loss,
+                                                       "disc_loss": disc_loss,}, every_n_iter=FLAGS.save_checkpoints_steps)
             output_spec = tf.compat.v1.estimator.tpu.TPUEstimatorSpec(
                 mode=mode,
                 loss=total_loss,
                 train_op=train_op,
                 scaffold_fn=scaffold_fn,
+                training_hooks=logging_hook,
             )
 
             '''
