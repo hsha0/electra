@@ -219,9 +219,12 @@ def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, 
             print(sigmoid_cross_entropy)
             loss = tf.reduce_mean(sigmoid_cross_entropy)
             '''
-            sigmoid = tf.math.sigmoid(logits)
-            print(sigmoid)
+            whether_replaced = tf.cast(tf.reshape(whether_replaced, [batch_size * seq_length, 1]), tf.float32)
+            per_example_loss = tf.multiply(tf.log(tf.sigmoid(logits)), whether_replaced) + tf.multiply(
+                                                    (1 - whether_replaced),tf.log(1 - tf.sigmoid(logits)))
+            print(per_example_loss)
             sys.exit()
+
 
     return (loss)
 
