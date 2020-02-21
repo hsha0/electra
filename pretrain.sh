@@ -1,8 +1,8 @@
 TPU_NAME='grpc://10.52.248.130:8470'
 MODEL=electra
 SIZE=small
-LR=5e-4
-DISC_W=50
+LR=0.002
+DISC_W=1
 TRAIN_STEP=125000
 BZ=1024
 
@@ -23,7 +23,7 @@ python3 run_pretrain.py \
 --max_seq_length=${MAX_SEQ_L} \
 --num_train_steps=${TRAIN_STEP} \
 --max_predictions_per_seq=20 \
---save_checkpoints_steps=1000 \
---iterations_per_loop=1000 \
+--save_checkpoints_steps=100 \
+--iterations_per_loop=100 \
 --use_tpu=true \
 --tpu_name=$TPU_NAME
