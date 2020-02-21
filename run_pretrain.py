@@ -177,7 +177,7 @@ def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, 
     with tf.compat.v1.variable_scope("discriminator"):
         with tf.compat.v1.variable_scope("whether_replaced/predictions"):
             output = tf.compat.v1.layers.dense(sequence_tensor,
-                                     units=1,
+                                     units=2,
                                      activation=modeling.get_activation(electra_config.hidden_act),
                                      kernel_initializer=modeling.create_initializer(
                                          electra_config.initializer_range))
@@ -194,8 +194,8 @@ def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, 
             )
 
             #loss = tf.reduce_mean(sigmoid_cross_entropy)
-            #per_example_loss = tf.reduce_sum(input_tensor=tf.multiply(sigmoid_cross_entropy, one_hot_labels), axis=[-1])
-            per_example_loss = sigmoid_cross_entropy
+            per_example_loss = tf.reduce_sum(input_tensor=tf.multiply(sigmoid_cross_entropy, one_hot_labels), axis=[-1])
+            #per_example_loss = sigmoid_cross_entropy
 
             label_weights = tf.reshape(tf.cast(label_weights, tf.float32), [-1])
             numerator = tf.reduce_sum(label_weights * per_example_loss)
