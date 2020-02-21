@@ -213,7 +213,7 @@ def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, 
             loss = tf.compat.v1.losses.sigmoid_cross_entropy(
                 one_hot_labels,
                 logits,
-                weights=label_weights,
+                weights=tf.reshape(label_weights, [-1]),
             )
 
     return (loss)
