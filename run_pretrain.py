@@ -188,7 +188,7 @@ def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, 
 
 
             sigmoid_cross_entropy = tf.nn.sigmoid_cross_entropy_with_logits(
-                labels=whether_replaced,
+                labels=one_hot_labels,
                 logits=logits,
                 name='sigmoid_cross_entropy',
             )
