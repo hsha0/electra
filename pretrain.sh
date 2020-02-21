@@ -1,4 +1,4 @@
-TPU_NAME='grpc://10.52.248.130:8470'
+TPU_NAME='grpc://10.34.145.122:8470'
 MODEL=electra
 SIZE=small
 LR=5e-4
