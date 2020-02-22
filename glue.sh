@@ -9,8 +9,8 @@ TASK_INDEX=2
 
 TASKS=(MRPC CoLA MNLI SST-2 QQP QNLI WNLI RTE STS-B)
 #LRS=(3e-4 3e-4 3e-4 3e-4 3e-4 3e-4 3e-4 3e-4 3e-4)
-#LRS=(2e-5 1e-5 3e-5 1e-5 5e-5 1e-5 2e-5 3e-5 2e-5)
-LRS=(2e-5 1e-5 3e-4 3e-4 3e-4 1e-5 3e-4 3e-4 3e-4)
+LRS=(2e-5 1e-5 3e-5 1e-5 5e-5 1e-5 2e-5 3e-5 2e-5)
+#LRS=(2e-5 1e-5 3e-4 3e-4 3e-4 1e-5 3e-4 3e-4 3e-4)
 #BZS=(32 32 32 32 32 32 32 32 32)
 BZS=(32 16 128 32 128 32 16 32 16)
 EPOCHS=(3 3 3 3 3 3 3 10 10)
