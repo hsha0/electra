@@ -305,8 +305,8 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         #zero = tf.constant(0, dtype=tf.int32)
         #!!!!ERROR!!! fixed
         zeros = tf.zeros(modeling.get_shape_list(diff), dtype=tf.int32)
-        diff_cast = tf.cast(tf.not_equal(diff, zeros), tf.int32)
-        print(diff)
+        diff_cast = tf.cast(tf.not_equal(diff, 0), tf.int32)
+        print(diff_cast)
         sys.exit()
 
         zeros = tf.zeros(modeling.get_shape_list(input_ids), dtype=tf.int32)
