@@ -4,7 +4,7 @@ SIZE=small
 LR=5e-4
 DISC_W=50
 TRAIN_STEP=125000
-TOTAL=1000000
+TOTAL=125000
 BZ=1024
 
 ELECTRA_GC='gs://electra'
@@ -14,7 +14,7 @@ MAX_SEQ_L=128
 python3 run_pretrain.py \
 --electra_config_file=$CONFIG \
 --input_file=$ELECTRA_GC/data_128_sent_CLS/*.tfrecord \
---output_dir=$ELECTRA_GC/electra_pretrain/${MODEL}_${SIZE}_seq${MAX_SEQ_L}_lr${LR}_w${DISC_W}_bz${BZ}_1M \
+--output_dir=$ELECTRA_GC/electra_pretrain/${MODEL}_${SIZE}_seq${MAX_SEQ_L}_lr${LR}_w${DISC_W}_bz${BZ}_nolayernorm \
 --vocab_file=vocab.txt \
 --disc_loss_weight=${DISC_W} \
 --model=$MODEL \

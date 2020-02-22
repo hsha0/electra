@@ -177,12 +177,24 @@ def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, 
 
     with tf.compat.v1.variable_scope("discriminator"):
         with tf.compat.v1.variable_scope("whether_replaced/predictions"):
+            '''
             logits = tf.compat.v1.layers.dense(sequence_tensor,
                                      units=1,
                                      activation=modeling.get_activation(electra_config.hidden_act),
                                      kernel_initializer=modeling.create_initializer(
                                          electra_config.initializer_range))
             #logits = modeling.layer_norm(output)
+            '''
+
+            output_weights = tf.get_variable(
+                "output_weights",
+                shape=[1, batch_size * seq_length],
+                initializer=modeling.create_initializer(electra_config.initializer_range))
+            output_bias = tf.get_variable(
+                "output_bias", shape=[1], initializer=tf.zeros_initializer())
+
+            logits = tf.matmul(sequence_tensor, output_weights, transpose_b=True)
+            logits = tf.nn.bias_add(logits, output_bias)
             '''
             #whether_replaced = tf.cast(tf.reshape(whether_replaced, [batch_size * seq_length, 1]), tf.float32)
             one_hot_labels = tf.reshape(tf.one_hot(whether_replaced, depth=2, dtype=tf.float32),logits.shape)
