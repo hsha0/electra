@@ -1,7 +1,7 @@
 TPU_NAME='grpc://10.34.145.122:8470'
 MODEL=electra
 SIZE=small
-LR=0.002
+LR=5e-4
 DISC_W=50
 TRAIN_STEP=125000
 TOTAL=1000000
@@ -14,7 +14,7 @@ MAX_SEQ_L=128
 python3 run_pretrain.py \
 --electra_config_file=$CONFIG \
 --input_file=$ELECTRA_GC/data_128_sent_CLS/*.tfrecord \
---output_dir=$ELECTRA_GC/electra_pretrain/${MODEL}_${SIZE}_seq${MAX_SEQ_L}_lr${LR}_w${DISC_W}_bz${BZ}_train_op \
+--output_dir=$ELECTRA_GC/electra_pretrain/${MODEL}_${SIZE}_seq${MAX_SEQ_L}_lr${LR}_w${DISC_W}_bz${BZ}_1M \
 --vocab_file=vocab.txt \
 --disc_loss_weight=${DISC_W} \
 --model=$MODEL \
