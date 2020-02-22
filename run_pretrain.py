@@ -301,12 +301,13 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         masked_lm_predictions = tf.argmax(input=masked_logits, axis=-1, output_type=tf.int32)
         masked_lm_ids = tf.reshape(masked_lm_ids, [-1])
         diff = masked_lm_predictions - masked_lm_ids  # [B*20]
+
+        #zero = tf.constant(0, dtype=tf.int32)
+        #!!!!ERROR!!! fixed
+        zeros = tf.zeros(modeling.get_shape_list(diff), dtype=tf.int32)
+        diff_cast = tf.cast(tf.not_equal(diff, zeros), tf.int32)
         print(diff)
         sys.exit()
-
-        zero = tf.constant(0, dtype=tf.int32)
-        #!!!!ERROR!!! fixed
-        diff_cast = tf.cast(tf.not_equal(diff, zero), tf.int32)
 
         zeros = tf.zeros(modeling.get_shape_list(input_ids), dtype=tf.int32)
         whether_replaced = replace_elements_by_indices(zeros, diff_cast, masked_lm_positions)
