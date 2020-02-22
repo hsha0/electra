@@ -188,7 +188,7 @@ def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, 
 
             output_weights = tf.get_variable(
                 "output_weights",
-                shape=[1, batch_size * seq_length],
+                shape=[batch_size * seq_length, 1],
                 initializer=modeling.create_initializer(electra_config.initializer_range))
             output_bias = tf.get_variable(
                 "output_bias", shape=[1], initializer=tf.zeros_initializer())
