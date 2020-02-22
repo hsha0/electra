@@ -382,7 +382,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
 
             output_spec = tf.compat.v1.estimator.tpu.TPUEstimatorSpec(
                 mode=mode,
-                loss=tf.cast(tf.reduce_sum(diff_cast), dtype=tf.float32),
+                loss=1000000.0 * masked_lm_loss + disc_loss,
                 train_op=train_op,
                 scaffold_fn=scaffold_fn,
             )
