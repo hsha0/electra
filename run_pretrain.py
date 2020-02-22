@@ -188,12 +188,12 @@ def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, 
 
             output_weights = tf.get_variable(
                 "output_weights",
-                shape=[1, batch_size * seq_length],
+                shape=[1, width],
                 initializer=modeling.create_initializer(electra_config.initializer_range))
             output_bias = tf.get_variable(
                 "output_bias", shape=[1], initializer=tf.zeros_initializer())
 
-            logits = tf.matmul(output_weights, sequence_tensor, transpose_b=True)
+            logits = tf.matmul(sequence_tensor, output_weights, transpose_b=True)
             logits = tf.nn.bias_add(logits, output_bias)
             '''
             #whether_replaced = tf.cast(tf.reshape(whether_replaced, [batch_size * seq_length, 1]), tf.float32)
