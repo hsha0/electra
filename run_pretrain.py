@@ -233,12 +233,18 @@ def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, 
             loss = tf.reduce_mean(sigmoid_cross_entropy)
             '''
             whether_replaced = tf.cast(tf.reshape(whether_replaced, [batch_size * seq_length, 1]), tf.float32)
-            per_example_loss = tf.multiply(tf.log(tf.sigmoid(logits)), whether_replaced) + tf.multiply(
-                                                    (1 - whether_replaced),tf.log(1 - tf.sigmoid(logits)))
-            label_weights = tf.reshape(tf.cast(label_weights, tf.float32), [seq_length*batch_size, -1])
-            numerator = -tf.reduce_sum(tf.multiply(label_weights, per_example_loss))
-            denominator = tf.reduce_sum(label_weights) + 1e-5
-            loss = numerator / denominator
+            #per_example_loss = tf.multiply(tf.log(tf.sigmoid(logits)), whether_replaced) + tf.multiply(
+            #                                        (1 - whether_replaced),tf.log(1 - tf.sigmoid(logits)))
+            sigmoid_cross_entropy = tf.nn.sigmoid_cross_entropy_with_logits(
+                labels=whether_replaced,
+                logits=logits,
+                name='sigmoid_cross_entropy',
+            )
+            #label_weights = tf.reshape(tf.cast(label_weights, tf.float32), [seq_length*batch_size, -1])
+            #numerator = -tf.reduce_sum(tf.multiply(label_weights, per_example_loss))
+            #denominator = tf.reduce_sum(label_weights) + 1e-5
+            #loss = numerator / denominator
+            loss = tf.reduce_mean(sigmoid_cross_entropy)
 
 
     return (loss)
@@ -333,7 +339,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
                                                use_one_hot_embeddings=use_one_hot_embeddings)
 
         (disc_loss) = get_discriminator_output(electra_config, discriminator.get_sequence_output(),
-                                                    whether_replaced, input_mask)
+                                               whether_replaced, input_mask)
 
         model_summary()
 
