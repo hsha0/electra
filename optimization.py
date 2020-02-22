@@ -67,12 +67,12 @@ def create_optimizer(loss, init_lr, num_train_steps, total_num_train_steps, num_
       exclude_from_weight_decay=["LayerNorm", "layer_norm", "bias"])
   '''
   optimizer = lamb.LAMB(learning_rate=learning_rate,
-                                  weight_decay_rate=weight_decay,
-                                  beta_1=0.9,
-                                  beta_2=0.999,
-                                  epsilon=1e-6,
-                                  exclude_from_weight_decay="LayerNorm, layer_norm, bias",
-                                  name='LAMB'
+                        weight_decay_rate=weight_decay,
+                        beta_1=0.9,
+                        beta_2=0.999,
+                        epsilon=1e-6,
+                        exclude_from_weight_decay="LayerNorm, layer_norm, bias",
+                        name='LAMB'
   )
 
   #if use_tpu:
@@ -123,8 +123,8 @@ def create_optimizer(loss, init_lr, num_train_steps, total_num_train_steps, num_
 
   tvars = tf.compat.v1.trainable_variables()
   grads = tf.gradients(ys=loss, xs=tvars)
-  # This is how the model was pre-trained.
 
+  # This is how the model was pre-trained.
   if use_tpu:
       grads = [tf.compat.v1.tpu.cross_replica_sum(grad) for grad in grads if (grad is not None)]
   (grads, _) = tf.clip_by_global_norm(grads, clip_norm=1.0)

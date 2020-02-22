@@ -19,8 +19,7 @@ See paper [Large Batch Optimization for Deep Learning: Training BERT in
 """
 
 import re
-from typing import Optional, Union, Callable
-from typeguard import typechecked
+from typing import Optional
 
 import tensorflow as tf
 
@@ -31,7 +30,6 @@ class LAMB(tf.keras.optimizers.Optimizer):
     in 76 minutes](https://arxiv.org/abs/1904.00962).
     """
 
-    @typechecked
     def __init__(
         self,
         learning_rate=0.001,

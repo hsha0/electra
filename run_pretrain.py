@@ -177,15 +177,6 @@ def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, 
 
     with tf.compat.v1.variable_scope("discriminator"):
         with tf.compat.v1.variable_scope("whether_replaced/predictions"):
-            '''
-            logits = tf.compat.v1.layers.dense(sequence_tensor,
-                                     units=1,
-                                     activation=modeling.get_activation(electra_config.hidden_act),
-                                     kernel_initializer=modeling.create_initializer(
-                                         electra_config.initializer_range))
-            #logits = modeling.layer_norm(output)
-            '''
-
             output_weights = tf.get_variable(
                 "output_weights",
                 shape=[1, width],
@@ -195,57 +186,14 @@ def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, 
 
             logits = tf.matmul(sequence_tensor, output_weights, transpose_b=True)
             logits = tf.nn.bias_add(logits, output_bias)
-            '''
-            #whether_replaced = tf.cast(tf.reshape(whether_replaced, [batch_size * seq_length, 1]), tf.float32)
-            one_hot_labels = tf.reshape(tf.one_hot(whether_replaced, depth=2, dtype=tf.float32),logits.shape)
 
-
-            sigmoid_cross_entropy = tf.nn.sigmoid_cross_entropy_with_logits(
-                labels=one_hot_labels,
-                logits=logits,
-                name='sigmoid_cross_entropy',
-            )
-
-            #loss = tf.reduce_mean(sigmoid_cross_entropy)
-            per_example_loss = tf.reduce_sum(input_tensor=tf.multiply(sigmoid_cross_entropy, one_hot_labels), axis=[-1])
-            #per_example_loss = sigmoid_cross_entropy
-
-            label_weights = tf.reshape(tf.cast(label_weights, tf.float32), [-1])
-            numerator = tf.reduce_sum(label_weights * per_example_loss)
-            denominator = tf.reduce_sum(label_weights)
-
-            print(per_example_loss)
-            print(label_weights)
-            loss = numerator / denominator
-
-            #per_example_loss = tf.multiply(tf.log(tf.sigmoid(logits)), whether_replaced) + tf.multiply((1 - whether_replaced),
-            #                                                               tf.log(1 - tf.sigmoid(logits)))
-            #loss = -tf.reduce_mean(per_example_loss, name='loss')
-            
-
-            sigmoid_cross_entropy = tf.nn.sigmoid_cross_entropy_with_logits(
-                labels=tf.cast(tf.reshape(whether_replaced, [batch_size * seq_length, 1]), tf.float32),
-                logits=logits,
-                name='sigmoid_cross_entropy',
-            )
-            label_weights = tf.reshape(tf.cast(label_weights, tf.float32), [-1])
-            print(sigmoid_cross_entropy)
-            loss = tf.reduce_mean(sigmoid_cross_entropy)
-            '''
             whether_replaced = tf.cast(tf.reshape(whether_replaced, [batch_size * seq_length, 1]), tf.float32)
-            #per_example_loss = tf.multiply(tf.log(tf.sigmoid(logits)), whether_replaced) + tf.multiply(
-            #                                        (1 - whether_replaced),tf.log(1 - tf.sigmoid(logits)))
             sigmoid_cross_entropy = tf.nn.sigmoid_cross_entropy_with_logits(
                 labels=whether_replaced,
                 logits=logits,
                 name='sigmoid_cross_entropy',
             )
-            #label_weights = tf.reshape(tf.cast(label_weights, tf.float32), [seq_length*batch_size, -1])
-            #numerator = -tf.reduce_sum(tf.multiply(label_weights, per_example_loss))
-            #denominator = tf.reduce_sum(label_weights) + 1e-5
-            #loss = numerator / denominator
             loss = tf.reduce_mean(sigmoid_cross_entropy)
-
 
     return (loss)
 
@@ -393,7 +341,6 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
                 part='disc'
             )
             '''
-
 
             train_op = optimization.create_optimizer(
                 loss=total_loss,
@@ -594,10 +541,7 @@ def main():
             max_predictions_per_seq=FLAGS.max_predictions_per_seq,
             is_training=True)
 
-        estimator.train(input_fn=train_input_fn, max_steps= FLAGS.num_train_steps)
-
-
-        sys.exit()
+        estimator.train(input_fn=train_input_fn, max_steps=FLAGS.num_train_steps)
 
 
 
