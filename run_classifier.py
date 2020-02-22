@@ -939,13 +939,20 @@ def model_fn_builder(electra_config, num_labels, init_checkpoint, learning_rate,
     if mode == tf.estimator.ModeKeys.TRAIN:
 
       train_op = optimization.create_optimizer(
-          total_loss, learning_rate, num_train_steps, num_warmup_steps, use_tpu, FLAGS.train_batch_size)
+          loss=total_loss,
+          init_lr=learning_rate,
+          num_train_steps=num_train_steps,
+          total_num_train_steps=num_train_steps,
+          num_warmup_steps=num_warmup_steps,
+          use_tpu=use_tpu)
 
       output_spec = tf.compat.v1.estimator.tpu.TPUEstimatorSpec(
           mode=mode,
           loss=total_loss,
           train_op=train_op,
           scaffold_fn=scaffold_fn)
+
+
     elif mode == tf.estimator.ModeKeys.EVAL:
 
       def metric_fn(per_example_loss, label_ids, logits, is_real_example):
