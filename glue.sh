@@ -41,3 +41,5 @@ python3 run_classifier.py \
 --seed=${SEED} \
 --use_tpu=True \
 --tpu_name=$TPU_NAME
+
+echo ${SEED}_${TASK}
