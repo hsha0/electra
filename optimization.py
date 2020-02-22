@@ -23,7 +23,7 @@ import tensorflow as tf
 import lamb
 
 
-def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, weight_decay=0.0, part='disc'):
+def create_optimizer(loss, init_lr, num_train_steps, total_num_train_steps, num_warmup_steps, use_tpu, weight_decay=0.0, part='disc'):
   """Creates an optimizer training op."""
   global_step = tf.compat.v1.train.get_or_create_global_step()
 
@@ -33,7 +33,7 @@ def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu, 
   learning_rate = tf.compat.v1.train.polynomial_decay(
       learning_rate,
       global_step,
-      num_train_steps,
+      total_num_train_steps,
       end_learning_rate=0.0,
       power=1.0,
       cycle=False)

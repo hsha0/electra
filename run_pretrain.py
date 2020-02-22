@@ -51,6 +51,7 @@ flags.DEFINE_integer("disc_loss_weight", 50, "The weight of discriminator loss."
 
 flags.DEFINE_integer("num_train_steps", 10, "Number of training steps.")
 
+flags.DEFINE_integer("total_num_train_steps", 1000000, "Total number of training steps.")
 #10000
 flags.DEFINE_integer("num_warmup_steps", 10000, "Number of warmup steps.")
 
@@ -377,7 +378,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
 
 
             train_op = optimization.create_optimizer(
-                total_loss, learning_rate, num_train_steps, num_warmup_steps, use_tpu, weight_decay=0.01)
+                total_loss, learning_rate, num_train_steps, FLAGS.total_num_train_steps, num_warmup_steps, use_tpu, weight_decay=0.01)
 
             output_spec = tf.compat.v1.estimator.tpu.TPUEstimatorSpec(
                 mode=mode,

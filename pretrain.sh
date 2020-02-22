@@ -4,6 +4,7 @@ SIZE=small
 LR=0.002
 DISC_W=50
 TRAIN_STEP=125000
+TOTAL=1000000
 BZ=1024
 
 ELECTRA_GC='gs://electra'
@@ -22,6 +23,7 @@ python3 run_pretrain.py \
 --train_batch_size=${BZ} \
 --max_seq_length=${MAX_SEQ_L} \
 --num_train_steps=${TRAIN_STEP} \
+--total_num_train_steps=${TOTAL} \
 --max_predictions_per_seq=20 \
 --save_checkpoints_steps=100 \
 --iterations_per_loop=100 \
