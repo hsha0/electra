@@ -3,15 +3,15 @@ TPU_NAME='grpc://10.7.202.90:8470'
 MODEL=electra
 SIZE=small
 SEED=$$
-CKPT='electra_small_seq128_lr5e-4_w50_bz128'
+CKPT='electra_small_seq128_lr5e-4_w50_bz1024_nolayernorm'
 CKPT_NUM=125000
-TASK_INDEX=2
+TASK_INDEX=1
 
 TASKS=(MRPC CoLA MNLI SST-2 QQP QNLI WNLI RTE STS-B)
-LRS=(3e-4 3e-4 3e-4 3e-4 3e-4 3e-4 3e-4 3e-4 3e-4)
-#LRS=(2e-5 1e-5 3e-5 1e-5 5e-5 1e-5 2e-5 3e-5 2e-5)
-BZS=(32 32 32 32 32 32 32 32 32)
-#BZS=(32 16 128 32 128 32 16 32 16)
+#LRS=(3e-4 3e-4 3e-4 3e-4 3e-4 3e-4 3e-4 3e-4 3e-4)
+LRS=(2e-5 1e-5 3e-5 1e-5 5e-5 1e-5 2e-5 3e-5 2e-5)
+#BZS=(32 32 32 32 32 32 32 32 32)
+BZS=(32 16 128 32 128 32 16 32 16)
 EPOCHS=(3 3 3 3 3 3 3 10 10)
 
 TASK=${TASKS[${TASK_INDEX}]}
