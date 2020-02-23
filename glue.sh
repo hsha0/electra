@@ -5,7 +5,7 @@ SIZE=small
 SEED=$$
 CKPT=electra_small_seq128_lr5e-4_w50_bz1024_nolayernorm
 CKPT_NUM=125000
-TASK_INDEX=1
+TASK_INDEX=$1
 
 TASKS=(MRPC CoLA MNLI SST-2 QQP QNLI WNLI RTE STS-B)
 #LRS=(3e-4 3e-4 3e-4 3e-4 3e-4 3e-4 3e-4 3e-4 3e-4)
@@ -16,8 +16,10 @@ BZS=(64 32 256 32 128 32 16 32 16)
 EPOCHS=(3 3 3 3 3 3 3 10 10)
 
 TASK=${TASKS[${TASK_INDEX}]}
-LR=${LRS[${TASK_INDEX}]}
-BZ=${BZS[${TASK_INDEX}]}
+#LR=${LRS[${TASK_INDEX}]}
+#BZ=${BZS[${TASK_INDEX}]}
+LR=$2
+BZ=$3
 EPOCH=${EPOCHS[${TASK_INDEX}]}
 INIT_CKPT=$ELECTRA_GC/electra_pretrain/${CKPT}/model.ckpt-${CKPT_NUM}
 
