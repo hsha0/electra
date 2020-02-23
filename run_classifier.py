@@ -800,7 +800,7 @@ def file_based_input_fn_builder(input_file, seq_length, is_training,
     d = tf.data.TFRecordDataset(input_file)
     if is_training:
       d = d.repeat()
-      d = d.shuffle(buffer_size=100, seed=FLAGS.seed)
+      d = d.shuffle(buffer_size=100)
 
     d = d.apply(
         tf.data.experimental.map_and_batch(
@@ -1059,7 +1059,7 @@ def input_fn_builder(features, seq_length, is_training, drop_remainder):
 
     if is_training:
       d = d.repeat()
-      d = d.shuffle(buffer_size=100, seed=FLAGS.seed)
+      d = d.shuffle(buffer_size=100)
 
     d = d.batch(batch_size=batch_size, drop_remainder=drop_remainder)
     return d
@@ -1090,7 +1090,7 @@ def get_config():
     return config
 
 def main(_):
-  tf.compat.v1.set_random_seed(FLAGS.seed)
+  #tf.compat.v1.set_random_seed(FLAGS.seed)
   tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.INFO)
 
   processors = {
