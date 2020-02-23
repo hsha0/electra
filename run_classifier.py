@@ -800,7 +800,7 @@ def file_based_input_fn_builder(input_file, seq_length, is_training,
     d = tf.data.TFRecordDataset(input_file)
     if is_training:
       d = d.repeat()
-      d = d.shuffle(buffer_size=100)
+      d = d.shuffle(buffer_size=100, seed=FLAGS.seed)
 
     d = d.apply(
         tf.data.experimental.map_and_batch(
