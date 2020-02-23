@@ -533,6 +533,9 @@ class QNLIProcessor(DataProcessor):
         """See base class."""
         return ["entailment", "not_entailment"]
 
+    def get_examples_num(self):
+        return 104743
+
     def _create_examples(self, lines, set_type):
         """Create examples for the training and dev sets."""
         examples = []
@@ -607,8 +610,6 @@ class WNLIProcessor(DataProcessor):
         """See base class."""
         return ["0", "1"]
 
-    def get_examples_num(self):
-        return 104743
 
     def _create_examples(self, lines, set_type):
         """Create examples for the training and dev sets."""
