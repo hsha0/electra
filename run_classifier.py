@@ -289,6 +289,9 @@ class MnliProcessor(DataProcessor):
     """See base class."""
     return ["contradiction", "entailment", "neutral"]
 
+  def get_examples_num(self):
+      return 392702
+
   def _create_examples(self, lines, set_type):
     """Creates examples for the training and dev sets."""
     examples = []
@@ -1155,10 +1158,14 @@ def main(_):
   num_train_steps = None
   num_warmup_steps = None
   if FLAGS.do_train:
-    train_examples = processor.get_train_examples(FLAGS.data_dir)
-    num_train_steps = int(
-        len(train_examples) / FLAGS.train_batch_size * FLAGS.num_train_epochs)
-    num_warmup_steps = int(num_train_steps * FLAGS.warmup_proportion)
+    if task_name == 'mnli':
+        num_train_steps = processor.get_examples_num()
+        num_warmup_steps = int(num_train_steps * FLAGS.warmup_proportion)
+    else:
+        train_examples = processor.get_train_examples(FLAGS.data_dir)
+        num_train_steps = int(
+            len(train_examples) / FLAGS.train_batch_size * FLAGS.num_train_epochs)
+        num_warmup_steps = int(num_train_steps * FLAGS.warmup_proportion)
 
   regression = False
   if task_name == 'sts-b': regression = True
@@ -1184,9 +1191,12 @@ def main(_):
       predict_batch_size=FLAGS.predict_batch_size)
 
   if FLAGS.do_train:
-    train_file = os.path.join(FLAGS.output_dir, "train.tf_record")
-    file_based_convert_examples_to_features(
-        train_examples, label_list, FLAGS.max_seq_length, tokenizer, train_file)
+    if task_name == 'mnli':
+        train_file = os.path.join(FLAGS.data_dir, "train.tf_record")
+    else:
+        train_file = os.path.join(FLAGS.output_dir, "train.tf_record")
+        file_based_convert_examples_to_features(
+            train_examples, label_list, FLAGS.max_seq_length, tokenizer, train_file)
     tf.compat.v1.logging.info("***** Running training *****")
     tf.compat.v1.logging.info("  Num examples = %d", len(train_examples))
     tf.compat.v1.logging.info("  Batch size = %d", FLAGS.train_batch_size)
