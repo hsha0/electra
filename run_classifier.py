@@ -410,6 +410,9 @@ class SST2Processor(DataProcessor):
         """See base class."""
         return ["0", "1"]
 
+    def get_examples_num(self):
+        return 67349
+
     def _create_examples(self, lines, set_type):
         """Creates examples for the training and dev sets."""
         examples = []
@@ -1159,8 +1162,9 @@ def main(_):
   train_examples = None
   num_train_steps = None
   num_warmup_steps = None
+  tfrecord_tasks = ['mnli', 'sst-2']
   if FLAGS.do_train:
-    if task_name == 'mnli':
+    if task_name in tfrecord_tasks:
         num_examples = processor.get_examples_num()
         num_train_steps = int(num_examples / FLAGS.train_batch_size * FLAGS.num_train_epochs)
         num_warmup_steps = int(num_train_steps * FLAGS.warmup_proportion)
@@ -1196,7 +1200,7 @@ def main(_):
       predict_batch_size=FLAGS.predict_batch_size)
 
   if FLAGS.do_train:
-    if task_name == 'mnli':
+    if task_name in tfrecord_tasks:
         train_file = os.path.join(FLAGS.data_dir, "train.tf_record")
     else:
         train_file = os.path.join(FLAGS.output_dir, "train.tf_record")
