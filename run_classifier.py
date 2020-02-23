@@ -449,6 +449,12 @@ class QQPProcessor(DataProcessor):
         """See base class."""
         return ["0", "1"]
 
+    def get_examples_num(self):
+        return 363857
+
+    def get_dev_examples_num(self):
+        return 40430
+
     def _create_examples(self, lines, set_type):
         """Create examples for the training and dev sets."""
         examples = []
@@ -1162,7 +1168,7 @@ def main(_):
   train_examples = None
   num_train_steps = None
   num_warmup_steps = None
-  tfrecord_tasks = ['mnli', 'sst-2']
+  tfrecord_tasks = ['mnli', 'sst-2', 'qqp']
   if FLAGS.do_train:
     if task_name in tfrecord_tasks:
         num_examples = processor.get_examples_num()
@@ -1218,23 +1224,33 @@ def main(_):
     estimator.train(input_fn=train_input_fn, max_steps=num_train_steps)
 
   if FLAGS.do_eval:
-    eval_examples = processor.get_dev_examples(FLAGS.data_dir)
-    num_actual_eval_examples = len(eval_examples)
-    if FLAGS.use_tpu:
-      # TPU requires a fixed batch size for all batches, therefore the number
-      # of examples must be a multiple of the batch size, or else examples
-      # will get dropped. So we pad with fake examples which are ignored
-      # later on. These do NOT count towards the metric (all tf.metrics
-      # support a per-instance weight, and these get a weight of 0.0).
-      while len(eval_examples) % FLAGS.eval_batch_size != 0:
-        eval_examples.append(PaddingInputExample())
+    if task_name == 'qqp':
+        num_actual_eval_examples = processor.get_dev_examples_num()
+    else:
+        eval_examples = processor.get_dev_examples(FLAGS.data_dir)
+        num_actual_eval_examples = len(eval_examples)
+        if FLAGS.use_tpu:
+          # TPU requires a fixed batch size for all batches, therefore the number
+          # of examples must be a multiple of the batch size, or else examples
+          # will get dropped. So we pad with fake examples which are ignored
+          # later on. These do NOT count towards the metric (all tf.metrics
+          # support a per-instance weight, and these get a weight of 0.0).
+          while len(eval_examples) % FLAGS.eval_batch_size != 0:
+            eval_examples.append(PaddingInputExample())
 
-    eval_file = os.path.join(FLAGS.output_dir, "eval.tf_record")
-    file_based_convert_examples_to_features(
-        eval_examples, label_list, FLAGS.max_seq_length, tokenizer, eval_file)
+    if task_name == 'qqp':
+        eval_file = os.path.join(FLAGS.data_dir, "eval.tf_record")
+    else:
+        eval_file = os.path.join(FLAGS.output_dir, "eval.tf_record")
+        file_based_convert_examples_to_features(
+            eval_examples, label_list, FLAGS.max_seq_length, tokenizer, eval_file)
 
     tf.compat.v1.logging.info("***** Running evaluation *****")
-    tf.compat.v1.logging.info("  Num examples = %d (%d actual, %d padding)",
+    if task_name == 'qqp':
+        tf.compat.v1.logging.info("  Num examples = %d (%d actual, %d padding)",
+                                  40432, 40430, 2)
+    else:
+        tf.compat.v1.logging.info("  Num examples = %d (%d actual, %d padding)",
                     len(eval_examples), num_actual_eval_examples,
                     len(eval_examples) - num_actual_eval_examples)
     tf.compat.v1.logging.info("  Batch size = %d", FLAGS.eval_batch_size)
