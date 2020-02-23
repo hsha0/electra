@@ -31,7 +31,7 @@ python3 run_classifier.py \
 --electra_config_file=$CONFIG \
 --task_name=${TASK} \
 --data_dir=$ELECTRA_GC/glue/glue_data/$TASK \
---output_dir=$ELECTRA_GC/glue/glue_results/${MODEL}_${SIZE}/${TASK}_${SEED} \
+--output_dir=$ELECTRA_GC/glue/glue_results/${MODEL}_${SIZE}/${TASK}_3368 \
 --init_checkpoint=$INIT_CKPT \
 --vocab_file=vocab.txt \
 --model=$MODEL \
