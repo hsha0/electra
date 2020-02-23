@@ -607,6 +607,9 @@ class WNLIProcessor(DataProcessor):
         """See base class."""
         return ["0", "1"]
 
+    def get_examples_num(self):
+        return 104743
+
     def _create_examples(self, lines, set_type):
         """Create examples for the training and dev sets."""
         examples = []
@@ -1168,7 +1171,7 @@ def main(_):
   train_examples = None
   num_train_steps = None
   num_warmup_steps = None
-  tfrecord_tasks = ['mnli', 'sst-2', 'qqp']
+  tfrecord_tasks = ['mnli', 'sst-2', 'qqp', 'wnli']
   if FLAGS.do_train:
     if task_name in tfrecord_tasks:
         num_examples = processor.get_examples_num()
