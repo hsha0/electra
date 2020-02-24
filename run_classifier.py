@@ -995,7 +995,7 @@ def model_fn_builder(electra_config, num_labels, init_checkpoint, learning_rate,
             accuracy = tf.compat.v1.metrics.accuracy(
                 labels=label_ids, predictions=predictions, weights=is_real_example)
 
-            mcc = MatthewsCorrelationCoefficient(num_classes=2)
+            mcc = MatthewsCorrelationCoefficient(num_classes=1)
             mcc.update_state(label_ids, predictions)
             #mcc = mcc_metric(y_true=label_ids, y_pred=predictions)
             #mcc = tf.reshape(mcc, [1])
