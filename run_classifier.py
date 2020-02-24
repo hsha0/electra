@@ -909,8 +909,8 @@ def mcc_metric(y_true, y_pred):
   x = tf.cast((true_pos + false_pos) * (true_pos + false_neg)
       * (true_neg + false_pos) * (true_neg + false_neg), tf.float32)
   '''
-  y_true = tf.cast(y_true, dtype=self.dtype)
-  y_pred = tf.cast(y_pred, dtype=self.dtype)
+  y_true = tf.cast(y_true)
+  y_pred = tf.cast(y_pred)
 
   true_positive = tf.math.count_nonzero(y_true * y_pred, 0)
   # true_negative
