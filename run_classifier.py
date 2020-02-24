@@ -899,6 +899,16 @@ def create_model(electra_config, is_training, input_ids, input_mask, segment_ids
     return (loss, per_example_loss, logits, probabilities)
 
 
+def mcc_metric(y_true, y_pred):
+  true_pos = tf.math.count_nonzero(y_pred * y_true)
+  true_neg = tf.math.count_nonzero((y_pred - 1) * (y_true - 1))
+  false_pos = tf.math.count_nonzero(y_pred * (y_true - 1))
+  false_neg = tf.math.count_nonzero((y_pred - 1) * y_true)
+  x = tf.cast((true_pos + false_pos) * (true_pos + false_neg)
+      * (true_neg + false_pos) * (true_neg + false_neg), tf.float32)
+  return tf.cast((true_pos * true_neg) - (false_pos * false_neg), tf.float32) / tf.sqrt(x)
+
+
 def model_fn_builder(electra_config, num_labels, init_checkpoint, learning_rate,
                      num_train_steps, num_warmup_steps, use_tpu,
                      use_one_hot_embeddings, regression=False):
@@ -984,8 +994,10 @@ def model_fn_builder(electra_config, num_labels, init_checkpoint, learning_rate,
             accuracy = tf.compat.v1.metrics.accuracy(
                 labels=label_ids, predictions=predictions, weights=is_real_example)
 
-            mcc = MatthewsCorrelationCoefficient(num_classes=1)
-            mcc.update_state(label_ids, predictions)
+            #mcc = MatthewsCorrelationCoefficient(num_classes=1)
+            #mcc.update_state(label_ids, predictions)
+            mcc = mcc_metric(y_true=label_ids, y_pred=predictions)
+            mcc = tf.compat.v1.metrics.mean(values=mcc)
             return {
                 "eval_mcc": mcc,
                 "eval_accuracy": accuracy,
