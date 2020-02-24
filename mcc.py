@@ -111,6 +111,9 @@ class MatthewsCorrelationCoefficient(tf.keras.metrics.Metric):
         false_positive = pred_sum - true_positive
         false_negative = true_sum - true_positive
 
+        print(false_negative)
+        sys.exit()
+
         # false positive state_update
         self.false_positives.assign_add(tf.cast(false_positive, self.dtype))
         # false negative state_update
