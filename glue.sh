@@ -47,7 +47,7 @@ python3 run_classifier.py \
 --learning_rate=${LR} \
 --max_seq_length=128 \
 --num_train_epochs=${EPOCH} \
---use_tpu=False \
+--use_tpu=True \
 --tpu_name=$TPU_NAME
 
 echo ${SEED}_${TASK}
