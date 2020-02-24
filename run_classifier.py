@@ -27,6 +27,7 @@ import tokenization
 import tensorflow as tf
 from scipy.stats import spearmanr
 from mcc import MatthewsCorrelationCoefficient
+from sklearn.metrics import matthews_corrcoef
 
 flags = tf.compat.v1.flags
 
@@ -1000,6 +1001,7 @@ def model_fn_builder(electra_config, num_labels, init_checkpoint, learning_rate,
             mcc = tf.reshape(mcc, [1])
             print(mcc)
             mcc = tf.compat.v1.metrics.mean(values=mcc)
+            mcc = matthews_corrcoef(label_ids, predictions)
             return {
                 "eval_mcc": mcc,
                 "eval_accuracy": accuracy,
