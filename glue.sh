@@ -26,7 +26,8 @@ TASK=${TASKS[${TASK_INDEX}]}
 #BZ=${BZS[${TASK_INDEX}]}
 LR=$2
 BZ=$3
-EPOCH=${EPOCHS[${TASK_INDEX}]}
+#EPOCH=${EPOCHS[${TASK_INDEX}]}
+EPOCH=$4
 INIT_CKPT=$ELECTRA_GC/electra_pretrain/${CKPT}/model.ckpt-${CKPT_NUM}
 
 CONFIG=config/${MODEL}_${SIZE}.json
