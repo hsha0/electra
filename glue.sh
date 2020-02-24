@@ -1,9 +1,9 @@
 ELECTRA_GC='gs://electra'
-TPU_NAME='grpc://10.20.176.210:8470'
+TPU_NAME='grpc://10.77.135.10:8470'
 MODEL=electra
 SIZE=small
 SEED=$$
-CKPT=electra_small_seq128_lr5e-4_w50_bz1024_nolayernorm
+CKPT=electra_small_seq128_lr2e-3_w50_bz1024
 CKPT_NUM=125000
 TASK_INDEX=$1
 
@@ -12,22 +12,23 @@ TASKS=(MRPC CoLA MNLI SST-2 QQP QNLI WNLI RTE STS-B)
 #BZS=(32 32 32 32 32 32 32 32 32)
 
 #LAMB
-#LRS=(2e-4 3e-4 4e-4 3e-4 1e-5 2e-4 3e-4 3e-4 2e-5)
-#BZS=(64 256 256 256 1024 256 32 32 16)
+LRS=(2e-4 3e-4 4e-4 3e-4 1e-5 2e-4 3e-4 3e-4 2e-5)
+BZS=(64 256 256 256 1024 256 32 32 16)
 
 #ADAM
-LRS=(4e-5 3e-4 4e-4 3e-4 1e-5 2e-4 3e-4 3e-4 2e-5)
-BZS=(8 256 256 256 1024 256 32 32 16)
+#LRS=(4e-5 3e-4 4e-4 3e-4 1e-5 2e-4 3e-4 3e-4 2e-5)
+#BZS=(8 256 256 256 1024 256 32 32 16)
+
 EPOCHS=(3 3 3 3 3 3 3 10 10)
 
 
 TASK=${TASKS[${TASK_INDEX}]}
-#LR=${LRS[${TASK_INDEX}]}
-#BZ=${BZS[${TASK_INDEX}]}
-LR=$2
-BZ=$3
-#EPOCH=${EPOCHS[${TASK_INDEX}]}
-EPOCH=$4
+LR=${LRS[${TASK_INDEX}]}
+BZ=${BZS[${TASK_INDEX}]}
+EPOCH=${EPOCHS[${TASK_INDEX}]}
+#LR=$2
+#BZ=$3
+#EPOCH=$4
 INIT_CKPT=$ELECTRA_GC/electra_pretrain/${CKPT}/model.ckpt-${CKPT_NUM}
 
 CONFIG=config/${MODEL}_${SIZE}.json
