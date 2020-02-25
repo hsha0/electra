@@ -130,8 +130,11 @@ def create_lamb_optimizer(loss, init_lr, total_num_train_steps, num_warmup_steps
       grads = [tf.compat.v1.tpu.cross_replica_sum(grad) for grad in grads if (grad is not None)]
   layer_wise_lr_multiplier = []
   for i, grad in enumerate(grads):
-      layer_wise_lr_multiplier.append([layer_wise_lr_decay ** i])
+      layer_wise_lr_multiplier.append(layer_wise_lr_decay ** i)
 
+  layer_wise_lr_multiplier =  tf.constant(layer_wise_lr_multiplier)
+  print(layer_wise_lr_multiplier)
+  print(grads)
   grads = tf.multiply(grads, tf.constant(layer_wise_lr_multiplier))
   print(grads)
   sys.exit()
