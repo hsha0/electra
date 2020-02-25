@@ -23,7 +23,7 @@ import tensorflow as tf
 import lamb
 
 
-def create_lamb_optimizer(loss, init_lr, total_num_train_steps, num_warmup_steps, use_tpu, weight_decay=0.0, part='disc'):
+def create_lamb_optimizer(loss, init_lr, total_num_train_steps, num_warmup_steps, use_tpu, weight_decay=0.0, layer_wise_lr_decay=1, part='disc'):
   """Creates an optimizer training op."""
   global_step = tf.compat.v1.train.get_or_create_global_step()
 
@@ -127,6 +127,8 @@ def create_lamb_optimizer(loss, init_lr, total_num_train_steps, num_warmup_steps
   # This is how the model was pre-trained.
   if use_tpu:
       grads = [tf.compat.v1.tpu.cross_replica_sum(grad) for grad in grads if (grad is not None)]
+  for i, grads in enumerate(grads):
+      grads[i] = grads * (layer_wise_lr_decay ** i)
   (grads, _) = tf.clip_by_global_norm(grads, clip_norm=1.0)
   train_op = optimizer.apply_gradients(zip(grads, tvars))
 
