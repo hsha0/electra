@@ -136,7 +136,7 @@ def create_lamb_optimizer(loss, init_lr, total_num_train_steps, num_warmup_steps
   for i, grads in enumerate(grads):
       layer_wise_lr_multiplier.append(layer_wise_lr_decay ** i)
 
-  print(grads[2])
+  grads = tf.reshape(grads, [len(layer_wise_lr_multiplier)])
   grads = tf.multiply(grads, tf.constant(layer_wise_lr_multiplier))
   print(grads)
   sys.exit()
