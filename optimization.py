@@ -137,7 +137,7 @@ def create_lamb_optimizer(loss, init_lr, total_num_train_steps, num_warmup_steps
   print(grads)
 
   #grads = tf.multiply(grads, layer_wise_lr_multiplier)
-  grads = tf.map_fn(lambda x, y: tf.multiply(x,y), [grads, layer_wise_lr_multiplier])
+  grads = tf.map_fn(lambda x, y: tf.multiply(x,y), grads, layer_wise_lr_multiplier)
   print(grads)
   sys.exit()
 
