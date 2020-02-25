@@ -183,12 +183,12 @@ def create_adam_optimizer(loss, init_lr, total_num_train_steps, num_warmup_steps
         exclude_from_weight_decay=["LayerNorm", "layer_norm", "bias"],
         name='ADAM')
 
+    if use_tpu:
+      optimizer = tf.compat.v1.tpu.CrossShardOptimizer(optimizer)
+
     tvars = tf.compat.v1.trainable_variables()
     grads = tf.gradients(ys=loss, xs=tvars)
 
-    # This is how the model was pre-trained.
-    if use_tpu:
-        grads = [tf.compat.v1.tpu.cross_replica_sum(grad) for grad in grads if (grad is not None)]
     (grads, _) = tf.clip_by_global_norm(grads, clip_norm=1.0)
     train_op = optimizer.apply_gradients(zip(grads, tvars))
 

@@ -3,9 +3,9 @@ MODEL=electra
 SIZE=small
 LR=5e-4
 DISC_W=50
-TRAIN_STEP=125000
+TRAIN_STEP=62500
 TOTAL=1000000
-BZ=1024
+BZ=128
 
 ELECTRA_GC='gs://electra'
 CONFIG=config/${MODEL}_${SIZE}.json
@@ -27,5 +27,5 @@ python3 run_pretrain.py \
 --max_predictions_per_seq=20 \
 --save_checkpoints_steps=1000 \
 --iterations_per_loop=1000 \
---use_tpu=true \
+--use_tpu=False \
 --tpu_name=$TPU_NAME
