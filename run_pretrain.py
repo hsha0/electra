@@ -36,6 +36,9 @@ flags.DEFINE_integer(
     "Must match data generation.")
 
 flags.DEFINE_string(
+    "optimizer", 'lamb', 'Name of optimizer.'
+)
+flags.DEFINE_string(
     "init_checkpoint", None,
     "Initial checkpoint (usually from a pre-trained BERT model).")
 
@@ -341,16 +344,27 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
                 part='disc'
             )
             '''
-
-            train_op = optimization.create_adam_optimizer(
-                loss=total_loss,
-                init_lr=learning_rate,
-                total_num_train_steps=FLAGS.total_num_train_steps,
-                num_warmup_steps=num_warmup_steps,
-                use_tpu=use_tpu,
-                weight_decay=0.01,
-            )
-
+            if FLAGS.optimizer == 'lamb':
+                train_op = optimization.create_lamb_optimizer(
+                    loss=total_loss,
+                    init_lr=learning_rate,
+                    total_num_train_steps=FLAGS.total_num_train_steps,
+                    num_warmup_steps=num_warmup_steps,
+                    use_tpu=use_tpu,
+                    weight_decay=0.01,
+                )
+            elif FLAGS.optimizer == 'adam':
+                train_op = optimization.create_adam_optimizer(
+                    loss=total_loss,
+                    init_lr=learning_rate,
+                    total_num_train_steps=FLAGS.total_num_train_steps,
+                    num_warmup_steps=num_warmup_steps,
+                    use_tpu=use_tpu,
+                    weight_decay=0.01,
+                )
+            else:
+                print(FLAGS.optimizer, 'does not exist.')
+                sys.exit()
             output_spec = tf.compat.v1.estimator.tpu.TPUEstimatorSpec(
                 mode=mode,
                 loss=total_loss,
