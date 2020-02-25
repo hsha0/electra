@@ -993,7 +993,7 @@ def model_fn_builder(electra_config, num_labels, init_checkpoint, learning_rate,
           init_lr=learning_rate,
           total_num_train_steps=num_train_steps,
           num_warmup_steps=num_warmup_steps,
-          layer_wise_lr_decay=0.8,
+          layer_wise_lr_decay=1.0,
           use_tpu=use_tpu)
 
       output_spec = tf.compat.v1.estimator.tpu.TPUEstimatorSpec(
