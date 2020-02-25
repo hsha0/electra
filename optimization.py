@@ -128,16 +128,10 @@ def create_lamb_optimizer(loss, init_lr, total_num_train_steps, num_warmup_steps
   # This is how the model was pre-trained.
   if use_tpu:
       grads = [tf.compat.v1.tpu.cross_replica_sum(grad) for grad in grads if (grad is not None)]
-  layer_wise_lr_multiplier = []
+
   for i, grad in enumerate(grads):
-      layer_wise_lr_multiplier.append(tf.ones(shape=grad.shape) * layer_wise_lr_decay ** i)
+      grads[i] = grad * layer_wise_lr_decay ** i
 
-  #layer_wise_lr_multiplier = tf.reshape(layer_wise_lr_multiplier, [-1,1,1])
-  print(layer_wise_lr_multiplier)
-  print(grads)
-
-  #grads = tf.multiply(grads, layer_wise_lr_multiplier)
-  grads = tf.map_fn(fn=lambda x: tf.multiply(x, layer_wise_lr_decay ** grads.index(x)), elems=tf.stack(grads))
   print(grads)
   sys.exit()
 
