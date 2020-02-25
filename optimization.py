@@ -132,9 +132,6 @@ def create_lamb_optimizer(loss, init_lr, total_num_train_steps, num_warmup_steps
   for i, grad in enumerate(grads):
       grads[i] = grad * layer_wise_lr_decay ** i
 
-  print(grads)
-  sys.exit()
-
   (grads, _) = tf.clip_by_global_norm(grads, clip_norm=1.0)
 
 
