@@ -45,7 +45,7 @@ flags.DEFINE_integer(
 flags.DEFINE_float("masked_lm_prob", 0.15, "Masked LM probability.")
 
 flags.DEFINE_float(
-    "short_seq_prob", 0.0,
+    "short_seq_prob", 0.1,
     "Probability of creating sequences which are shorter than the "
     "maximum length.")
 
@@ -192,6 +192,8 @@ def create_instances_from_document(
     max_num_tokens = max_seq_length - 3
 
     target_seq_length = max_num_tokens
+    if rng.random() < short_seq_prob:
+        target_seq_length = rng.randint(2, max_num_tokens)
 
     # We DON'T just concatenate all of the tokens from a document into a long
     # sequence and choose an arbitrary split point because this would make the
