@@ -342,7 +342,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
             )
             '''
 
-            train_op = optimization.create_lamb_optimizer(
+            train_op = optimization.create_adam_optimizer(
                 loss=total_loss,
                 init_lr=learning_rate,
                 total_num_train_steps=FLAGS.total_num_train_steps,
