@@ -3,7 +3,7 @@ TPU_NAME='grpc://10.62.245.10:8470'
 MODEL=electra
 SIZE=small
 SEED=$$
-CKPT=electra_small_seq128_lr5e-5_w50_bz1024
+CKPT=electra_small_seq128_lr5e-4_w50_bz1024_nolayernorm
 CKPT_NUM=125000
 TASK_INDEX=$1
 
