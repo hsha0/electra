@@ -15,7 +15,7 @@ MAX_SEQ_L=128
 python3 run_pretrain.py \
 --electra_config_file=$CONFIG \
 --input_file=$ELECTRA_GC/data_128_CLS_0.1short/*.tfrecord \
---output_dir=$ELECTRA_GC/electra_pretrain/${MODEL}_${SIZE}_seq${MAX_SEQ_L}_lr${LR}_w${DISC_W}_bz${BZ}_LAMB \
+--output_dir=$ELECTRA_GC/electra_pretrain/${MODEL}_${SIZE}_seq${MAX_SEQ_L}_lr${LR}_w${DISC_W}_bz${BZ}_ADAM \
 --vocab_file=vocab.txt \
 --disc_loss_weight=${DISC_W} \
 --model=$MODEL \
