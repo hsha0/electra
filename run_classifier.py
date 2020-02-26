@@ -1045,8 +1045,9 @@ def model_fn_builder(electra_config, num_labels, init_checkpoint, learning_rate,
             #mcc = tf.compat.v1.metrics.mean(values=mcc)
             mcc = MatthewsCorrelationCoefficient(num_classes=1)
             mcc.update_state(y_true=label_ids, y_pred=predictions, sample_weight=is_real_example)
+            mcc_value = tf.compat.v1.metrics.mean(mcc.result())
             return {
-                "eval_mcc": (mcc.result(), mcc.update_state),
+                "eval_mcc": mcc_value,
                 "eval_accuracy": accuracy,
                 "eval_loss": loss,
 
