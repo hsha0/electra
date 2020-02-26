@@ -888,7 +888,6 @@ def create_model(electra_config, is_training, input_ids, input_mask, segment_ids
         per_example_loss = tf.square(labels - logits)
         loss = tf.reduce_mean(input_tensor=per_example_loss)
 
-
     else:
         probabilities = tf.nn.softmax(logits, axis=-1)
         log_probs = tf.nn.log_softmax(logits, axis=-1)
@@ -1008,7 +1007,7 @@ def model_fn_builder(electra_config, num_labels, init_checkpoint, learning_rate,
 
       def metric_fn(per_example_loss, label_ids, logits, is_real_example):
         if regression:
-            correlation = tfp.stats.correlation(x=logits, y=tf.reshape(label_ids, [0, 1]))
+            correlation = tfp.stats.correlation(x=logits, y=tf.reshape(label_ids, [0, 1]), sample_axis=1, event_axis=0)
             print(correlation)
             correlation = tf.compat.v1.metrics.mean(correlation)
 
