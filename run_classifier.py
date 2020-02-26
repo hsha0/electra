@@ -903,14 +903,14 @@ def create_model(electra_config, is_training, input_ids, input_mask, segment_ids
     return (loss, per_example_loss, logits, probabilities)
 
 def mcc_metric(y_true, y_pred):
-  predicted = y_pred
-  true_pos = tf.math.count_nonzero(predicted * y_true)
-  true_neg = tf.math.count_nonzero((predicted - 1) * (y_true - 1))
-  false_pos = tf.math.count_nonzero(predicted * (y_true - 1))
-  false_neg = tf.math.count_nonzero((predicted - 1) * y_true)
-  x = tf.cast((true_pos + false_pos) * (true_pos + false_neg)
-      * (true_neg + false_pos) * (true_neg + false_neg), tf.float32)
-  return tf.cast((true_pos * true_neg) - (false_pos * false_neg), tf.float32) / tf.sqrt(x)
+    predicted = y_pred
+    true_pos = tf.math.count_nonzero(predicted * y_true)
+    true_neg = tf.math.count_nonzero((predicted - 1) * (y_true - 1))
+    false_pos = tf.math.count_nonzero(predicted * (y_true - 1))
+    false_neg = tf.math.count_nonzero((predicted - 1) * y_true)
+    x = tf.cast((true_pos + false_pos) * (true_pos + false_neg)
+        * (true_neg + false_pos) * (true_neg + false_neg), tf.float32)
+    return tf.cast((true_pos * true_neg) - (false_pos * false_neg), tf.float32) / tf.sqrt(x)
 
 
 def mcc_metric_2(y_true, y_pred, bucunzai):
