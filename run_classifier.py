@@ -903,8 +903,7 @@ def create_model(electra_config, is_training, input_ids, input_mask, segment_ids
     return (loss, per_example_loss, logits, probabilities)
 
 
-def mcc_metric(y_true, y_pred, weights):
-  '''
+def mcc_metric(y_true, y_pred):
   y_true = tf.cast(y_true)
   y_pred = tf.cast(y_pred)
 
@@ -940,6 +939,7 @@ def mcc_metric(y_true, y_pred, weights):
               * (true_negative + false_positive) * (true_negative + false_negative), tf.float32)
   return tf.cast((true_positive * true_negative) - (false_positive * false_negative), tf.float32) / tf.sqrt(x)
   #return true_positive
+  '''
 
 def model_fn_builder(electra_config, num_labels, init_checkpoint, learning_rate,
                      num_train_steps, num_warmup_steps, use_tpu,
@@ -1032,7 +1032,7 @@ def model_fn_builder(electra_config, num_labels, init_checkpoint, learning_rate,
             accuracy = tf.compat.v1.metrics.accuracy(
                 labels=label_ids, predictions=predictions, weights=is_real_example)
 
-            mcc = mcc_metric(y_true=label_ids, y_pred=predictions, weights=is_real_example)
+            mcc = mcc_metric(y_true=label_ids, y_pred=predictions)
             mcc = tf.compat.v1.metrics.mean(values=mcc)
             return {
                 "eval_mcc": mcc,
