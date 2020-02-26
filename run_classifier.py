@@ -451,7 +451,7 @@ class QQPProcessor(DataProcessor):
         return ["0", "1"]
 
     def get_examples_num(self):
-        return 363857
+        return 363846
 
     def get_dev_examples_num(self):
         return 40430
@@ -463,7 +463,7 @@ class QQPProcessor(DataProcessor):
             if i == 0:
                 continue
             guid = "%s-%s" % (set_type, tokenization.convert_to_unicode(line[0]))
-            if set_type == "train":
+            if set_type == "train" or set_type == 'dev':
                 text_a = tokenization.convert_to_unicode(line[3])
                 text_b = tokenization.convert_to_unicode(line[4])
             else:
@@ -1278,7 +1278,7 @@ def main(_):
           while len(eval_examples) % FLAGS.eval_batch_size != 0:
             eval_examples.append(PaddingInputExample())
 
-    if task_name == 'qqp':
+    if task_name == 'bucunzai':
         eval_file = os.path.join(FLAGS.data_dir, "eval.tf_record")
     else:
         eval_file = os.path.join(FLAGS.output_dir, "eval.tf_record")
@@ -1286,7 +1286,7 @@ def main(_):
             eval_examples, label_list, FLAGS.max_seq_length, tokenizer, eval_file)
 
     tf.compat.v1.logging.info("***** Running evaluation *****")
-    if task_name == 'qqp':
+    if task_name == 'bucunzai':
         tf.compat.v1.logging.info("  Num examples = %d (%d actual, %d padding)",
                                   40432, 40430, 2)
     else:
@@ -1300,7 +1300,7 @@ def main(_):
     # However, if running eval on the TPU, you will need to specify the
     # number of steps.
     if FLAGS.use_tpu:
-      if task_name == 'qqp':
+      if task_name == 'bucunzai':
         eval_steps = int(40432 // FLAGS.eval_batch_size)
       else:
         assert len(eval_examples) % FLAGS.eval_batch_size == 0
