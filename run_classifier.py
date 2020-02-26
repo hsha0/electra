@@ -912,7 +912,7 @@ def mcc_metric(y_true, y_pred):
     x = tf.cast((true_pos + false_pos) * (true_pos + false_neg) * (true_neg + false_pos) * (
                 true_neg + false_neg), tf.float32)
 
-    return tf.cast((true_pos * true_neg) - (false_pos * false_neg), tf.float32) / tf.sqrt(tf.maximum(x, 1))
+    return tf.math.divide_no_nan(tf.cast((true_pos * true_neg) - (false_pos * false_neg), tf.float32), tf.sqrt(tf.maximum(x, 1)))
 
 
 def mcc_metric_2(y_true, y_pred, bucunzai):
@@ -1041,11 +1041,11 @@ def model_fn_builder(electra_config, num_labels, init_checkpoint, learning_rate,
             accuracy = tf.compat.v1.metrics.accuracy(
                 labels=label_ids, predictions=predictions, weights=is_real_example)
 
-            #mcc = mcc_metric(y_true=label_ids, y_pred=predictions)
-            #mcc = tf.compat.v1.metrics.mean(values=mcc)
-            mcc = MatthewsCorrelationCoefficient(num_classes=1)
-            mcc.update_state(y_true=label_ids, y_pred=predictions, sample_weight=is_real_example)
-            mcc_value = tf.compat.v1.metrics.mean(mcc.result())
+            mcc = mcc_metric(y_true=label_ids, y_pred=predictions)
+            mcc = tf.compat.v1.metrics.mean(values=mcc)
+            #mcc = MatthewsCorrelationCoefficient(num_classes=1)
+            #mcc.update_state(y_true=label_ids, y_pred=predictions, sample_weight=is_real_example)
+            #mcc_value = tf.compat.v1.metrics.mean(mcc.result())
             return {
                 "eval_mcc": mcc_value,
                 "eval_accuracy": accuracy,
