@@ -36,6 +36,7 @@ CONFIG=config/${MODEL}_${SIZE}.json
 echo ${SEED}_${TASK}
 
 python3 run_classifier.py \
+--eval_batch_size=128 \
 --electra_config_file=$CONFIG \
 --task_name=${TASK} \
 --data_dir=$ELECTRA_GC/glue/glue_data_new/$TASK \
