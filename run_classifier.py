@@ -1007,14 +1007,14 @@ def model_fn_builder(electra_config, num_labels, init_checkpoint, learning_rate,
 
       def metric_fn(per_example_loss, label_ids, logits, is_real_example):
         if regression:
-            correlation = tfp.stats.correlation(x=tf.reshape(logits,[-1]), y=label_ids, event_axis=None)
-            print(correlation)
-            correlation = tf.compat.v1.metrics.mean(correlation)
-
+            #correlation = tfp.stats.correlation(x=tf.reshape(logits,[-1]), y=label_ids, event_axis=None)
+            #print(correlation)
+            #correlation = tf.compat.v1.metrics.mean(correlation)
+            pearsonr = tf.contrib.metrics.streaming_pearson_correlation(logits, label_ids, weights=is_real_example)
             loss = tf.compat.v1.metrics.mean(values=per_example_loss, weights=is_real_example)
 
             return {
-                "eval_correlation": correlation,
+                "eval_pearsonr": pearsonr,
                 "eval_loss": loss,
             }
         elif FLAGS.task_name == "CoLA":
