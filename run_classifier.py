@@ -1208,7 +1208,7 @@ def main(_):
   num_train_steps = None
   num_warmup_steps = None
   #tfrecord_tasks = ['mnli', 'sst-2', 'qqp', 'qnli']
-  tfrecord_tasks = []
+  tfrecord_tasks = ['mnli', 'sst-2']
   if FLAGS.do_train:
     if task_name in tfrecord_tasks:
         num_examples = processor.get_examples_num()
@@ -1264,7 +1264,7 @@ def main(_):
     estimator.train(input_fn=train_input_fn, max_steps=num_train_steps)
 
   if FLAGS.do_eval:
-    if task_name == 'qqp':
+    if task_name == 'bucunzai':
         num_actual_eval_examples = processor.get_dev_examples_num()
     else:
         eval_examples = processor.get_dev_examples(FLAGS.data_dir)
