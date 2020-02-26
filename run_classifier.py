@@ -1008,7 +1008,7 @@ def model_fn_builder(electra_config, num_labels, init_checkpoint, learning_rate,
 
       def metric_fn(per_example_loss, label_ids, logits, is_real_example):
         if regression:
-            correlation = tfp.stats.correlation(x=tf.reshape(logits, [-1]), y=label_ids)
+            correlation = tfp.stats.correlation(x=logits, y=tf.reshape(label_ids, [0, 1]))
             print(correlation)
             correlation = tf.compat.v1.metrics.mean(correlation)
 
