@@ -43,7 +43,7 @@ python3 run_classifier.py \
 --init_checkpoint=$INIT_CKPT \
 --vocab_file=vocab.txt \
 --model=$MODEL \
---do_train=False \
+--do_train=True \
 --do_eval=True \
 --train_batch_size=${BZ} \
 --learning_rate=${LR} \
