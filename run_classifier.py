@@ -913,7 +913,7 @@ def mcc_metric(y_true, y_pred):
   return tf.cast((true_pos * true_neg) - (false_pos * false_neg), tf.float32) / tf.sqrt(x)
 
 
-def mcc_metric(y_true, y_pred, bucunzai):
+def mcc_metric_2(y_true, y_pred, bucunzai):
   true_positive = tf.reduce_sum(tf.math.count_nonzero(y_true * y_pred, 0))
   # true_negative
   y_true_negative = tf.math.not_equal(y_true, 1.0)
