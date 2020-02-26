@@ -1041,13 +1041,12 @@ def model_fn_builder(electra_config, num_labels, init_checkpoint, learning_rate,
             accuracy = tf.compat.v1.metrics.accuracy(
                 labels=label_ids, predictions=predictions, weights=is_real_example)
 
-            mcc = mcc_metric(y_true=label_ids, y_pred=predictions)
-            mcc = tf.compat.v1.metrics.mean(values=mcc)
-            #mcc = MatthewsCorrelationCoefficient(num_classes=1)
-            #mcc.update_state(y_true=label_ids, y_pred=predictions, sample_weight=is_real_example)
-            #mcc_value = tf.compat.v1.metrics.mean(mcc.result())
+            #mcc = mcc_metric(y_true=label_ids, y_pred=predictions)
+            #mcc = tf.compat.v1.metrics.mean(values=mcc)
+            mcc = MatthewsCorrelationCoefficient(num_classes=1)
+            update_op = mcc.update_state(y_true=label_ids, y_pred=predictions, sample_weight=is_real_example)
             return {
-                "eval_mcc": mcc,
+                "eval_mcc": (mcc.result(), update_op),
                 "eval_accuracy": accuracy,
                 "eval_loss": loss,
 
