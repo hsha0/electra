@@ -927,9 +927,12 @@ def mcc_metric(y_true, y_pred, weights):
   confusion_matrix = tf.math.confusion_matrix(labels=y_true, predictions=y_pred, num_classes=2, weights=weights)
 
   confusion_matrix = tf.reshape(confusion_matrix, [-1])
-
+  print(confusion_matrix)
   true_negative = tf.gather(confusion_matrix, 0)
+  print(true_negative)
   true_positive = tf.gather(confusion_matrix, 3)
+  print(true_positive)
+  sys.exit()
 
   false_positive = tf.gather(confusion_matrix, 1)
   false_negative = tf.gather(confusion_matrix, 2)
