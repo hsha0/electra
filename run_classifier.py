@@ -1022,7 +1022,7 @@ def model_fn_builder(electra_config, num_labels, init_checkpoint, learning_rate,
 
 
     elif mode == tf.estimator.ModeKeys.EVAL:
-
+      mcc = MatthewsCorrelationCoefficient(num_classes=1)
       def metric_fn(per_example_loss, label_ids, logits, is_real_example):
         if regression:
             #correlation = tfp.stats.correlation(x=tf.reshape(logits,[-1]), y=label_ids, event_axis=None)
@@ -1043,7 +1043,7 @@ def model_fn_builder(electra_config, num_labels, init_checkpoint, learning_rate,
 
             #mcc = mcc_metric(y_true=label_ids, y_pred=predictions)
             #mcc = tf.compat.v1.metrics.mean(values=mcc)
-            mcc = MatthewsCorrelationCoefficient(num_classes=1)
+
             update_op = mcc.update_state(y_true=label_ids, y_pred=predictions, sample_weight=is_real_example)
             return {
                 "eval_mcc": (mcc.result(), update_op),
