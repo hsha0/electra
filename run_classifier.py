@@ -390,6 +390,9 @@ class ColaProcessor(DataProcessor):
         label = tokenization.convert_to_unicode(line[1])
       examples.append(
           InputExample(guid=guid, text_a=text_a, text_b=None, label=label))
+
+    if set_type == 'dev':
+        return examples[:-3]
     return examples
 
 class SST2Processor(DataProcessor):
@@ -995,7 +998,7 @@ def model_fn_builder(electra_config, num_labels, init_checkpoint, learning_rate,
     output_spec = None
     if mode == tf.estimator.ModeKeys.TRAIN:
 
-      train_op = optimization.create_adam_optimizer(
+      train_op = optimization.create_lamb_optimizer(
           loss=total_loss,
           init_lr=learning_rate,
           total_num_train_steps=num_train_steps,
