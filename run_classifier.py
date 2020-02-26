@@ -912,7 +912,7 @@ def mcc_metric(y_true, y_pred):
     x = tf.cast((true_pos + false_pos) * (true_pos + false_neg) * (true_neg + false_pos) * (
                 true_neg + false_neg), tf.float32)
 
-    return tf.cast((true_pos * true_neg) - (false_pos * false_neg), tf.float32) / tf.sqrt(x)
+    return tf.cast((true_pos * true_neg) - (false_pos * false_neg), tf.float32) / tf.sqrt(tf.maximum(x, 1))
 
 
 def mcc_metric_2(y_true, y_pred, bucunzai):
