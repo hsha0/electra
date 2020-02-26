@@ -1252,7 +1252,7 @@ def main(_):
 
   # If TPU is not available, this will fall back to normal Estimator on CPU
   # or GPU.
-  if task_name == 'CoLA': FLAGS.eval_batch_size = 104
+  if task_name == 'CoLA': FLAGS.eval_batch_size = 1040
   estimator = tf.compat.v1.estimator.tpu.TPUEstimator(
       use_tpu=FLAGS.use_tpu,
       model_fn=model_fn,
