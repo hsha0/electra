@@ -904,9 +904,6 @@ def create_model(electra_config, is_training, input_ids, input_mask, segment_ids
 
 
 def mcc_metric(y_true, y_pred):
-  y_true = tf.cast(y_true)
-  y_pred = tf.cast(y_pred)
-
   true_positive = tf.reduce_sum(tf.math.count_nonzero(y_true * y_pred, 0))
   # true_negative
   y_true_negative = tf.math.not_equal(y_true, 1.0)
