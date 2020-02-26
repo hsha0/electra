@@ -28,6 +28,7 @@ import tensorflow as tf
 from scipy.stats import spearmanr
 from mcc import MatthewsCorrelationCoefficient
 from sklearn.metrics import matthews_corrcoef
+import tensorflow_probability as tfp
 
 flags = tf.compat.v1.flags
 
@@ -1017,9 +1018,6 @@ def model_fn_builder(electra_config, num_labels, init_checkpoint, learning_rate,
             accuracy = tf.compat.v1.metrics.accuracy(
                 labels=label_ids, predictions=predictions, weights=is_real_example)
 
-            #mcc = MatthewsCorrelationCoefficient(num_classes=1)
-            #mcc.update_state(label_ids, predictions)
-            #mcc = mcc.result()
             mcc = mcc_metric(y_true=label_ids, y_pred=predictions)
             mcc = tf.compat.v1.metrics.mean(values=mcc)
             return {
@@ -1028,6 +1026,18 @@ def model_fn_builder(electra_config, num_labels, init_checkpoint, learning_rate,
                 "eval_loss": loss,
 
             }
+        elif FLAGS.task_name == 'STS-B':
+            correlation = tfp.stats.correlation(x = logits, y = label_ids)
+            print(correlation)
+            correlation = tf.compat.v1.metrics.mean(correlation)
+
+            loss = tf.compat.v1.metrics.mean(values=per_example_loss, weights=is_real_example)
+
+            return {
+                "eval_correlation": correlation,
+                "eval_loss": loss,
+            }
+
         else:
             predictions = tf.argmax(input=logits, axis=-1, output_type=tf.int32)
             accuracy = tf.compat.v1.metrics.accuracy(
@@ -1208,7 +1218,7 @@ def main(_):
   num_train_steps = None
   num_warmup_steps = None
   #tfrecord_tasks = ['mnli', 'sst-2', 'qqp', 'qnli']
-  tfrecord_tasks = ['mnli', 'sst-2']
+  tfrecord_tasks = ['mnli', 'sst-2', 'qqp']
   if FLAGS.do_train:
     if task_name in tfrecord_tasks:
         num_examples = processor.get_examples_num()
@@ -1264,7 +1274,7 @@ def main(_):
     estimator.train(input_fn=train_input_fn, max_steps=num_train_steps)
 
   if FLAGS.do_eval:
-    if task_name == 'bucunzai':
+    if task_name == 'qqp':
         num_actual_eval_examples = processor.get_dev_examples_num()
     else:
         eval_examples = processor.get_dev_examples(FLAGS.data_dir)
@@ -1278,7 +1288,7 @@ def main(_):
           while len(eval_examples) % FLAGS.eval_batch_size != 0:
             eval_examples.append(PaddingInputExample())
 
-    if task_name == 'bucunzai':
+    if task_name == 'qqp':
         eval_file = os.path.join(FLAGS.data_dir, "eval.tf_record")
     else:
         eval_file = os.path.join(FLAGS.output_dir, "eval.tf_record")
@@ -1286,7 +1296,7 @@ def main(_):
             eval_examples, label_list, FLAGS.max_seq_length, tokenizer, eval_file)
 
     tf.compat.v1.logging.info("***** Running evaluation *****")
-    if task_name == 'bucunzai':
+    if task_name == 'qqp':
         tf.compat.v1.logging.info("  Num examples = %d (%d actual, %d padding)",
                                   40432, 40430, 2)
     else:
@@ -1300,7 +1310,7 @@ def main(_):
     # However, if running eval on the TPU, you will need to specify the
     # number of steps.
     if FLAGS.use_tpu:
-      if task_name == 'bucunzai':
+      if task_name == 'qqp':
         eval_steps = int(40432 // FLAGS.eval_batch_size)
       else:
         assert len(eval_examples) % FLAGS.eval_batch_size == 0
