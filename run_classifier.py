@@ -912,17 +912,17 @@ def mcc_metric(y_true, y_pred):
   y_true = tf.cast(y_true)
   y_pred = tf.cast(y_pred)
 
-  true_positive = tf.math.count_nonzero(y_true * y_pred, 0)
+  true_positive = tf.reduce_sum(tf.math.count_nonzero(y_true * y_pred, 0))
   # true_negative
   y_true_negative = tf.math.not_equal(y_true, 1.0)
   y_pred_negative = tf.math.not_equal(y_pred, 1.0)
-  true_negative = tf.math.count_nonzero(
+  true_negative = tf.reduce_sum(tf.math.count_nonzero(
       tf.math.logical_and(y_true_negative, y_pred_negative), axis=0
-  )
+  ))
   # predicted sum
-  pred_sum = tf.math.count_nonzero(y_pred, 0)
+  pred_sum = tf.reduce_sum(tf.math.count_nonzero(y_pred, 0))
   # Ground truth label sum
-  true_sum = tf.math.count_nonzero(y_true, 0)
+  true_sum = tf.reduce_sum(tf.math.count_nonzero(y_true, 0))
   false_positive = pred_sum - true_positive
   false_negative = true_sum - true_positive
 
