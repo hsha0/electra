@@ -1008,8 +1008,14 @@ def model_fn_builder(electra_config, num_labels, init_checkpoint, learning_rate,
 
       def metric_fn(per_example_loss, label_ids, logits, is_real_example):
         if regression:
+            correlation = tfp.stats.correlation(x=logits, y=label_ids)
+            print(correlation)
+            correlation = tf.compat.v1.metrics.mean(correlation)
+
             loss = tf.compat.v1.metrics.mean(values=per_example_loss, weights=is_real_example)
+
             return {
+                "eval_correlation": correlation,
                 "eval_loss": loss,
             }
         elif FLAGS.task_name == "CoLA":
@@ -1026,18 +1032,6 @@ def model_fn_builder(electra_config, num_labels, init_checkpoint, learning_rate,
                 "eval_loss": loss,
 
             }
-        elif FLAGS.task_name == 'STS-B':
-            correlation = tfp.stats.correlation(x = logits, y = label_ids)
-            print(correlation)
-            correlation = tf.compat.v1.metrics.mean(correlation)
-
-            loss = tf.compat.v1.metrics.mean(values=per_example_loss, weights=is_real_example)
-
-            return {
-                "eval_correlation": correlation,
-                "eval_loss": loss,
-            }
-
         else:
             predictions = tf.argmax(input=logits, axis=-1, output_type=tf.int32)
             accuracy = tf.compat.v1.metrics.accuracy(
