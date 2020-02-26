@@ -43,13 +43,13 @@ python3 run_classifier.py \
 --init_checkpoint=$INIT_CKPT \
 --vocab_file=vocab.txt \
 --model=$MODEL \
---do_train=False \
+--do_train=True \
 --do_eval=True \
 --train_batch_size=${BZ} \
 --learning_rate=${LR} \
 --max_seq_length=128 \
 --num_train_epochs=${EPOCH} \
---use_tpu=True \
+--use_tpu=False \
 --tpu_name=$TPU_NAME
 
 echo ${SEED}_${TASK}
