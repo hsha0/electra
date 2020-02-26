@@ -900,7 +900,7 @@ def create_model(electra_config, is_training, input_ids, input_mask, segment_ids
     return (loss, per_example_loss, logits, probabilities)
 
 
-def mcc_metric(y_true, y_pred):
+def mcc_metric(y_true, y_pred, weights):
   '''
   true_pos = tf.math.count_nonzero(y_pred * y_true)
   true_neg = tf.math.count_nonzero((y_pred - 1) * (y_true - 1))
@@ -908,6 +908,7 @@ def mcc_metric(y_true, y_pred):
   false_neg = tf.math.count_nonzero((y_pred - 1) * y_true)
   x = tf.cast((true_pos + false_pos) * (true_pos + false_neg)
       * (true_neg + false_pos) * (true_neg + false_neg), tf.float32)
+  '''
   '''
   y_true = tf.cast(y_true)
   y_pred = tf.cast(y_pred)
@@ -930,6 +931,22 @@ def mcc_metric(y_true, y_pred):
   x = tf.cast((true_positive + false_positive) * (true_positive + false_negative)
       * (true_negative + false_positive) * (true_negative + false_negative), tf.float32)
   return tf.cast((true_positive * true_negative) - (false_positive * false_negative), tf.float32) / tf.sqrt(x)
+  '''
+  confusion_matrix = tf.math.confusion_matrix(labels=y_true, predictions=y_pred, num_classes=2, weights=weights)
+
+  confusion_matrix = tf.reshape(confusion_matrix, [-1])
+
+  true_negative = tf.gather(confusion_matrix, 0)
+  true_positive = tf.gather(confusion_matrix, 3)
+
+  false_positive = tf.gather(confusion_matrix, 1)
+  false_negative = tf.gather(confusion_matrix, 2)
+
+  x = tf.cast((true_positive + false_positive) * (true_positive + false_negative)
+              * (true_negative + false_positive) * (true_negative + false_negative), tf.float32)
+  return tf.cast((true_positive * true_negative) - (false_positive * false_negative), tf.float32) / tf.sqrt(x)
+
+
 
 def model_fn_builder(electra_config, num_labels, init_checkpoint, learning_rate,
                      num_train_steps, num_warmup_steps, use_tpu,
@@ -1023,7 +1040,7 @@ def model_fn_builder(electra_config, num_labels, init_checkpoint, learning_rate,
             accuracy = tf.compat.v1.metrics.accuracy(
                 labels=label_ids, predictions=predictions, weights=is_real_example)
 
-            mcc = mcc_metric(y_true=label_ids, y_pred=predictions)
+            mcc = mcc_metric(y_true=label_ids, y_pred=predictions, weights=is_real_example)
             mcc = tf.compat.v1.metrics.mean(values=mcc)
             return {
                 "eval_mcc": mcc,
