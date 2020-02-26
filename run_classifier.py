@@ -902,14 +902,6 @@ def create_model(electra_config, is_training, input_ids, input_mask, segment_ids
 
 def mcc_metric(y_true, y_pred, weights):
   '''
-  true_pos = tf.math.count_nonzero(y_pred * y_true)
-  true_neg = tf.math.count_nonzero((y_pred - 1) * (y_true - 1))
-  false_pos = tf.math.count_nonzero(y_pred * (y_true - 1))
-  false_neg = tf.math.count_nonzero((y_pred - 1) * y_true)
-  x = tf.cast((true_pos + false_pos) * (true_pos + false_neg)
-      * (true_neg + false_pos) * (true_neg + false_neg), tf.float32)
-  '''
-  '''
   y_true = tf.cast(y_true)
   y_pred = tf.cast(y_pred)
 
@@ -932,7 +924,7 @@ def mcc_metric(y_true, y_pred, weights):
       * (true_negative + false_positive) * (true_negative + false_negative), tf.float32)
   return tf.cast((true_positive * true_negative) - (false_positive * false_negative), tf.float32) / tf.sqrt(x)
   '''
-  confusion_matrix = tf.math.confusion_matrix(labels=y_true, predictions=y_pred, num_classes=2, weights=weights)
+  confusion_matrix = tf.math.confusion_matrix(labels=y_true, predictions=y_pred, num_classes=2, weights=weight)
 
   confusion_matrix = tf.reshape(confusion_matrix, [-1])
 
@@ -1074,15 +1066,6 @@ def model_fn_builder(electra_config, num_labels, init_checkpoint, learning_rate,
 
   return model_fn
 
-def mcc_metric(y_true, y_pred):
-    predicted = y_pred
-    true_pos = tf.math.count_nonzero(predicted * y_true)
-    true_neg = tf.math.count_nonzero((predicted - tf.ones(shape=tf.shape(input=predicted), dtype=tf.int32)) * (y_true - tf.ones(shape=tf.shape(input=predicted), dtype=tf.int32)))
-    false_pos = tf.math.count_nonzero(predicted * (y_true - tf.ones(shape=tf.shape(input=predicted) , dtype=tf.int32)))
-    false_neg = tf.math.count_nonzero((predicted - tf.ones(shape=tf.shape(input=predicted), dtype=tf.int32)) * y_true)
-    x = tf.cast((true_pos + false_pos + 1) * (true_pos + false_neg + 1) * (true_neg + false_pos + 1) * (true_neg + false_neg + 1), tf.float32)
-
-    return tf.cast((true_pos * true_neg) - (false_pos * false_neg), tf.float32) / tf.sqrt(x)
 
 # This function is not used by this file but is still used by the Colab and
 # people who depend on it.
