@@ -1207,7 +1207,8 @@ def main(_):
   train_examples = None
   num_train_steps = None
   num_warmup_steps = None
-  tfrecord_tasks = ['mnli', 'sst-2', 'qnli']
+  #tfrecord_tasks = ['mnli', 'sst-2', 'qqp', 'qnli']
+  tfrecord_tasks = []
   if FLAGS.do_train:
     if task_name in tfrecord_tasks:
         num_examples = processor.get_examples_num()
