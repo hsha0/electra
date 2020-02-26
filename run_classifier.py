@@ -935,8 +935,8 @@ def mcc_metric(y_true, y_pred, weights):
 
   x = tf.cast((true_positive + false_positive) * (true_positive + false_negative)
               * (true_negative + false_positive) * (true_negative + false_negative), tf.float32)
-  return tf.cast((true_positive * true_negative) - (false_positive * false_negative), tf.float32) / tf.sqrt(x)
-
+  #return tf.cast((true_positive * true_negative) - (false_positive * false_negative), tf.float32) / tf.sqrt(x)
+  return true_negative
 
 def model_fn_builder(electra_config, num_labels, init_checkpoint, learning_rate,
                      num_train_steps, num_warmup_steps, use_tpu,
