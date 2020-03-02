@@ -1192,6 +1192,8 @@ def main(_):
 
   task_name = FLAGS.task_name.lower()
 
+  if task_name == 'wnli': sys.exit("WNLI")
+
   if task_name not in processors:
     raise ValueError("Task not found: %s" % (task_name))
 
