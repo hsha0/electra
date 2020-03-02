@@ -249,9 +249,9 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         masks_list = tf.constant([MASK_ID] * (FLAGS.max_predictions_per_seq * batch_size))
         #[B, 20]
         masked_lm_weights = tf.multiply(tf.ones(modeling.get_shape_list(masked_lm_positions)),
-                                        gather_indexes_rank2(input_mask, masked_lm_positions))
+                                        tf.cast(gather_indexes_rank2(input_mask, masked_lm_positions), tf.float32))
 
-        
+
         print(masked_lm_weights)
         sys.exit()
 
