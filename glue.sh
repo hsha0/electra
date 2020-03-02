@@ -34,7 +34,7 @@ INIT_CKPT=$ELECTRA_GC/electra_pretrain/${CKPT}/model.ckpt-${CKPT_NUM}
 
 CONFIG=config/${MODEL}_${SIZE}.json
 
-echo ${SEED}_${TASK}_${LR}_${BZ}_${EPOCH}
+echo ${SEED}_${TASK}_${LR}_${BZ}_${EPOCH}_${CKPT}
 
 python3 run_classifier.py \
 --electra_config_file=$CONFIG \
@@ -53,4 +53,4 @@ python3 run_classifier.py \
 --use_tpu=True \
 --tpu_name=$TPU_NAME
 
-echo ${SEED}_${TASK}_${LR}_${BZ}_${EPOCH}
+echo ${SEED}_${TASK}_${LR}_${BZ}_${EPOCH}_${CKPT}
