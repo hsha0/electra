@@ -250,7 +250,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         #[B, 20]
         masked_lm_weights = tf.ones(modeling.get_shape_list(masked_lm_positions))
 
-        print(gather_indexes(input_mask, masked_lm_positions))
+        print(gather_indexes_rank2(input_mask, masked_lm_positions))
         sys.exit()
 
         #[B, S]
