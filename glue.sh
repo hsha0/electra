@@ -3,7 +3,7 @@ TPU_NAME='grpc://10.58.13.82:8470'
 MODEL=electra
 SIZE=small
 SEED=$$
-CKPT=electra_small_seq128_lr2e-3_w50_bz1024
+CKPT=electra_small_seq128_lr5e-4_w50_bz1024_lamb_0.1short
 CKPT_NUM=125000
 TASK_INDEX=$1
 
@@ -24,12 +24,12 @@ EPOCHS=(3 3 3 3 3 3 3 10 10)
 
 
 TASK=${TASKS[${TASK_INDEX}]}
-#LR=${LRS[${TASK_INDEX}]}
-#BZ=${BZS[${TASK_INDEX}]}
-#EPOCH=${EPOCHS[${TASK_INDEX}]}
-LR=$2
-BZ=$3
-EPOCH=$4
+LR=${LRS[${TASK_INDEX}]}
+BZ=${BZS[${TASK_INDEX}]}
+EPOCH=${EPOCHS[${TASK_INDEX}]}
+#LR=$2
+#BZ=$3
+#EPOCH=$4
 INIT_CKPT=$ELECTRA_GC/electra_pretrain/${CKPT}/model.ckpt-${CKPT_NUM}
 
 CONFIG=config/${MODEL}_${SIZE}.json
