@@ -53,4 +53,4 @@ python3 run_classifier.py \
 --use_tpu=True \
 --tpu_name=$TPU_NAME
 
-echo ${SEED}_${TASK}
+echo ${SEED}_${TASK}_${LR}_${BZ}_${EPOCH}
