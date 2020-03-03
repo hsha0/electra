@@ -202,7 +202,6 @@ def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, 
             denominator = tf.reduce_sum(label_weights) + 1e-5
             loss = numerator / denominator
 
-
     return (loss)
 
 
