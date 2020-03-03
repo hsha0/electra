@@ -276,8 +276,8 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
          masked_lm_positions, masked_lm_ids, masked_lm_weights)
 
         top_k_candidates = tf.math.top_k(input=masked_logits, k=10)
-        random_sample_indice = tf.constant([random.sample(range(0, 9), 1) for i in range(batch_size * FLAGS.max_predictions_per_seq)])
-        masked_lm_predictions = gather_indexes_rank2(top_k_candidates[1], random_sample_indice)
+        random_sample_indices = tf.constant([random.sample(range(0, 9), 1) for i in range(batch_size * FLAGS.max_predictions_per_seq)])
+        masked_lm_predictions = gather_indexes_rank2(top_k_candidates[1], random_sample_indices)
 
 
         masked_lm_ids = tf.reshape(masked_lm_ids, [-1])
