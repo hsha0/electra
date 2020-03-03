@@ -245,6 +245,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         segment_ids = features["segment_ids"]
 
         batch_size = modeling.get_shape_list(input_ids)[0] #batch_size
+        seq_length = modeling.get_shape_list(input_ids)[1] #seq_length
 
         #[B, 20]
         masked_lm_positions = tf.constant([sorted(random.sample(range(1, FLAGS.max_seq_length-1), FLAGS.max_predictions_per_seq)) for i in range(batch_size)])
@@ -276,7 +277,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
 
         #masked_lm_predictions = tf.argmax(input=masked_logits, axis=-1, output_type=tf.int32)
         top_k_candidates = tf.math.top_k(input=masked_logits, k=10)
-        random_sample_indice = tf.constant([random.sample(range(0, 9), 1) for i in range(batch_size)])
+        random_sample_indice = tf.constant([random.sample(range(0, 9), 1) for i in range(batch_size * seq_length)])
         print(top_k_candidates)
         print(random_sample_indice)
         sys.exit()
