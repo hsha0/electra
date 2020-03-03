@@ -275,15 +275,18 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
          electra_config, generator.get_sequence_output(), generator.get_embedding_table(),
          masked_lm_positions, masked_lm_ids, masked_lm_weights)
 
-        #masked_lm_predictions = tf.argmax(input=masked_logits, axis=-1, output_type=tf.int32)
+
         print(masked_logits)
         top_k_candidates = tf.math.top_k(input=masked_logits, k=10)
         random_sample_indice = tf.constant([random.sample(range(0, 9), 1) for i in range(batch_size * FLAGS.max_predictions_per_seq)])
         print(top_k_candidates)
         print(random_sample_indice)
-        masked_lm_ids = gather_indexes_rank2(top_k_candidates[1], random_sample_indice)
-        print(masked_lm_ids)
+        masked_predictions = gather_indexes_rank2(top_k_candidates[1], random_sample_indice)
+        print(masked_predictions)
+        masked_lm_predictions = tf.argmax(input=masked_logits, axis=-1, output_type=tf.int32)
+        print(masked_predictions)
         sys.exit()
+
 
         masked_lm_ids = tf.reshape(masked_lm_ids, [-1])
         diff = masked_lm_predictions - masked_lm_ids  # [B*20]
@@ -505,7 +508,10 @@ def gather_indexes_rank2(sequence_tensor, positions):
   flat_sequence_tensor = tf.reshape(sequence_tensor,
                                     [batch_size * seq_length])
   output_tensor = tf.gather(flat_sequence_tensor, flat_positions)
-  output_tensor = tf.reshape(output_tensor, [batch_size, FLAGS.max_predictions_per_seq])
+  try:
+    output_tensor = tf.reshape(output_tensor, [batch_size, FLAGS.max_predictions_per_seq])
+  except:
+    output_tensor = tf.reshape(output_tensor, [batch_size, 1])
   return output_tensor
 
 
