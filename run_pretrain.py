@@ -197,7 +197,8 @@ def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, 
                 name='sigmoid_cross_entropy',
             )
 
-            numerator = tf.reduce_sum(tf.cast(tf.reshape(label_weights, [-1]), tf.float32) * sigmoid_cross_entropy)
+            label_weights = tf.cast(tf.reshape(label_weights, [-1]), tf.float32)
+            numerator = tf.reduce_sum(label_weights * sigmoid_cross_entropy)
             denominator = tf.reduce_sum(label_weights) + 1e-5
             loss = numerator / denominator
 
