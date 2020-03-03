@@ -167,7 +167,7 @@ def get_masked_lm_output(electra_config, input_tensor, output_weights, positions
             loss = numerator / denominator
             #loss = tf.reduce_sum(input_tensor=label_weights * per_example_loss)
 
-    return (loss, per_example_loss, log_probs, logits)
+    return (numerator, per_example_loss, log_probs, logits)
 
 
 def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, label_weights):
@@ -201,10 +201,10 @@ def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, 
             sigmoid_cross_entropy = tf.reshape(sigmoid_cross_entropy, [-1])
 
             numerator = tf.reduce_sum(label_weights * sigmoid_cross_entropy)
-            denominator = tf.reduce_sum(label_weights) + 1e-5
-            loss = numerator / denominator
+            #denominator = tf.reduce_sum(label_weights) + 1e-5
+            #loss = numerator / denominator
 
-    return (loss)
+    return (numerator)
 
 
 def replace_elements_by_indices(old, new, indices):
@@ -216,12 +216,10 @@ def replace_elements_by_indices(old, new, indices):
     flat_positions = tf.reshape(indices + flat_offsets, [-1])
 
     zeros = tf.zeros(tf.shape(input=flat_positions)[0], dtype=tf.int32)
-
     flat_old = tf.reshape(old, [-1])
 
     masked_lm_mask = tf.compat.v1.sparse_to_dense(flat_positions, tf.shape(input=flat_old), zeros, default_value=1,
                                                   validate_indices=True, name="masked_lm_mask")
-
     flat_old_temp = tf.multiply(flat_old, masked_lm_mask)
     new_temp = tf.compat.v1.sparse_to_dense(flat_positions, tf.shape(input=flat_old), new,
                                             default_value=0, validate_indices=True, name=None)
@@ -287,8 +285,10 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
 
         zeros = tf.zeros(modeling.get_shape_list(input_ids), dtype=tf.int32)
         whether_replaced = replace_elements_by_indices(zeros, diff_cast, masked_lm_positions)
+        whether_replaced = tf.multiply(whether_replaced, input_mask)
 
         input_ids_for_discriminator = replace_elements_by_indices(masked_input_ids, masked_lm_predictions, masked_lm_positions)
+        input_ids_for_discriminator = tf.multiply(input_ids_for_discriminator, input_mask)
 
         discriminator = modeling.Discriminator(config=electra_config,
                                                is_training=is_training,
