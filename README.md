@@ -2,6 +2,7 @@
 
 ## Introduction
 My own implementation of ELECTRA.
+Paper Link: https://openreview.net/pdf?id=r1xMH1BtvB
 
 ## Pretraining
 ```commandline
