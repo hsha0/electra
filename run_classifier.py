@@ -933,21 +933,7 @@ def mcc_metric_2(y_true, y_pred, bucunzai):
   x = tf.cast((true_positive + false_positive) * (true_positive + false_negative)
       * (true_negative + false_positive) * (true_negative + false_negative), tf.float32)
   return tf.cast((true_positive * true_negative) - (false_positive * false_negative), tf.float32) / tf.sqrt(x)
-  '''
-  confusion_matrix = tf.math.confusion_matrix(labels=y_true, predictions=y_pred, num_classes=2, weights=weights)
 
-  confusion_matrix = tf.reshape(confusion_matrix, [4, 1])
-  true_negative = tf.gather(confusion_matrix, 0)
-  true_positive = tf.gather(confusion_matrix, 3)
-
-  false_positive = tf.gather(confusion_matrix, 1)
-  false_negative = tf.gather(confusion_matrix, 2)
-
-  x = tf.cast((true_positive + false_positive) * (true_positive + false_negative)
-              * (true_negative + false_positive) * (true_negative + false_negative), tf.float32)
-  return tf.cast((true_positive * true_negative) - (false_positive * false_negative), tf.float32) / tf.sqrt(x)
-  #return true_positive
-  '''
 
 def model_fn_builder(electra_config, num_labels, init_checkpoint, learning_rate,
                      num_train_steps, num_warmup_steps, use_tpu,
@@ -1223,7 +1209,6 @@ def main(_):
   train_examples = None
   num_train_steps = None
   num_warmup_steps = None
-  #tfrecord_tasks = ['mnli', 'sst-2', 'qqp', 'qnli']
   tfrecord_tasks = ['mnli', 'sst-2', 'qqp', 'qnli']
   if FLAGS.do_train:
     if task_name in tfrecord_tasks:
