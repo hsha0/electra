@@ -276,6 +276,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
          masked_lm_positions, masked_lm_ids, masked_lm_weights)
 
         #masked_lm_predictions = tf.argmax(input=masked_logits, axis=-1, output_type=tf.int32)
+        print(masked_logits)
         top_k_candidates = tf.math.top_k(input=masked_logits, k=10)
         random_sample_indice = tf.constant([random.sample(range(0, 9), 1) for i in range(batch_size * seq_length)])
         print(top_k_candidates)
