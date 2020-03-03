@@ -281,6 +281,8 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         random_sample_indice = tf.constant([random.sample(range(0, 9), 1) for i in range(batch_size * FLAGS.max_predictions_per_seq)])
         print(top_k_candidates)
         print(random_sample_indice)
+        masked_lm_ids = gather_indexes_rank2(top_k_candidates[1], random_sample_indice)
+        print(masked_lm_ids)
         sys.exit()
 
         masked_lm_ids = tf.reshape(masked_lm_ids, [-1])
