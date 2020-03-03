@@ -165,9 +165,8 @@ def get_masked_lm_output(electra_config, input_tensor, output_weights, positions
             numerator = tf.reduce_sum(label_weights * per_example_loss)
             denominator = tf.reduce_sum(label_weights) + 1e-5
             loss = numerator / denominator
-            #loss = tf.reduce_sum(input_tensor=label_weights * per_example_loss)
 
-    return (numerator, per_example_loss, log_probs, logits)
+    return (loss, per_example_loss, log_probs, logits)
 
 
 def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, label_weights):
@@ -201,10 +200,10 @@ def get_discriminator_output(electra_config, sequence_tensor, whether_replaced, 
             sigmoid_cross_entropy = tf.reshape(sigmoid_cross_entropy, [-1])
 
             numerator = tf.reduce_sum(label_weights * sigmoid_cross_entropy)
-            #denominator = tf.reduce_sum(label_weights) + 1e-5
-            #loss = numerator / denominator
+            denominator = tf.reduce_sum(label_weights) + 1e-5
+            loss = numerator / denominator
 
-    return (numerator)
+    return (loss)
 
 
 def replace_elements_by_indices(old, new, indices):
@@ -275,7 +274,13 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
          electra_config, generator.get_sequence_output(), generator.get_embedding_table(),
          masked_lm_positions, masked_lm_ids, masked_lm_weights)
 
-        masked_lm_predictions = tf.argmax(input=masked_logits, axis=-1, output_type=tf.int32)
+        #masked_lm_predictions = tf.argmax(input=masked_logits, axis=-1, output_type=tf.int32)
+        top_k_candidates = tf.math.top_k(input=masked_logits, k=10)
+        random_sample_indice = tf.constant([random.sample(range(0, 9), 1) for i in range(batch_size)])
+        print(top_k_candidates)
+        print(random_sample_indice)
+        sys.exit()
+
         masked_lm_ids = tf.reshape(masked_lm_ids, [-1])
         diff = masked_lm_predictions - masked_lm_ids  # [B*20]
 
