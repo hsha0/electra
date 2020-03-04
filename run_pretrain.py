@@ -50,7 +50,7 @@ flags.DEFINE_float('mask_percentage', 0.15, "Percentage of words to be masked fo
 
 flags.DEFINE_float("learning_rate", 5e-4, "The initial learning rate for glue.")
 
-flags.DEFINE_float("temperature", )
+flags.DEFINE_float("temperature", 2, "Temperature for temperature sampling.")
 
 flags.DEFINE_integer("disc_loss_weight", 50, "The weight of discriminator loss.")
 
@@ -228,6 +228,20 @@ def replace_elements_by_indices(old, new, indices):
     updated_old = tf.reshape(flat_old_temp + new_temp, old_shape)
 
     return updated_old
+
+
+def temperature_sampling(logits, temperature)
+    if temperature is None or temperature == 0.0:
+        return tf.math.argmax(logits)
+
+    preds = tf.math.log(logits + 1e-7) / temperature
+    exp_preds = tf.math.exp(preds)
+    preds = exp_preds / tf.reduce_sum(exp_preds)
+    probas = tf.random.categorical(preds, 1)
+    print(probas)
+    sys.exit()
+
+    index = tf.argmax(probas)
 
 
 def model_fn_builder(electra_config, init_checkpoint, learning_rate,
