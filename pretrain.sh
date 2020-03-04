@@ -1,5 +1,5 @@
 TPU_NAME='grpc://10.52.227.130:8470'
-MODEL=electra
+MODEL=ale
 SIZE=small
 LR=5e-4
 DISC_W=50
