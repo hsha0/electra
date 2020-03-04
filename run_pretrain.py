@@ -237,7 +237,7 @@ def temperature_sampling(logits, temperature):
     preds = tf.math.log(logits + 1e-7) / temperature
     exp_preds = tf.math.exp(preds)
     preds = exp_preds / tf.reduce_sum(exp_preds)
-    preds = tf.random.categorical(preds, 1)
+    preds = tf.cast(tf.random.categorical(preds, 1), tf.int32)
 
     return preds
 
