@@ -230,7 +230,7 @@ def replace_elements_by_indices(old, new, indices):
     return updated_old
 
 
-def temperature_sampling(logits, temperature)
+def temperature_sampling(logits, temperature):
     if temperature is None or temperature == 0.0:
         return tf.math.argmax(logits)
 
