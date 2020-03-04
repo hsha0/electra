@@ -237,12 +237,9 @@ def temperature_sampling(logits, temperature):
     preds = tf.math.log(logits + 1e-7) / temperature
     exp_preds = tf.math.exp(preds)
     preds = exp_preds / tf.reduce_sum(exp_preds)
-    probas = tf.random.categorical(preds, 1)
-    print(probas)
+    preds = tf.random.categorical(preds, 1)
 
-    sys.exit()
-
-    index = tf.argmax(probas)
+    return preds
 
 
 def model_fn_builder(electra_config, init_checkpoint, learning_rate,
@@ -292,16 +289,13 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
          electra_config, generator.get_sequence_output(), generator.get_embedding_table(),
          masked_lm_positions, masked_lm_ids, masked_lm_weights)
 
-        temperature_sampling(masked_logits, FLAGS.temperature)
-
-        top_k_candidates = tf.math.top_k(input=masked_logits, k=10)
-        random_sample_indices = tf.constant([random.sample(range(0, 9), 1) for i in range(batch_size * FLAGS.max_predictions_per_seq)])
-        masked_lm_predictions = gather_indexes_rank2(top_k_candidates[1], random_sample_indices)
-
+        masked_lm_predictions = temperature_sampling(masked_logits, FLAGS.temperature)
 
         masked_lm_ids = tf.reshape(masked_lm_ids, [-1])
-        masked_lm_predictions = tf.reshape(masked_lm_predictions, [-1])
+        #masked_lm_predictions = tf.reshape(masked_lm_predictions, [-1])
         diff = masked_lm_predictions - masked_lm_ids  # [B*20]
+        print(diff)
+        sys.exit()
 
         zero = tf.constant(0, dtype=tf.int32)
         #!!!!ERROR!!! fixed
