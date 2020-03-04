@@ -1,4 +1,4 @@
-TPU_NAME='grpc://10.22.27.138:8470'
+TPU_NAME='grpc://10.121.215.26:8470'
 MODEL=ale
 SIZE=base
 LR=5e-4
@@ -7,7 +7,8 @@ TRAIN_STEP=125000
 TOTAL=125000
 WARM_UP=10000
 BZ=1024
-OPT=adam
+OPT=lamb
+T=2
 
 ELECTRA_GC='gs://electra'
 CONFIG=config/${MODEL}_${SIZE}.json

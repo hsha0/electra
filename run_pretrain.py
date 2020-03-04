@@ -50,6 +50,8 @@ flags.DEFINE_float('mask_percentage', 0.15, "Percentage of words to be masked fo
 
 flags.DEFINE_float("learning_rate", 5e-4, "The initial learning rate for glue.")
 
+flags.DEFINE_float("temperature", )
+
 flags.DEFINE_integer("disc_loss_weight", 50, "The weight of discriminator loss.")
 
 flags.DEFINE_integer("num_train_steps", 10, "Number of training steps.")

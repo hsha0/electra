@@ -992,7 +992,7 @@ def model_fn_builder(electra_config, num_labels, init_checkpoint, learning_rate,
     output_spec = None
     if mode == tf.estimator.ModeKeys.TRAIN:
 
-      train_op = optimization.create_adam_optimizer(
+      train_op = optimization.create_lamb_optimizer(
           loss=total_loss,
           init_lr=learning_rate,
           total_num_train_steps=num_train_steps,
