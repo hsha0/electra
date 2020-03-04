@@ -238,7 +238,7 @@ def temperature_sampling(logits, temperature):
     exp_preds = tf.math.exp(preds)
     preds = exp_preds / tf.reduce_sum(exp_preds)
     print(preds)
-    probas = tf.map_fn(lambda x:tf.random.categorical(x,1), preds)
+    probas = tf.map_fn(lambda x:tf.random.categorical(x,1), tf.expand_dims(preds, 2))
     print(probas)
     sys.exit()
 
