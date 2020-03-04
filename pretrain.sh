@@ -1,6 +1,6 @@
 TPU_NAME='grpc://10.22.27.138:8470'
 MODEL=ale
-SIZE=small
+SIZE=base
 LR=5e-4
 DISC_W=50
 TRAIN_STEP=125000
