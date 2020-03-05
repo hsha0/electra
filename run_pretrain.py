@@ -271,9 +271,7 @@ def temperature_sampling(logits, temperature):
     if temperature is None or temperature == 0.0:
         return tf.math.argmax(logits)
     logits = logits / temperature
-    logits = top_k_logits(logits, k=0)
-    print(logits)
-    sys.exit()
+    logits = top_k_logits(logits, k=10)
     logits = top_p_logits(logits, p=1)
     print(logits)
     sys.exit()
