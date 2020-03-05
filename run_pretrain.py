@@ -234,7 +234,7 @@ def temperature_sampling(logits, temperature):
     if temperature is None or temperature == 0.0:
         return tf.math.argmax(logits)
 
-    logits = logits / temperature
+    logits = tf.nn.log_softmax(logits) / temperature
     preds = tf.cast(tf.random.categorical(logits, 1), tf.int32)
 
     return preds
