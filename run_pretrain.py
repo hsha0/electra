@@ -233,8 +233,9 @@ def replace_elements_by_indices(old, new, indices):
 def temperature_sampling(logits, temperature):
     if temperature is None or temperature == 0.0:
         return tf.math.argmax(logits)
-    logits = logits / temperature
-    preds = tf.cast(tf.random.categorical(logits, 1), tf.int32)
+
+    log_prob = tf.nn.log_softmax(logits / temperature)
+    preds = tf.cast(tf.random.categorical(log_prob, 1), tf.int32)
     return preds
 
 
