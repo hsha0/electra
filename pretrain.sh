@@ -8,7 +8,7 @@ TOTAL=125000
 WARM_UP=10000
 BZ=1024
 OPT=lamb
-T=1
+T=0.5
 
 ELECTRA_GC='gs://electra'
 CONFIG=config/${MODEL}_${SIZE}.json
