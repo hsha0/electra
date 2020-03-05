@@ -301,8 +301,12 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         whether_replaced = replace_elements_by_indices(zeros, diff_cast, masked_lm_positions)
         whether_replaced = tf.multiply(whether_replaced, input_mask)
 
+        print(whether_replaced)
+
         input_ids_for_discriminator = replace_elements_by_indices(masked_input_ids, masked_lm_predictions, masked_lm_positions)
         input_ids_for_discriminator = tf.multiply(input_ids_for_discriminator, input_mask)
+        print(input_ids_for_discriminator)
+        sys.exit()
 
         discriminator = modeling.Discriminator(config=electra_config,
                                                is_training=is_training,
@@ -395,12 +399,13 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
                 scaffold_fn=scaffold_fn,
             )
 
-
+            """
             flops = tf.profiler.profile(
                 tf.get_default_graph(),
                 options=tf.profiler.ProfileOptionBuilder.float_operation())
             print(flops.total_float_ops, '\n\n\n')
             sys.exit()
+            """
         return output_spec
 
     return model_fn
