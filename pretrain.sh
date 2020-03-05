@@ -1,4 +1,4 @@
-TPU_NAME='grpc://10.118.84.114:8470'
+TPU_NAME='grpc://10.37.218.74:8470'
 MODEL=electra
 SIZE=small
 LR=5e-4
@@ -8,7 +8,7 @@ TOTAL=125000
 WARM_UP=10000
 BZ=1024
 OPT=lamb
-T=0.5
+T=0.8
 
 ELECTRA_GC='gs://electra'
 CONFIG=config/${MODEL}_${SIZE}.json
