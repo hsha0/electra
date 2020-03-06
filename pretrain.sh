@@ -1,4 +1,4 @@
-TPU_NAME='grpc://10.29.171.130:8470'
+TPU_NAME='grpc://10.41.94.242:8470'
 MODEL=electra
 SIZE=small
 LR=5e-4
@@ -6,9 +6,9 @@ DISC_W=50
 TRAIN_STEP=125000
 TOTAL=125000
 WARM_UP=10000
-BZ=1024
+BZ=128
 OPT=lamb
-T=1.2
+T=1
 
 ELECTRA_GC='gs://electra'
 CONFIG=config/${MODEL}_${SIZE}.json
