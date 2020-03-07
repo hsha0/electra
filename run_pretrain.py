@@ -579,7 +579,7 @@ def main():
             max_predictions_per_seq=FLAGS.max_predictions_per_seq,
             is_training=True)
 
-        with tf.contrib.tfprof.ProfileContext('gs://electra/profile.txt',
+        with tf.contrib.tfprof.ProfileContext('profile.txt',
                                               trace_steps=range(100, 200, 3),
                                                dump_steps=[200]) as pctx:
             opts = tf.profiler.ProfileOptionBuilder.time_and_memory()
