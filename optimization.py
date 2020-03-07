@@ -22,6 +22,7 @@ import re
 import tensorflow as tf
 import lamb
 import sys
+import lamb_opt
 
 
 def create_lamb_optimizer(loss, init_lr, total_num_train_steps, num_warmup_steps, use_tpu, weight_decay=0.0, part='disc'):
@@ -67,6 +68,8 @@ def create_lamb_optimizer(loss, init_lr, total_num_train_steps, num_warmup_steps
       epsilon=1e-6,
       exclude_from_weight_decay=["LayerNorm", "layer_norm", "bias"])
   '''
+
+  '''
   optimizer = lamb.LAMB(learning_rate=learning_rate,
                         weight_decay_rate=weight_decay,
                         beta_1=0.9,
@@ -75,9 +78,17 @@ def create_lamb_optimizer(loss, init_lr, total_num_train_steps, num_warmup_steps
                         exclude_from_weight_decay="LayerNorm, layer_norm, bias",
                         name='LAMB'
   )
+  '''
 
-  #if use_tpu:
-  #  optimizer = tf.compat.v1.tpu.CrossShardOptimizer(optimizer)
+  optimizer = lamb_opt.LAMBOptimizer(learning_rate=learning_rate,
+                                     weight_decay_rate=weight_decay,
+                                     beta_1=0.9,
+                                     beta_2=0.999,
+                                     epsilon=1e-6,
+                                     exclude_from_weight_decay=["LayerNorm", "layer_norm", "bias"])
+
+  if use_tpu:
+    optimizer = tf.compat.v1.tpu.CrossShardOptimizer(optimizer)
   '''
   with tf.variable_scope("embeddings"):
     tvars = tf.trainable_variables(scope="embeddings")
@@ -126,8 +137,8 @@ def create_lamb_optimizer(loss, init_lr, total_num_train_steps, num_warmup_steps
   grads = tf.gradients(ys=loss, xs=tvars)
 
   # This is how the model was pre-trained.
-  if use_tpu:
-      grads = [tf.compat.v1.tpu.cross_replica_sum(grad) for grad in grads if (grad is not None)]
+  #if use_tpu:
+  #    grads = [tf.compat.v1.tpu.cross_replica_sum(grad) for grad in grads if (grad is not None)]
 
 
 
