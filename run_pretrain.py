@@ -579,7 +579,8 @@ def main():
             max_predictions_per_seq=FLAGS.max_predictions_per_seq,
             is_training=True)
 
-        estimator.train(input_fn=train_input_fn, max_steps=FLAGS.num_train_steps)
+        with tf.python.eager.profiler.Profiler('gs://electra/profile_log.txt'):
+            estimator.train(input_fn=train_input_fn, max_steps=FLAGS.num_train_steps)
 
 
 
