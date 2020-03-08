@@ -1139,10 +1139,6 @@ def convert_examples_to_features(examples, label_list, max_seq_length,
   return features
 
 
-def get_config():
-    config = modeling.ElectraConfig(30522)
-    return config
-
 def main(_):
   tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.INFO)
 
