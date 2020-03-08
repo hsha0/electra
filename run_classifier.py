@@ -856,6 +856,7 @@ def _truncate_seq_pair(tokens_a, tokens_b, max_length):
 def create_model(electra_config, is_training, input_ids, input_mask, segment_ids,
                  labels, num_labels, use_one_hot_embeddings, regression):
   """Creates a classification model."""
+  tf.compat.v1.set_random_seed(FLAGS.seed)
   model = modeling.Discriminator(
       config=electra_config,
       is_training=is_training,
@@ -944,7 +945,6 @@ def model_fn_builder(electra_config, num_labels, init_checkpoint, learning_rate,
 
   def model_fn(features, labels, mode, params):  # pylint: disable=unused-argument
     """The `model_fn` for TPUEstimator."""
-    tf.compat.v1.set_random_seed(FLAGS.seed)
     tf.compat.v1.logging.info("*** Features ***")
     for name in sorted(features.keys()):
       tf.compat.v1.logging.info("  name = %s, shape = %s" % (name, features[name].shape))
