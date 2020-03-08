@@ -22,7 +22,6 @@ import re
 import tensorflow as tf
 import lamb
 import sys
-import lamb_opt
 
 
 def create_lamb_optimizer(loss, init_lr, total_num_train_steps, num_warmup_steps, use_tpu, weight_decay=0.0, part='disc'):
