@@ -2,11 +2,10 @@ ELECTRA_GC='gs://electra'
 TPU_NAME='grpc://10.75.205.162:8470'
 MODEL=electra
 SIZE=small
-SEED=$2
+SEED=$$
 CKPT=Tsample_electra_small_seq128_lr5e-4_w50_bz1024_lamb_T0.8
 CKPT_NUM=125000
 TASK_INDEX=$1
-RANDOM=$$
 
 TASKS=(MRPC CoLA MNLI SST-2 QQP QNLI WNLI RTE STS-B)
 
@@ -41,13 +40,12 @@ python3 run_classifier.py \
 --electra_config_file=$CONFIG \
 --task_name=${TASK} \
 --data_dir=$ELECTRA_GC/glue/glue_data_new/$TASK \
---output_dir=$ELECTRA_GC/glue/glue_results/${MODEL}_${SIZE}/${TASK}_${SEED}_${RANDOM} \
+--output_dir=$ELECTRA_GC/glue/glue_results/${MODEL}_${SIZE}/${TASK}_${SEED}\
 --init_checkpoint=$INIT_CKPT \
 --vocab_file=vocab.txt \
 --model=$MODEL \
 --do_train=True \
 --do_eval=True \
---seed=${SEED} \
 --train_batch_size=${BZ} \
 --learning_rate=${LR} \
 --max_seq_length=128 \
