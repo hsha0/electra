@@ -942,7 +942,7 @@ def model_fn_builder(electra_config, num_labels, init_checkpoint, learning_rate,
 
   def model_fn(features, labels, mode, params):  # pylint: disable=unused-argument
     """The `model_fn` for TPUEstimator."""
-
+    tf.compat.v1.set_random_seed(FLAGS.seed)
     tf.compat.v1.logging.info("*** Features ***")
     for name in sorted(features.keys()):
       tf.compat.v1.logging.info("  name = %s, shape = %s" % (name, features[name].shape))
@@ -1143,7 +1143,7 @@ def get_config():
     return config
 
 def main(_):
-  tf.compat.v1.set_random_seed(FLAGS.seed)
+
   tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.INFO)
 
   processors = {
