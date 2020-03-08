@@ -29,6 +29,8 @@ from scipy.stats import spearmanr
 from mcc import MatthewsCorrelationCoefficient
 from sklearn.metrics import matthews_corrcoef
 import tensorflow_probability as tfp
+import numpy as np
+import random
 
 flags = tf.compat.v1.flags
 
@@ -1143,6 +1145,8 @@ def get_config():
     return config
 
 def main(_):
+  random.seed(FLAGS.seed)
+  np.random.seed(FLAGS.seed)
 
   tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.INFO)
 
