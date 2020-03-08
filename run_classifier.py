@@ -823,7 +823,7 @@ def file_based_input_fn_builder(input_file, seq_length, is_training,
     d = tf.data.TFRecordDataset(input_file)
     if is_training:
       d = d.repeat()
-      d = d.shuffle(buffer_size=100, seed=FLAGS.seed)
+      d = d.shuffle(buffer_size=100)
 
     d = d.apply(
         tf.data.experimental.map_and_batch(
@@ -856,7 +856,6 @@ def _truncate_seq_pair(tokens_a, tokens_b, max_length):
 def create_model(electra_config, is_training, input_ids, input_mask, segment_ids,
                  labels, num_labels, use_one_hot_embeddings, regression):
   """Creates a classification model."""
-  tf.compat.v1.set_random_seed(FLAGS.seed)
   model = modeling.Discriminator(
       config=electra_config,
       is_training=is_training,
@@ -1114,7 +1113,7 @@ def input_fn_builder(features, seq_length, is_training, drop_remainder):
 
     if is_training:
       d = d.repeat()
-      d = d.shuffle(buffer_size=100, seed=FLAGS.seed)
+      d = d.shuffle(buffer_size=100)
 
     d = d.batch(batch_size=batch_size, drop_remainder=drop_remainder)
     return d
@@ -1145,9 +1144,6 @@ def get_config():
     return config
 
 def main(_):
-  random.seed(FLAGS.seed)
-  np.random.seed(FLAGS.seed)
-
   tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.INFO)
 
   processors = {
@@ -1203,7 +1199,6 @@ def main(_):
   run_config = tf.compat.v1.estimator.tpu.RunConfig(
       cluster=tpu_cluster_resolver,
       master=FLAGS.master,
-      tf_random_seed=FLAGS.seed,
       model_dir=FLAGS.output_dir,
       save_checkpoints_steps=FLAGS.save_checkpoints_steps,
       tpu_config=tf.compat.v1.estimator.tpu.TPUConfig(
