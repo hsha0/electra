@@ -1,9 +1,9 @@
 ELECTRA_GC='gs://electra'
-TPU_NAME='grpc://10.58.63.90:8470'
+TPU_NAME='grpc://10.75.205.162:8470'
 MODEL=electra
 SIZE=small
-SEED=$$
-CKPT=Tsample_electra_small_seq128_lr5e-4_w50_bz1024_lamb_T0.9
+SEED=$2
+CKPT=Tsample_electra_small_seq128_lr5e-4_w50_bz1024_lamb_T0.8
 CKPT_NUM=125000
 TASK_INDEX=$1
 
@@ -46,6 +46,7 @@ python3 run_classifier.py \
 --model=$MODEL \
 --do_train=True \
 --do_eval=True \
+--seed=${SEED} \
 --train_batch_size=${BZ} \
 --learning_rate=${LR} \
 --max_seq_length=128 \

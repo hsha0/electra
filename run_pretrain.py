@@ -579,12 +579,8 @@ def main():
             max_predictions_per_seq=FLAGS.max_predictions_per_seq,
             is_training=True)
 
-        with tf.contrib.tfprof.ProfileContext(FLAGS.output_dir,
-                                              trace_steps=range(100, 200, 3),
-                                               dump_steps=[200]) as pctx:
-            opts = tf.profiler.ProfileOptionBuilder.time_and_memory()
-            pctx.add_auto_profiling('op', opts, [150, 200])
-            estimator.train(input_fn=train_input_fn, max_steps=FLAGS.num_train_steps)
+
+        estimator.train(input_fn=train_input_fn, max_steps=FLAGS.num_train_steps)
 
 
 
