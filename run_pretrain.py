@@ -235,7 +235,7 @@ def temperature_sampling(logits, temperature):
         return tf.math.argmax(logits)
 
     logits_shape = modeling.get_shape_list(logits)
-    logits = tf.slice(logits, [0,999], [logits_shape[0], logits_shape[1]-1000])
+    logits = tf.slice(logits, [0, 999], [logits_shape[0], logits_shape[1]-1000])
 
     log_prob = tf.nn.log_softmax(logits / temperature)
     preds = tf.cast(tf.random.categorical(log_prob, 1), tf.int32) + 1000
@@ -262,7 +262,7 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
         seq_length = modeling.get_shape_list(input_ids)[1] #seq_length
 
         #[B, 20]
-        masked_lm_positions = tf.constant([sorted(random.sample(range(1, FLAGS.max_seq_length-1), FLAGS.max_predictions_per_seq)) for i in range(batch_size)])
+        masked_lm_positions = tf.constant([sorted(random.sample(range(1, FLAGS.max_seq_length-2), FLAGS.max_predictions_per_seq)) for i in range(batch_size)])
         #[20*B]
         masks_list = tf.constant([MASK_ID] * (FLAGS.max_predictions_per_seq * batch_size))
         #[B, 20]
