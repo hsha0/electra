@@ -1,7 +1,7 @@
-TPU_NAME='grpc://10.30.224.130:8470'
+TPU_NAME='grpc://10.18.131.170:8470'
 MODEL=electra
 SIZE=small
-LR=4e-4
+LR=6e-4
 DISC_W=50
 TRAIN_STEP=125000
 TOTAL=125000
@@ -17,7 +17,7 @@ MAX_SEQ_L=128
 python3 run_pretrain.py \
 --electra_config_file=$CONFIG \
 --input_file=$ELECTRA_GC/data_128_CLS_0.1short/*.tfrecord \
---output_dir=$ELECTRA_GC/electra_pretrain/LR4E-4_${MODEL}_${SIZE}_seq${MAX_SEQ_L}_lr${LR}_w${DISC_W}_bz${BZ}_${OPT}_T${T} \
+--output_dir=$ELECTRA_GC/electra_pretrain/LR6E-4_${MODEL}_${SIZE}_seq${MAX_SEQ_L}_lr${LR}_w${DISC_W}_bz${BZ}_${OPT}_T${T} \
 --optimizer=${OPT} \
 --temperature=${T} \
 --vocab_file=vocab.txt \
