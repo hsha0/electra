@@ -1,9 +1,9 @@
 ELECTRA_GC='gs://electra'
-TPU_NAME='grpc://10.56.249.90:8470'
+TPU_NAME='grpc://10.113.33.218:8470'
 MODEL=electra
 SIZE=small
 SEED=$$
-CKPT=29522_electra_small_seq128_lr5e-4_w50_bz1024_lamb_T0.8
+CKPT=LR3e-4_electra_small_seq128_lr3e-4_w50_bz1024_lamb_T0.8
 CKPT_NUM=125000
 TASK_INDEX=$1
 
