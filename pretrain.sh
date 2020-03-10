@@ -1,4 +1,4 @@
-TPU_NAME='grpc://10.60.170.98:8470'
+TPU_NAME='grpc://10.27.58.130:8470'
 MODEL=electra
 SIZE=small
 LR=5e-4
@@ -8,7 +8,7 @@ TOTAL=125000
 WARM_UP=10000
 BZ=1024
 OPT=lamb
-T=0.8
+T=1
 
 ELECTRA_GC='gs://electra'
 CONFIG=config/${MODEL}_${SIZE}.json
@@ -17,7 +17,7 @@ MAX_SEQ_L=128
 python3 run_pretrain.py \
 --electra_config_file=$CONFIG \
 --input_file=$ELECTRA_GC/data_128_CLS_0.1short/*.tfrecord \
---output_dir=$ELECTRA_GC/electra_pretrain/+999_${MODEL}_${SIZE}_seq${MAX_SEQ_L}_lr${LR}_w${DISC_W}_bz${BZ}_${OPT}_T${T} \
+--output_dir=$ELECTRA_GC/electra_pretrain/999T1_${MODEL}_${SIZE}_seq${MAX_SEQ_L}_lr${LR}_w${DISC_W}_bz${BZ}_${OPT}_T${T} \
 --optimizer=${OPT} \
 --temperature=${T} \
 --vocab_file=vocab.txt \
