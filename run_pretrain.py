@@ -269,6 +269,8 @@ def model_fn_builder(electra_config, init_checkpoint, learning_rate,
 
         #[B, S]
         masked_input_ids = replace_elements_by_indices(input_ids, masks_list, masked_lm_positions)
+        masked_input_ids = tf.multiply(masked_input_ids, input_mask)
+
         #[B, 20]
         masked_lm_ids = gather_indexes_rank2(input_ids, masked_lm_positions)
 
