@@ -235,10 +235,7 @@ def temperature_sampling(logits, temperature):
         return tf.math.argmax(logits)
 
     log_prob = tf.nn.log_softmax(logits / temperature)
-    log_prob_shape = modeling.get_shape_list(log_prob)
-
-    log_prob = tf.slice(log_prob, [0, 999], [log_prob_shape[0], log_prob_shape[1]-999])
-    preds = tf.cast(tf.random.categorical(log_prob, 1), tf.int32) + 999
+    preds = tf.cast(tf.random.categorical(log_prob, 1), tf.int32)
     return preds
 
 
