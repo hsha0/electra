@@ -1,5 +1,5 @@
 ELECTRA_GC='gs://electra'
-TPU_NAME='grpc://10.91.79.250:8470'
+TPU_NAME='grpc://10.27.146.98:8470'
 MODEL=ale
 SIZE=small
 SEED=$$
