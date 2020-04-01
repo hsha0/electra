@@ -3,7 +3,7 @@ TPU_NAME='grpc://10.46.194.210:8470'
 MODEL=ale
 SIZE=base
 SEED=$$
-CKPT=ale_base_seq128_lr5e-4_w50_bz1024_lamb_T0.8
+CKPT=ale_base_seq128_lr2e-4_w50_bz1024_lamb_T0.8
 CKPT_NUM=35000
 TASK_INDEX=$1
 
