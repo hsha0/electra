@@ -1,4 +1,4 @@
-TPU_NAME='grpc://10.51.225.34:8470'
+TPU_NAME='grpc://10.15.206.170:8470'
 MODEL=ale
 SIZE=base
 LR=4e-3
