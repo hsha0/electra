@@ -24,11 +24,11 @@ EPOCHS=(3 3 3 3 3 3 3 10 10)
 
 
 TASK=${TASKS[${TASK_INDEX}]}
-#LR=${LRS[${TASK_INDEX}]}
-#BZ=${BZS[${TASK_INDEX}]}
+LR=${LRS[${TASK_INDEX}]}
+BZ=${BZS[${TASK_INDEX}]}
 EPOCH=${EPOCHS[${TASK_INDEX}]}
-LR=$2
-BZ=$3
+#LR=$2
+#BZ=$3
 #EPOCH=$4
 INIT_CKPT=$ELECTRA_GC/electra_pretrain/${CKPT}/model.ckpt-${CKPT_NUM}
 
