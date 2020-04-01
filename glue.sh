@@ -1,10 +1,10 @@
 ELECTRA_GC='gs://electra'
 TPU_NAME='grpc://10.46.194.210:8470'
 MODEL=ale
-SIZE=base
+SIZE=small
 SEED=$$
-CKPT=ale_base_seq128_lr2e-4_w50_bz1024_lamb_T0.8
-CKPT_NUM=35000
+CKPT=ale_small_seq128_lr5e-4_w50_bz1024_lamb_T0.8
+CKPT_NUM=162000
 TASK_INDEX=$1
 
 TASKS=(MRPC CoLA MNLI SST-2 QQP QNLI WNLI RTE STS-B)
