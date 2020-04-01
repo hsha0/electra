@@ -1,7 +1,7 @@
 ELECTRA_GC='gs://electra'
 TPU_NAME='grpc://10.108.212.218:8470'
 MODEL=ale
-SIZE=small
+SIZE=base
 SEED=$$
 CKPT=ale_base_seq128_lr4e-3_w50_bz1024_lamb_T0.8
 CKPT_NUM=35000
